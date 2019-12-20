@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#Output Timestamp
+date
+
+flag=$*
+
+counter=0
+tflags=$flag
+size=${#flag}
+marker=$size
+    
+while [ -n "$tflags" ]
+do
+    counter=$(($counter + 1))
+    temp=${tflags#?} #save everything except the first character
+    char=${tflags%"$temp"} #save first character in tflags
+
+    #Test for space
+    
+    if [ "$char" = " " ]; then
+	marker=$counter
+	tflags=
+    else
+	tflags=$temp #save remaining vector and loop through
+    fi
+    
+done
+
+filename=${flag:0:$marker}
+options=${flag:$marker:$size}
+
+if [ -z "$options" ]; then
+    #extra options
+    echo 'No extra options found'
+else
+    echo 'Using ',$options ,' Options'
+fi
+
+##########COMPILE C CODE##########
+
+if [ -e $filename ]; then
+
+    echo 'Compiling following file:'
+    echo $filename
+    g++ -o Run.exe $filename $options 2> errorfile
+    errors=$(cat errorfile ) # test for contents of file
+    size=${#errors}
+    if [ "$size" -gt 0 ]; then
+        #errors found
+	cat errorfile
+    else
+        #everything is good
+	echo 'Compilation Complete'
+	#if [ -e "Run.exe" ]; then
+	#    echo 'Running code'
+	#    ./Run.exe
+	#fi
+    fi
+    
+    rm errorfile
+    
+else
+
+    echo 'Oops!,File not found!'
+    echo $filename
+    
+fi
+
+#Run code
+
+
+# Copyright - Carlos Montalvo 2015
+# You may freely distribute this file but please keep my name in here
+# as the original owner
