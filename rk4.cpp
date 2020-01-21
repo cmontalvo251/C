@@ -40,9 +40,9 @@ void Initialize_Inputs()
   State[0] = -1;
   State[1] = 0;
   m = 1;
-  c = 2;
+  c = 0;
   k = 3;
-  TIMEON = 50;
+  TIMEON = 500000;
   xcommand = 1;
   xdotcommand = 0;
   kp = 30;
