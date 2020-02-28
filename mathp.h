@@ -30,6 +30,7 @@
 #define CONSTRAIN(in,min,max) (in > max ? max : (in < min ? min : in))
 #define wrap_Pi(x) (x < -Pi ? x+Pi2 : (x > Pi ? x - Pi2: x))
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
+#define SIGN(a,b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
 
 using namespace std;
 
@@ -37,6 +38,7 @@ void ClearHome();
 double randnum(double,double);
 void printdouble(double,char*);
 double delpsi(double,double);
+double sat(double,double,double);
 
 #endif
 

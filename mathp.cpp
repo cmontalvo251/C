@@ -8,6 +8,20 @@ void ClearHome() {
  #endif
 }
 
+double sat(double input,double epsilon,double scalefactor)
+{
+  if (input > epsilon) {
+    //Right side of graph
+    return scalefactor;
+  } else if (input < -epsilon) {
+    //left side of graph
+    return -scalefactor;
+  } else {
+    //Inside the boundary so interpolate
+    return scalefactor*input;
+  }
+}
+
 double randnum(double start,double end) //returns a random number from start to end
 {
   //srand(time(NULL)+rand());
