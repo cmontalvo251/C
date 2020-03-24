@@ -62,9 +62,9 @@ class MATLAB {
 
   double diffsum(MATLAB);
   
-  void plus(MATLAB,MATLAB);
-  void plus_eq(MATLAB);
-  void plus_eq(double);
+  void plus(MATLAB A,MATLAB B); //this = A + B
+  void plus_eq(MATLAB A); // this = this + A
+  void plus_eq(double v); // this = this + v (scalar)
   void plus_mult_eq(MATLAB,double); //This is this = this + MATLAB*double
   void minus(MATLAB,MATLAB);
   void minus_eq(MATLAB);
@@ -81,7 +81,7 @@ class MATLAB {
   void mult_eq1(int,int,double); //Only multiplies 1 element of the vector
 
   void copy_init(MATLAB,char*);
-  void overwrite(MATLAB);
+  void overwrite(MATLAB); 
   void overwrite(MATLAB,char*);
 
   double norm();
