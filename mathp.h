@@ -27,6 +27,7 @@
 #define GPSVAL 60.0*NM2FT*FT2M
 #define GRAVITYENG 32.2
 #define GRAVITYSI 9.81
+#define RHOSLSI 1.225
 #define CONSTRAIN(in,min,max) (in > max ? max : (in < min ? min : in))
 #define wrap_Pi(x) (x < -Pi ? x+Pi2 : (x > Pi ? x - Pi2: x))
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
