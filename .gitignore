@@ -1,3 +1,6 @@
+*.OUT
+*.lib
+Orbit/Model_Resources/EGM_EMM
 *.o
 *.pdf
 *.exe
