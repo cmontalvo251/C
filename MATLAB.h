@@ -52,7 +52,7 @@ class MATLAB {
   void matrix_inverse(MATLAB A, int DIM) ;
   int found_nans();
 
-  void Gauss(MATLAB,char*); //This routine will compute inv(RN'*RN)*RN'
+  void GaussLagrange(MATLAB,char*); //This routine will compute inv(RN'*RN)*RN'
 
   void parallel_axis_theorem(MATLAB,double);
 

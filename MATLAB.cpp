@@ -886,7 +886,7 @@ double MATLAB::max_abs() {
 }
 
 //Compute the least squares matrix
-void MATLAB::Gauss(MATLAB A,char name[]) {
+void MATLAB::GaussLagrange(MATLAB A,char name[]) {
   //Solution is always a transpose of the input matrix
   zeros(A.col_,A.row_,name);
   
