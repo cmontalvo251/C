@@ -10,12 +10,12 @@ using namespace std;
 //need something better. I've done this already. It's called MATLAB++ (MATLAB for C++)
 //the quotes are because it's in this folder. Make sure to include the cpp file
 //as well when you code your stuff
-#include "MATLAB.h"
+#include "../MATLAB.h"
 //^^All of the routines for matrix multiplication are in there.
 //The problem is you need to compile MATLAB.cpp into a module using the -c objective
 
 //So first
-//g++ MATLAB.cpp -c -w
+//g++ ../MATLAB.cpp -c -w
 //this will create a .o or module file
 
 //Then you need

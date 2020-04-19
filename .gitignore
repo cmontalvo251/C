@@ -1,3 +1,4 @@
+*.out
 *.OUT
 *.lib
 Orbit/Model_Resources/EGM_EMM
@@ -5,4 +6,3 @@ Orbit/Model_Resources/EGM_EMM
 *.pdf
 *.exe
 *.dll
-Test_Scripts
