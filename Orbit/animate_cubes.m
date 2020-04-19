@@ -16,7 +16,6 @@ end
 %%%Make a world
 screenwidth = 1600;
 screenheight = 980;
-ANIMATEORBIT = 0;
 if SIMXYZ && ANIMATEORBIT
   L = 42164*(1000);
   T = 86400;
@@ -57,7 +56,7 @@ colors = {'r-','g-','b-'};
 facecolors = {[1 0 0],[0 1 0],[0 0 1]};
 
 if SIMPTP
-  for nsat = 1%:NUMSATS
+  for nsat = 1:NUMSATS
     [fzoom{nsat},axzoom{nsat}] = plottool(1,['Satellite',num2str(nsat-1)],18,'X Orbit (km)','Y Orbit (km)','Z Orbit (km)');
     left = left - width;
     if left < 0
@@ -70,11 +69,10 @@ end
 
 pause
 
-skip = 1;
 for nframe = 1:skip:length(t_vec)
   %%Clear figures
   if SIMPTP
-    for nsat = 1%:NUMSATS
+    for nsat = 1:NUMSATS
       cla(axzoom{nsat});
       hold(axzoom{nsat},'on');
     end
@@ -103,7 +101,7 @@ for nframe = 1:skip:length(t_vec)
 
     if SIMPTP
       %%Ok now plot a zoomed photo
-      %set(0,'CurrentFigure',fzoom{nsat})
+      set(0,'CurrentFigure',fzoom{nsat})
       x = state_XYZ(1,nframe);
       y = state_XYZ(2,nframe);
       z = state_XYZ(3,nframe);
@@ -111,9 +109,9 @@ for nframe = 1:skip:length(t_vec)
       theta = state_PTP(nframe,2);
       psi = state_PTP(nframe,3);
       CubeDraw((10/100)/1000,(10/100)/1000,(20/100)/1000,x,y,z,phi,theta,psi,facecolors{nsat})
-      view(axzoom{1},37,18)
+      view(axzoom{nsat},37,18)
       axis equal
-      title(axzoom{1},num2str(t_vec(nframe)))
+      title(axzoom{nsat},num2str(t_vec(nframe)))
     end
   end
   

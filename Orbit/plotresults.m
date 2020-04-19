@@ -1,15 +1,18 @@
 % Copyright - Carlos Montalvo 2015
 % You may freely distribute this file but please keep my name in here
 % as the original owner
-
-purge
+clear
+clc
+close all
 
 ANIMATE = 1;
+ANIMATEORBIT = 1;
 SIMULATE = 1;
+skip = 10;
 
 if SIMULATE
   system('make');
-  system('./Cube.exe');
+  system('./Orbit.exe');
 end
 
 %%%Now that these parameters are in input files we can pull these straight

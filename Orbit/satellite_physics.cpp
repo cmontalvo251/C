@@ -207,8 +207,8 @@ void Controller::Compute(double simtime) {
     //Thankfully the magnetic field is already in the controller class
     //it is called BVEC_.
 
-    //No need to call the magnetorquers if the magnetic field is off. 
-    if (MAGNETORQUER_CONTROLLER_TYPE == 1) {
+    //No need to call the magnetorquers if the magnetic field is on
+    if (MAGNETORQUER_CONTROLLER_TYPE > 0) {
       //mu is the magnetic moment of the satellite the equation for magnetic moment is
       // number of turns * current * Area * normal vector
       // The magnetic moments are computed in this routine below
@@ -232,6 +232,8 @@ void Controller::Compute(double simtime) {
     //}
     //}
   }
+
+  //LMN.disp();
   
 }
 
@@ -254,6 +256,7 @@ void Controller::computeMagneticTorque()
 
 
   //Now we run the cross product
+  //BVEC_Tesla.disp();
   MTVEC.cross(MMTVEC, BVEC_Tesla);
 
   //MTVEC.disp();
@@ -406,8 +409,11 @@ void Controller::computeMagneticCurrent() {
   else if (MAGNETORQUER_CONTROLLER_TYPE == 2) {
     //mu_ideal = k*(BVEC cross omega)
     pqr.vecset(1, 3, state_PTP_, 5);
-    MMTVEC.cross(BVEC_Tesla,pqr);
+    //pqr.disp();
+    MMTVEC.cross(pqr,BVEC_Tesla);
+    //MMTVEC.disp();
     MMTVEC.mult_eq(K);
+    //MMTVEC.disp();
     //No from here we need to compute x,y,z current based on this
     xcurrent = MMTVEC.get(1,1)/(magnnumturn*areamagnetorque);
     ycurrent = MMTVEC.get(2,1)/(magnnumturn*areamagnetorque);
@@ -435,15 +441,17 @@ void Controller::computeMagneticCurrent() {
     ycurrent = K*MMTVEC.get(2,1)/(magnnumturn*areamagnetorque);
     zcurrent = K*MMTVEC.get(3,1)/(magnnumturn*areamagnetorque);
   }
-     
+
   //Saturation Blocks - max current is set in the Controller::Controller routine
-  double norm_current = sqrt(xcurrent*xcurrent + ycurrent*ycurrent + zcurrent*zcurrent);
+  double norm_current = fabs(xcurrent) + fabs(ycurrent) + fabs(zcurrent);
   if (norm_current > maxcurrent) {
     xcurrent = xcurrent * maxcurrent / norm_current;
     ycurrent = ycurrent * maxcurrent / norm_current;
     zcurrent = zcurrent * maxcurrent / norm_current;
-  }  
+  }
 
+  //printf("Current = %lf %lf %lf \n",xcurrent,ycurrent,zcurrent);
+  
   CURRENT_VEC.set(1,1,xcurrent);
   CURRENT_VEC.set(2,1,ycurrent);
   CURRENT_VEC.set(3,1,zcurrent);
@@ -683,7 +691,8 @@ void Satellite::Initialize(int ierror,MATLAB state_XYZ0,MATLAB state_PTP0,int sa
   Ivec.set(2,1,Iyy);
   Ivec.set(3,1,Izz);
   I.diag(Ivec,"I");  
-  Iinv.inv(I,"Iinv");
+  Iinv.overwrite(I,"Iinv");
+  Iinv.inverse();
   //Copy Initial Condition Vectors
   state_XYZ_.copy_init(state_XYZ0,"state_XYZ");
   state_PTP_.copy_init(state_PTP0,"state_PTP");
@@ -849,16 +858,26 @@ void Satellite::computePTPDerivs(MATLAB deriv,MATLAB rk4_PTP)
   LMN.plus(LMNdrag,LMNcontrol);
 
   //LMN.disp();
+  //PAUSE();
 
   //pqrskew = [0 -r q;r 0 -p;-q p 0];  
   //pqrdot = Iinv*(LMN-pqrskew*I*pqr);
+  //pqr.disp();
   I_pqr.mult(I,pqr);
+  //I.disp();
+  //I_pqr.disp();
   pqrskew_I_pqr.cross(pqr,I_pqr);
+  //pqrskew_I_pqr.disp();
   LMN.minus_eq(pqrskew_I_pqr);
+  //LMN.disp();
+  //Iinv.disp();
   pqrdot.mult(Iinv,LMN);
   
   //Save state derivatives
   deriv.vecset(5,NUMPTP,pqrdot,1);
+
+  //pqrdot.disp();
+  //PAUSE();
 
   ///////////////////////////////
 }
