@@ -60,6 +60,21 @@ void MATLAB::vecfprintfln(FILE* outfile) {
   fprintf(outfile,"\n");
 }
 
+void MATLAB::dmatrixprint(double **A,int DIM,char* name) {
+  printf("%s%s%s",name," = ","\n");
+  int i;
+  int j;
+  for(i=1;i<=DIM;i++)
+    {
+      for(j=1;j<=DIM;j++)
+	{
+	  printf("%.8e%s",A[i][j]," ");
+	}
+      printf("%s","\n");
+    }
+  printf("%s","\n");
+}
+
 void MATLAB::disp() {
   printf("%s%s%s",name_," = ","\n");
   int i;
@@ -188,14 +203,22 @@ void MATLAB::overwrite(MATLAB A,char name[]) {
       set(idx,jdx,A.get(idx,jdx));
     }
   }
-}  
+}
+
+int MATLAB::checkSizeCompatibility(MATLAB A,char* functionname) {
+  if ((A.row_ != row_) || (A.col_ != col_)) {
+    printf("Error in %s. Matrices are not the same size. vars = %s,%s \n",functionname,A.name_,name_);
+    A.size();
+    size();
+    return 0;
+  } else {
+    return 1;
+  }
+}
 
 void MATLAB::overwrite(MATLAB A) {
   //Make sure A and this are the same size
-  if ((A.row_ != row_) || (A.col_ != col_)) {
-    printf("Error in overwrite. Matrices are not the same size. vars = %s,%s \n",A.name_,name_);
-    A.size();
-    size();
+  if (!checkSizeCompatibility(A,"overwrite")) {
     return;
   }
   for (int idx = 1;idx<=row_;idx++) {
@@ -722,6 +745,7 @@ void MATLAB::inverse() {
       }
       else {
 	printf("Error in inverse(). Matrix bigger than a 3x3. var = %s \n",name_);
+	printf("You need to run matrix_inverse() instead. \n");
 	return;
       }
     }
@@ -1123,28 +1147,38 @@ double** MATLAB::dmatrix(long nrl, long nrh, long ncl, long nch)
 //
 // Invert a square matrix A of dimension DIM, output INV
 //
-// A = matrix to invert (in)
-// INV = inverse of A (out)
-// DIM = number of rows or number of columns of A (in)
+// AMATLAB = matrix to invert (in)
+// Output written to self.
+// DIM = number of rows or number of columns of AMATLAB
 //
 ////////////////////////////////////////////////////////////////
 void MATLAB::matrix_inverse(MATLAB AMATLAB, int DIM){
 
-  
+  if (!checkSizeCompatibility(AMATLAB,"matrix_inverse")) {
+    return;
+  }
+
+  if (AMATLAB.row_ <= 3) {
+    //Run the other version of inverse
+    //First copy AMATLAB into self
+    overwrite(AMATLAB);
+    inverse();
+    return;
+  }
+
+  //Allocate matrices for inverse
   double **A, **INV;
   A = dmatrix(1,DIM,1,DIM);
   INV = dmatrix(1,DIM,1,DIM);
-  
-  for (int i = 1;i<=4;i++){
-    for (int j = 1;j<=4;j++){
+
+  //Put AMATLAB in to A
+  for (int i = 1;i<=DIM;i++){
+    for (int j = 1;j<=DIM;j++){
       A[i][j] = AMATLAB.get(i,j);
     }
   }
-  //But call with the other version. Eventually I probably want to get this to work
-  //with just the matlab versions.
 
   // A and AI must have been created with NR util's dmatrix function!
-
   int i, j ;
   double **a, **v, *w, **ut;
   
@@ -1159,9 +1193,11 @@ void MATLAB::matrix_inverse(MATLAB AMATLAB, int DIM){
       a[i][j] = A[i][j] ;
     }
   }
+
+  //dmatrixprint(a,DIM,"a");
   
   // Perform SVD
-  svdcmp(a, DIM, DIM, w, v) ;
+  svdcmp(a, DIM, DIM, w, v);
 
   // Transpose U matrix
   for(i = 1; i <=DIM; i++){
@@ -1169,52 +1205,54 @@ void MATLAB::matrix_inverse(MATLAB AMATLAB, int DIM){
       ut[i][j] = a[j][i] ;
     }
   }
+  // Check singular values and invert them
+  for(i = 1; i <= DIM; i++){
+    if(w[i] < 1e-6){
+      //printf("\nWARNING: Matrix may be singular.\n");
+      //w[i] = 0.0 ;
+      printf("Error in matrix_inverse(). \n");
+      printf("Matrix too close to singular.\n");
+      printf("Singular value = %lf \n",w[i]);
+      return;
+    }
+    else{
+      w[i] = 1.0/w[i] ;
+    }
+  }
   
-	// Check singular values and invert them
-	for(i = 1; i <= DIM; i++){
-	  if(w[i] < 1e-6){
-	    //printf("\nWARNING: Matrix may be singular.\n");
-	    //w[i] = 0.0 ;
-	    printf("Matrix too close to singular.\n");
-	    exit(1);
-	  }
-	  else{
-	    w[i] = 1.0/w[i] ;
-	  }
-	}
+  // Build SIGMAt
+  double **Sigmat = dmatrix(1,DIM,1,DIM) ;
+  for(i = 1; i <=DIM; i++){
+    for (j = 1; j <=DIM; j++){
+      if(i != j){
+	Sigmat[i][j] = 0.0 ;
+      }else{
+	Sigmat[i][j] = w[i] ;
+      }
+    }
+  }
 
-	// Build SIGMAt
-	double **Sigmat = dmatrix(1,DIM,1,DIM) ;
-	for(i = 1; i <=DIM; i++){
-		for (j = 1; j <=DIM; j++){
-			if(i != j){
-				Sigmat[i][j] = 0.0 ;
-			}else{
-				Sigmat[i][j] = w[i] ;
-			}
-		}
-	}
+  // Multiply Sigma*ut
+  double **R1 = dmatrix(1,DIM,1,DIM) ;
+  matrix_multiply(Sigmat,ut,R1,DIM,DIM,DIM) ;
+  
+  // Find inverse
+  matrix_multiply(v,R1,INV,DIM,DIM,DIM);
 
-	// Multiply Sigma*ut
-	double **R1 = dmatrix(1,DIM,1,DIM) ;
-	matrix_multiply(Sigmat,ut,R1,DIM,DIM,DIM) ;
+  // Free matrices
+  free_dmatrix(a,1,DIM,1,DIM) ;
+  free_dmatrix(v,1,DIM,1,DIM) ;
+  free_dmatrix(ut,1,DIM,1,DIM) ;
+  free_dvector(w,1,DIM) ;
+  free_dmatrix(Sigmat,1,DIM,1,DIM) ;
+  free_dmatrix(R1,1,DIM,1,DIM);
 
-	// Find inverse
-	matrix_multiply(v,R1,INV,DIM,DIM,DIM);
-
-	// Free matrices
-	free_dmatrix(a,1,DIM,1,DIM) ;
-	free_dmatrix(v,1,DIM,1,DIM) ;
-	free_dmatrix(ut,1,DIM,1,DIM) ;
-	free_dvector(w,1,DIM) ;
-	free_dmatrix(Sigmat,1,DIM,1,DIM) ;
-	free_dmatrix(R1,1,DIM,1,DIM);
-
-	for (int i = 1;i<=DIM;i++) {
-	  for (int j = 1;j<=DIM;j++) {
-	    set(i,j,INV[i][j]);
-	  }
-	}
+  //Once inverse is computed. Plase INV into self
+  for (int i = 1;i<=DIM;i++) {
+    for (int j = 1;j<=DIM;j++) {
+      set(i,j,INV[i][j]);
+    }
+  }
 }
 
 void MATLAB::svdcmp(double **a, int m, int n, double w[], double **v) {

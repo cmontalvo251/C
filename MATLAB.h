@@ -61,6 +61,8 @@ class MATLAB {
 
   void normalize();
 
+  int checkSizeCompatibility(MATLAB,char*);
+
   double mean();
 
   double diffsum(MATLAB);
@@ -109,6 +111,7 @@ class MATLAB {
   void diag(MATLAB);
   void eye(int,char*);
   void disp();
+  void dmatrixprint(double**,int,char*);
   int getRow();
   int getCol();
   char* getName();
