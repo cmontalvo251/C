@@ -163,6 +163,10 @@ void Rotation3::L3(double ang)
 	T3.set(3, 3, 1);
 }
 
+void Rotation3::setptp(MATLAB ptpout) {
+  ptpout.overwrite(ptp);
+}
+
 void Rotation3::extractEuler(MATLAB TBI) {
   //Given a TBI matrix extract euler angles
   double theta = -asin(TBI.get(1,3));

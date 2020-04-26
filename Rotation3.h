@@ -20,6 +20,7 @@ class Rotation3 {
   //Contructor
   Rotation3(); 
   void L321(MATLAB,int); //int is a type //0 = Euler Angles,1 = Quaternions
+  void setptp(MATLAB);
   void rotateBody2Inertial(MATLAB,MATLAB);
   void rotateInertial2Body(MATLAB,MATLAB);
   void disp();

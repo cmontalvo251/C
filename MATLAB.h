@@ -42,14 +42,17 @@ class MATLAB {
   void ones(int,int,char*);
   void transpose();
   void transpose_not_square(MATLAB);
+  //Inverses for diagonal matrices and 2x2
   void inv(MATLAB,char*); //DO NOT DELETE KEPT FOR BACKWARDS COMPATIBILITY
-  void inverse();
+  //Inverses for diagonal matrices and up to 3x3
+  void inverse(); //DO NOT DELETE KEEP FOR BACKWARDS COMPATIBILITY
+  //Inverses for all size matrices
+  void matrix_inverse(MATLAB A, int DIM) ;
   void set(int,int,double);
   void vecset(int thistart,int thisend,MATLAB,int thatstart);
   void matrixset(int,MATLAB);
   double get(int,int);
   void linspace(double,double,int,char*);
-  void matrix_inverse(MATLAB A, int DIM) ;
   int found_nans();
 
   void GaussLagrange(MATLAB,char*); //This routine will compute inv(RN'*RN)*RN'

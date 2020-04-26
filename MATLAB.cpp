@@ -901,6 +901,7 @@ void MATLAB::GaussLagrange(MATLAB A,char name[]) {
   if (A.row_ > A.col_) {
     //Computing inv(A'*A)*A'
     printf("Error in Gauss. Have not coded least squares regression yet nor has it been tested \n");
+    printf("I suggest contacting the current developer of this code to implement this. \n");
     return;
   }
   //If you have the opposite scenario where the number of columns is greater than rows it means you have
@@ -1129,8 +1130,7 @@ double** MATLAB::dmatrix(long nrl, long nrh, long ncl, long nch)
 ////////////////////////////////////////////////////////////////
 void MATLAB::matrix_inverse(MATLAB AMATLAB, int DIM){
 
-  //AMATLAB.disp();
-
+  
   double **A, **INV;
   A = dmatrix(1,DIM,1,DIM);
   INV = dmatrix(1,DIM,1,DIM);
@@ -1138,9 +1138,7 @@ void MATLAB::matrix_inverse(MATLAB AMATLAB, int DIM){
   for (int i = 1;i<=4;i++){
     for (int j = 1;j<=4;j++){
       A[i][j] = AMATLAB.get(i,j);
-      //printf("%lf ",A[i][j]);
     }
-    //printf("\n");
   }
   //But call with the other version. Eventually I probably want to get this to work
   //with just the matlab versions.
