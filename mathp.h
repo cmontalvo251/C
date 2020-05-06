@@ -11,6 +11,7 @@
 #define CUBE(x) (((x)*(x)*(x)))
 #define PI 3.14159265358979323846264338327950288419716939937510582
 #define MEARTH (5.972*pow(10,24)) //%%%Mass of the earth in kg
+#define MSUN (1.989*pow(10,30)) //%%%Mass of the Sun in kg
 #define GSPACE (6.6742*pow(10,-11)) //%%Gravitational constant - units?
 #define REARTH          6371393. //Radius of earth - This is mean radius
 #define REARTH_POLAR    6357000. //##this is polar radius
