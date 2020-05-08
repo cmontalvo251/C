@@ -9,6 +9,110 @@ MATLAB::MATLAB() {
   init_ = 0;
 }
 
+int MATLAB::find(MATLAB vec,double vi) {
+  //This function assumes vec is in ascending order and that vi is in b/t min(vec) and max(vec)
+  int out = 1;
+  while ((vec.get(out,1) <= vi) && (out <= vec.row_)) {
+    out+=1;
+  }
+  return out;
+}
+
+double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
+  //I'm going to assume alot here to get rid of a lot of error checking
+  //For starters X and Y are in ascending order
+
+  double xmax = X.get(X.row_,1);
+  double xmin = X.get(1,1);
+  double ymax = Y.get(Y.row_,1);
+  double ymin = Y.get(1,1);
+  double xrange = xmax-xmin;
+  double yrange = ymax-ymin;
+  
+  //Check for out of bounds on X
+  while (xstar > xmax) {
+    xstar -= xrange;
+  }
+  while (xstar < xmin) {
+    xstar += xrange;
+  }
+
+  //Find the position of xstar within X
+  int xr = find(X,xstar);
+  int xl = xr-1;
+
+  //Check for out of bounds on Y
+  while (ystar > ymax) {
+    ystar -= yrange;
+  }
+  while (ystar < ymin) {
+    ystar += yrange;
+  }
+
+  //Find the position of xstar within X
+  int yr = find(Y,ystar);
+  int yl = yr-1;
+  
+  //We start with 4 points
+  double four[4];
+  four[0] = get(xr,yr);
+  four[1] = get(xl,yr);
+  four[2] = get(xl,yl);
+  four[3] = get(xr,yl);
+
+  //Interpolate b/t points 2 and 1 as well as 3 and 0
+  double slope21 = (four[1]-four[2])/(Y.get(yr,1)-Y.get(yl,1));
+  double slope30 = (four[0]-four[3])/(Y.get(yr,1)-Y.get(yl,1));
+  double outLower = slope21*(ystar-Y.get(yl,1))+four[2];
+  double outUpper = slope30*(ystar-Y.get(yl,1))+four[3];
+
+  //%%Interpolate between X points */
+  double xslope = (outUpper-outLower)/(X.get(xr,1)-X.get(xl,1));
+  double out = xslope*(xstar-X.get(xl,1))+outLower;
+
+  if (debug) {
+    cout << xstar << " " << xmin << " " << xmax << "  " << xrange << endl;
+    cout << xr << " " << xl << endl;
+    cout << ystar << " " << ymin << " " << ymax << "  " << yrange << endl;
+    cout << yr << " " << yl << endl;
+    for (int idx = 0;idx<4;idx++) {
+      cout << idx << " " << four[idx] << " ";
+    }
+    cout << endl;
+    cout << slope21 << " " << slope30 << " " << outLower << " " << outUpper << endl;
+    cout << xslope << " " << out << endl;
+    disp();
+  }
+
+
+  return out;
+}
+
+//Overloaded function. Use this when you already
+//have the matrix allocated
+void MATLAB::dlmread(char* filename) {
+  cout << "Reading " << filename << endl;
+  //Gonna open this file the old school way
+  FILE *file;
+  file = fopen(filename,"r");
+  double val = 0;
+  if (file) {
+    for (int idx = 1;idx<=row_;idx++) {
+      for (int jdx = 1;jdx<=col_;jdx++) {
+	fscanf(file,"%lf ",&val);
+	set(idx,jdx,val);
+      }
+    }
+  } else {
+    printf("!!!!!!!!!!! File: %s not found !!!!!!!!!!!! \n",filename);
+    exit(1);
+  }
+  fclose(file);
+}
+
+
+//I don't think this function below is correct but I'm going to keep it to make sure I do
+//not break old code
 void MATLAB::dlmread(char* filename,MATLAB* data,char* name) {
   cout << "Reading " << filename << endl;
   //Gonna open this file the old school way
@@ -378,10 +482,8 @@ void MATLAB::linspace(double start,double end,int length,char name[]) {
     printf("Error in linspace. End is not greater than start - var = %s\n",name);
     return;
   }
-  int idx = 1;
-  while (start <= end) {
+  for (int idx = 1;idx<=length;idx++){
     set(idx,1,start);
-    idx+=1;
     start += inc;
   }
 }

@@ -120,6 +120,10 @@ class MATLAB {
   void vecfprintfln(FILE*);
 
   void dlmread(char*,MATLAB*,char*);
+  void dlmread(char*);
+
+  double interp2(MATLAB x,MATLAB y,double xstar,double ystar,int debug);
+  int find(MATLAB,double);
 
   //Constructor
   MATLAB();
