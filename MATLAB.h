@@ -70,6 +70,7 @@ class MATLAB {
   void plus(MATLAB A,MATLAB B); //this = A + B
   void plus_eq(MATLAB A); // this = this + A
   void plus_eq(double v); // this = this + v (scalar)
+  void plus_eq1(int,int,double); //this(int,int) = this(int,int) + double
   void plus_mult_eq(MATLAB,double); //This is this = this + MATLAB*double
   void minus(MATLAB,MATLAB);
   void minus_eq(MATLAB);

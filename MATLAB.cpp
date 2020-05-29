@@ -720,6 +720,17 @@ void MATLAB::minus_init(MATLAB A,MATLAB B,char name[]) {
   
 }
 
+void MATLAB::plus_eq1(int row,int col,double var) {
+  if (row > row_) {
+    printf("Error in mult_eq1. Input row is greater than row_. Matrix = %s \n",name_);
+  }
+  if (col > col_) {
+    printf("Error in mult_eq1. Input col is greater than col_. Matrix = %s \n",name_);
+  }
+  double current_val = get(row,col);
+  set(row,col,current_val+var);
+}
+
 void MATLAB::plus_eq(MATLAB A) {
   //Check and make sure the size of A and this are the same
   if ((A.row_ != row_) || (A.col_ != col_)) {
