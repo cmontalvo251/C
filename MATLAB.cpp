@@ -15,6 +15,10 @@ int MATLAB::find(MATLAB vec,double vi) {
   while ((vec.get(out,1) <= vi) && (out <= vec.row_)) {
     out+=1;
   }
+  if (out > row_) {
+    cout << "find() assumes vi is in b/t min(vec) and max(vec)" << endl;
+    exit(1);
+  }
   return out;
 }
 
@@ -54,7 +58,7 @@ double MATLAB::interp(MATLAB T,double tstar,int debug) {
   return out;
 }
 
-double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
+double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int WRAP) {
   //I'm going to assume alot here to get rid of a lot of error checking
   //For starters X and Y are in ascending order
 
@@ -64,30 +68,63 @@ double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
   double ymin = Y.get(1,1);
   double xrange = xmax-xmin;
   double yrange = ymax-ymin;
+
+  int yr,yl,xl,xr;
   
   //Check for out of bounds on X
-  while (xstar > xmax) {
-    xstar -= xrange;
-  }
-  while (xstar < xmin) {
-    xstar += xrange;
+  if (WRAP) {
+    while (xstar > xmax) {
+      xstar -= xrange;
+    }
+    while (xstar < xmin) {
+      xstar += xrange;
+    }
   }
 
-  //Find the position of xstar within X
-  int xr = find(X,xstar);
-  int xl = xr-1;
-
+  if (xstar >= xmax) {
+      xstar = xmax;
+      xr = row_;
+  } else if (xstar <= xmin) {
+    xstar = xmin;
+    xr = 2;
+  } else {
+    //Find the position of xstar within X
+    xr = find(X,xstar);
+  }
+  xl = xr-1;
+  
   //Check for out of bounds on Y
-  while (ystar > ymax) {
-    ystar -= yrange;
-  }
-  while (ystar < ymin) {
-    ystar += yrange;
+  if (WRAP) {
+    while (ystar >= ymax) {
+      ystar -= yrange;
+    }
+    while (ystar <= ymin) {
+      ystar += yrange;
+    }
   }
 
-  //Find the position of xstar within X
-  int yr = find(Y,ystar);
-  int yl = yr-1;
+  if (ystar >= ymax) {
+      ystar = ymax;
+      yr = row_;
+  } else if (ystar <= ymin) {
+    ystar = ymin;
+    yr = 2;
+  } else {
+    //Find the position of xstar within X
+    yr = find(Y,ystar);
+  }
+  yl = yr-1;
+
+  int debug = 0;
+  // if (xstar > 7118) {
+  //   debug = 1;
+  // }
+  if (debug) {
+    cout << xstar << " " << xmin << " " << xmax << "  " << xrange << endl;
+    cout << xr << " " << xl << endl;
+    cout << ystar << " " << ymin << " " << ymax << "  " << yrange << endl;
+    cout << yr << " " << yl << endl;
+  }
   
   //We start with 4 points
   double four[4];
@@ -107,10 +144,6 @@ double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
   double out = xslope*(xstar-X.get(xl,1))+outLower;
 
   if (debug) {
-    cout << xstar << " " << xmin << " " << xmax << "  " << xrange << endl;
-    cout << xr << " " << xl << endl;
-    cout << ystar << " " << ymin << " " << ymax << "  " << yrange << endl;
-    cout << yr << " " << yl << endl;
     for (int idx = 0;idx<4;idx++) {
       cout << idx << " " << four[idx] << " ";
     }
@@ -118,8 +151,9 @@ double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
     cout << slope21 << " " << slope30 << " " << outLower << " " << outUpper << endl;
     cout << xslope << " " << out << endl;
     disp();
+    X.disp();
+    Y.disp();
   }
-
 
   return out;
 }
@@ -308,12 +342,13 @@ double MATLAB::get(int row,int col) {
   //Error checking
   if ((row > row_) || (col > col_)) {
       printf("Error in get() command. Request Out of bounds - var = %s \n",name_);
-      printf("row = %d, col = %d \n",row,col);
+      printf("Requested Row and Column -> row = %d, col = %d \n",row,col);
       printf("Size of Matrix = %d %d \n",row_,col_);
       return 0;
     }
   if ((row == 0) || (col == 0)) {
     printf("Error in get() command. Requested zero - var = %s \n",name_);
+    printf("Returning Zero as output");
     return 0;
   }
   return data_[row-1][col-1];
