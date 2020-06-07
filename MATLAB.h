@@ -124,6 +124,7 @@ class MATLAB {
   void dlmread(char*);
 
   double interp2(MATLAB x,MATLAB y,double xstar,double ystar,int debug);
+  double interp(MATLAB t,double tstar,int debug);
   int find(MATLAB,double);
 
   //Constructor

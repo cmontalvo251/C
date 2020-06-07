@@ -18,6 +18,42 @@ int MATLAB::find(MATLAB vec,double vi) {
   return out;
 }
 
+double MATLAB::interp(MATLAB T,double tstar,int debug) {
+  //I'm going to assume alot here to get rid of a lot of error checking
+  //For starters X and Y are in ascending order
+
+  double tmax = T.get(T.row_,1);
+  double tmin = T.get(1,1);
+  double trange = tmax-tmin;
+  
+  //Check for out of bounds on T
+  if (tstar > tmax) {
+    return get(row_,1);
+  }
+  if (tstar < tmin) {
+    return get(1,1);
+  }
+
+  //Find the position of xstar within X
+  int tr = find(T,tstar);
+  int tl = tr-1;
+
+  //%%Interpolate between X points */
+  double outUpper = get(tr,1);
+  double outLower = get(tl,1);
+  double tslope = (outUpper-outLower)/(T.get(tr,1)-T.get(tl,1));
+  double out = tslope*(tstar-T.get(tl,1))+outLower;
+
+  if (debug) {
+    cout << tstar << " " << tmin << " " << tmax << "  " << trange << endl;
+    cout << tr << " " << tl << endl;
+    cout << tslope << " " << out << endl;
+    disp();
+  }
+
+  return out;
+}
+
 double MATLAB::interp2(MATLAB X,MATLAB Y,double xstar,double ystar,int debug) {
   //I'm going to assume alot here to get rid of a lot of error checking
   //For starters X and Y are in ascending order
