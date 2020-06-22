@@ -1,12 +1,15 @@
 #ifndef MATLAB_H
 #define MATLAB_H
 
+#ifdef __linux__ || __APPLE
 #include <cmath> //only for g++
+#include <iostream> //only for g++
+#include <string> //only for g++
+#endif
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream> //only for g++
-#include <string> //only for g++
 #include <string.h>
 #include "mathp.h"
 #include <fstream>
