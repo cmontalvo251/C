@@ -163,7 +163,7 @@ void Rotation3::L3(double ang)
 	T3.set(3, 3, 1);
 }
 
-void Rotation3::setptp(MATLAB ptpout) {
+void Rotation3::getptp(MATLAB ptpout) {
   ptpout.overwrite(ptp);
 }
 
