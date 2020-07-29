@@ -136,9 +136,7 @@ void SerialPutc(HANDLE *hComm, char txchar)
   #endif
   #ifdef __linux__
   // Write to serial port
-  //write(*hComm,txchar, sizeof(txchar));
-  unsigned char msg[] = { 'H', 'e', 'l', 'l', 'o', '\r' };
-  write(*hComm,"H",sizeof(msg));
+  write(*hComm,&txchar,sizeof(txchar));
   #endif
   return;
 }
