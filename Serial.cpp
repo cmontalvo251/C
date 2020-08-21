@@ -2,6 +2,19 @@
 
 HANDLE my;
  
+void InitSerialPort(void)
+{
+  // VERY IMPORTANT: Edit this line of code to designate which COM port the ADCS board is using!!
+  int baudRate = 115200;
+  #ifdef __WIN32__
+    char *port = "\\\\.\\COM12";
+  #endif
+  #ifdef __linux__
+    char *port = "/dev/ttyUSB0";
+  #endif
+  my=SerialInit(port,baudRate);
+}
+ 
 HANDLE SerialInit(char *ComPortName, int BaudRate) 
 {
   HANDLE hComm; 
@@ -150,17 +163,4 @@ void SerialPutString(HANDLE *hComm, char *string)
     //printf("%c",outchar);
     outchar = *string++;
   }
-}
-
-void InitSerialPort(void)
-{
-  // VERY IMPORTANT: Edit this line of code to designate which COM port the ADCS board is using!!
-  int baudRate = 115200;
-  #ifdef __WIN32__
-    char *port = "\\\\.\\COM12";
-  #endif
-  #ifdef __linux__
-    char *port = "/dev/ttyUSB0";
-  #endif
-  my=SerialInit(port,baudRate);
 }
