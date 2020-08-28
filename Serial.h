@@ -39,10 +39,11 @@ bool bReadRC;
 extern HANDLE my;
 
 //Serial Functions
-HANDLE SerialInit(char *ComPortName, int BaudRate);
+void InitSerialPort(void); //Use this if you want to use defaults
+HANDLE SerialInit(char *ComPortName, int BaudRate); //Use this if you want to specify
 char SerialGetc(HANDLE *hComm);
 void SerialPutc(HANDLE *hComm, char txchar);
 void SerialPutString(HANDLE *hComm, char *string);
-void InitSerialPort(void);
+
 
 #endif

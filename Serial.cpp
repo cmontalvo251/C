@@ -1,20 +1,23 @@
 #include "Serial.h"
 
 HANDLE my;
- 
+
+//Call this for defaults
 void InitSerialPort(void)
 {
   // VERY IMPORTANT: Edit this line of code to designate which COM port the ADCS board is using!!
-  int baudRate = 115200;
+  int BaudRate = 115200;
   #ifdef __WIN32__
     char *port = "\\\\.\\COM12";
   #endif
   #ifdef __linux__
     char *port = "/dev/ttyUSB0";
   #endif
-  my=SerialInit(port,baudRate);
+  my=SerialInit(port,BaudRate);
 }
- 
+
+
+//Call this for higher level control
 HANDLE SerialInit(char *ComPortName, int BaudRate) 
 {
   HANDLE hComm; 
