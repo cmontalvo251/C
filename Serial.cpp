@@ -133,8 +133,9 @@ char SerialGetc(HANDLE *hComm)
     // settings above, specifically VMIN and VTIME
     int num_bytes = read(*hComm, &rxchar, sizeof(rxchar));
     // n is the number of bytes read. n may be 0 if no bytes were received, and can also be -1 to signal an error.
-    if (num_bytes < 0) {
-      printf("Error reading: %s", strerror(errno));
+    if (num_bytes <= 0) {
+      //printf("Error reading: %s", strerror(errno));
+      rxchar = '\0';
     }
     // Here we assume we received ASCII data, but you might be sending raw bytes (in that case, don't try and
     // print it to the screen like this!)
