@@ -11,7 +11,7 @@ void Datalogger::findfile(char* directory) {
   FILE* fileout;
   while (!found) {
     sprintf(filename,"%s%d%s",directory,number,".txt");
-    printf("%s%s \n","Attempting to open = ",filename);
+    printf("%s%s \n","Attempting to check for file: ",filename);
     fileout = fopen(filename,"r");
     if (!fileout) {
       found = 1;
@@ -26,7 +26,7 @@ void Datalogger::findfile(char* directory) {
 }
 
 void Datalogger::open() {
-  printf("Attempting to open %s \n",filename);
+  printf("Attempting to open: %s \n",filename);
   outfile = fopen(filename,"wb");
   //printf("Attempting to open %s \n",filename);
   if (!outfile) {
