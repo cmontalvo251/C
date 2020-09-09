@@ -180,6 +180,7 @@ void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
     SerialPutString(hComm,outline);
   }
   SerialPutc(hComm,'\r');
+  printf("Numbers Sent \n");
 }
 
 void SerialGetArray(HANDLE *hComm,float number_array[],int num) {
