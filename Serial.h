@@ -2,6 +2,7 @@
 #define SERIAL_H
 
 #include <stdio.h>
+#include <iostream>
 
 // Flow control flags
 #define FC_DTRDSR       0x01
@@ -38,12 +39,22 @@ bool bReadRC;
 //Shared my handle for linux/windows
 extern HANDLE my;
 
+//This is needed to convert from floats to longs
+union inparser {
+	long inversion;
+	float floatversion;
+} ;
+
+#define MAXFLOATS 10
+#define MAXLINE 60
+
 //Serial Functions
 void InitSerialPort(void); //Use this if you want to use defaults
 HANDLE SerialInit(char *ComPortName, int BaudRate); //Use this if you want to specify
 char SerialGetc(HANDLE *hComm);
 void SerialPutc(HANDLE *hComm, char txchar);
 void SerialPutString(HANDLE *hComm, char *string);
-
+void SerialPutArray(HANDLE *hComm,float array[],int num);
+void SerialGetArray(HANDLE *hComm,float array[],int num);
 
 #endif

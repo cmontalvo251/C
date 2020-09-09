@@ -168,3 +168,47 @@ void SerialPutString(HANDLE *hComm, char *string)
     outchar = *string++;
   }
 }
+
+void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
+  union inparser inputvar;
+  char outline[10];
+  for (int i = 0;i<num;i++) {
+    inputvar.floatversion = number_array[i];
+    int int_var = inputvar.inversion;
+    printf("Sending = %lf %d \n",number_array[i],int_var);
+    sprintf(outline,"H:%08x ",int_var);
+    SerialPutString(hComm,outline);
+  }
+  SerialPutc(hComm,'\r');
+}
+
+void SerialGetArray(HANDLE *hComm,float number_array[],int num) {
+  union inparser inputvar;
+  for (int d = 0;d<num;d++) {
+    int i = 0;
+    char inLine[MAXLINE];
+    char inchar = '\0';
+    do {
+      do {
+        inchar = SerialGetc(hComm);
+      } while (inchar == '\0');
+      inLine[i++] = inchar;
+      printf("i = %d char = %c chartoint = %d \n",i,inchar,int(inchar));
+    } while ((inchar != '\r') && (i<MAXLINE));
+    printf("Response received \n");
+
+    // Format from Arduino:
+    // H:nnnnnnnn 
+
+    // Now Convert from ASCII to HEXSTRING to FLOAT
+    printf("Converting to Float \n");
+    inputvar.inversion = 0;
+    for(i=4;i<12;i++){
+      printf("i = %d char = %c \n",i,inLine[i]);
+      inputvar.inversion <<= 4;
+      inputvar.inversion |= (inLine[i] <= '9' ? inLine[i] - '0' : toupper(inLine[i]) - 'A' + 10);
+    }
+    printf(" \n");
+    number_array[d] = inputvar.floatversion;
+  }
+}
