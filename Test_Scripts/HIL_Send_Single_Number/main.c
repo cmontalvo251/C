@@ -33,7 +33,7 @@ int main() {
 	}
 
 	//Create fictitious float
-	float number = 4.8;
+	float number = -3.6;
 	float number_array[MAXFLOATS];
 	number_array[0] = number;
 	int number_of_numbers = 1;
