@@ -2,6 +2,7 @@
 *.OUT
 *.lib
 Orbit/Model_Resources/EGM_EMM
+Test_Scripts/HIL_Send_Single_Number/Serial.*
 *.o
 *.pdf
 *.exe
