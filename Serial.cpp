@@ -184,6 +184,21 @@ void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
   printf("Numbers Sent \n");
 }
 
+//This function will just read everything from the Serial monitor and print it to screen
+void SerialGetAll(HANDLE *hComm) {
+  char inchar = '\0';
+  printf("Waiting for characters \n");
+  int i = 0;
+  do {
+    do {
+      inchar = SerialGetc(hComm);
+    } while (inchar == '\0');
+    printf("Receiving: i = %d char = %c chartoint = %d \n",i,inchar,int(inchar));
+    i++;
+  } while ((i<MAXLINE));
+  printf("Response received \n");
+}
+
 void SerialGetArray(HANDLE *hComm,float number_array[],int num) {
   union inparser inputvar;
   for (int d = 0;d<num;d++) {

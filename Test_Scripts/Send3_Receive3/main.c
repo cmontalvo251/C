@@ -36,20 +36,29 @@ int main() {
 	}
 
 	//Create fictitious float
-	float number = -3.6;
-	float number_array[MAXFLOATS];
-	number_array[0] = number;
-	int number_of_numbers = 1;
+	float number1 = -3.6;
+	float number2 = 4.5;
+	float number3 = 2.4;
+	float number_array[MAXFLOATS]; //MAXFLOATS is set to 10 in Serial.h right now
+	number_array[0] = number1;
+	number_array[1] = number2;
+	number_array[2] = number3;
+	int number_of_numbers = 3;
 
 	//Send to Arduino
 	SerialPutArray(&my,number_array,number_of_numbers);
+
+	//Read everything (just for debugging)
+	//SerialGetAll(&my);
 
 	//Now Read from Arduino
 	SerialGetArray(&my,number_array,number_of_numbers);
 
 	//Extract Data
-	float rec_number = number_array[0];
-
-	printf("Number Received = %lf \n",rec_number);
+	float rec_number = 0;
+	for (int i = 0;i<number_of_numbers;i++) {
+		rec_number = number_array[i];	
+		printf("Number Received = %lf \n",rec_number);
+	}
 
 } //end main loop desktop computer

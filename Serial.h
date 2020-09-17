@@ -56,5 +56,6 @@ void SerialPutc(HANDLE *hComm, char txchar);
 void SerialPutString(HANDLE *hComm, char *string);
 void SerialPutArray(HANDLE *hComm,float array[],int num);
 void SerialGetArray(HANDLE *hComm,float array[],int num);
+void SerialGetAll(HANDLE *hComm);
 
 #endif
