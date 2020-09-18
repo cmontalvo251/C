@@ -46,7 +46,7 @@ union inparser {
 } ;
 
 #define MAXFLOATS 10
-#define MAXLINE 60
+#define MAXLINE 120
 
 //Serial Functions
 void InitSerialPort(void); //Use this if you want to use defaults

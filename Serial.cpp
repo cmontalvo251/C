@@ -172,6 +172,7 @@ void SerialPutString(HANDLE *hComm, char *string)
 void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
   union inparser inputvar;
   char outline[20];
+  int slashr = 0;
   for (int i = 0;i<num;i++) {
     inputvar.floatversion = number_array[i];
     int int_var = inputvar.inversion;
@@ -179,8 +180,13 @@ void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
     sprintf(outline,"H:%08x ",int_var);
     printf("Hex = %s \n",outline);
     SerialPutString(hComm,outline);
+    slashr++;
+    //Send a slash r after every 3rd set of numbers
+    if (slashr == 3) {
+      SerialPutc(hComm,'\r');
+      slashr=0;
+    }
   }
-  SerialPutc(hComm,'\r');
   printf("Numbers Sent \n");
 }
 
@@ -192,6 +198,7 @@ void SerialGetAll(HANDLE *hComm) {
   do {
     do {
       inchar = SerialGetc(hComm);
+      //printf("i = %d inchar = %c chartoint = %d \n",i,inchar,int(inchar));
     } while (inchar == '\0');
     printf("Receiving: i = %d char = %c chartoint = %d \n",i,inchar,int(inchar));
     i++;
