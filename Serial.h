@@ -40,10 +40,13 @@ bool bReadRC;
 extern HANDLE my;
 
 //This is needed to convert from floats to longs
+#ifndef INPARSER_H
+#define INPARSER_H
 union inparser {
 	long inversion;
 	float floatversion;
-} ;
+};
+#endif
 
 #define MAXFLOATS 10
 #define MAXLINE 120
