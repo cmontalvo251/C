@@ -57,6 +57,10 @@ HANDLE SerialInit(char *ComPortName, int BaudRate); //Use this if you want to sp
 char SerialGetc(HANDLE *hComm);
 void SerialPutc(HANDLE *hComm, char txchar);
 void SerialPutString(HANDLE *hComm, char *string);
+
+///THE FORMAR FOR SAYING HELLO AND RESPONDING AS WELL AS PUTTING 
+//AN ARRAY AND READING AN ARRAY REALLY NEEDS TO BE THE SAME
+//THERE IS NO REASON REALLY TO HAVE THEM BE DIFFERENT.
 void SerialPutArray(HANDLE *hComm,float array[],int num);
 void SerialGetArray(HANDLE *hComm,float array[],int num);
 void SerialGetAll(HANDLE *hComm);
