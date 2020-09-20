@@ -238,3 +238,28 @@ void SerialGetArray(HANDLE *hComm,float number_array[],int num) {
     number_array[d] = inputvar.floatversion;
   }
 }
+
+void SerialPutHello(HANDLE *hComm,int echo) {
+  if (echo) {
+    printf("Sending w slash r \n");
+  }
+  SerialPutc(hComm,'w');
+  SerialPutc(hComm,'\r');
+  if (echo) {
+    printf("Sent \n");
+  }
+}
+
+int SerialGetHello(HANDLE *hComm,int echo) {
+  //Consume w\r\n
+  printf("Reading the Serial Buffer for w slash r slash n \n");
+  char inchar;
+  int err = 0;
+  for (int i = 0;i<3;i++) {
+    inchar = SerialGetc(hComm);
+    int val = int(inchar);
+    err+=val;
+    printf("%d \n",val);
+  }
+  return err;
+}
