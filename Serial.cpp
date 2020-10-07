@@ -170,15 +170,23 @@ void SerialPutString(HANDLE *hComm, char *string)
 }
 
 void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
+  SerialPutArray(hComm,number_array,num,1);
+}
+
+void SerialPutArray(HANDLE *hComm,float number_array[],int num,int echo) {
   union inparser inputvar;
   char outline[20];
   int slashr = 0;
   for (int i = 0;i<num;i++) {
     inputvar.floatversion = number_array[i];
     int int_var = inputvar.inversion;
-    printf("Sending = %lf %d \n",number_array[i],int_var);
+    if (echo) {
+      printf("Sending = %lf %d \n",number_array[i],int_var);
+    }
     sprintf(outline,"H:%08x ",int_var);
-    printf("Hex = %s \n",outline);
+    if (echo) {
+      printf("Hex = %s \n",outline);
+    }
     SerialPutString(hComm,outline);
     slashr++;
     //Send a slash r after every 3rd set of numbers
@@ -187,7 +195,9 @@ void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
       slashr=0;
     }
   }
-  printf("Numbers Sent \n");
+  if (echo) {
+    printf("Numbers Sent \n");
+  }
 }
 
 //This function will just read everything from the Serial monitor and print it to screen
@@ -207,34 +217,50 @@ void SerialGetAll(HANDLE *hComm) {
 }
 
 void SerialGetArray(HANDLE *hComm,float number_array[],int num) {
+  SerialGetArray(hComm,number_array,num,1);
+}
+
+void SerialGetArray(HANDLE *hComm,float number_array[],int num,int echo) {
   union inparser inputvar;
   for (int d = 0;d<num;d++) {
     int i = 0;
     char inLine[MAXLINE];
     char inchar = '\0';
-    printf("Waiting for characters \n");
+    if (echo) {
+      printf("Waiting for characters \n");
+    }
     do {
       do {
         inchar = SerialGetc(hComm);
       } while (inchar == '\0');
+      if (echo) {
       printf("Receiving: i = %d char = %c chartoint = %d \n",i,inchar,int(inchar));
+      }
       inLine[i++] = inchar;
     } while ((inchar != '\r') && (i<MAXLINE));
-    printf("Response received \n");
+    if (echo) {
+      printf("Response received \n");
+    }
 
     // Format from Arduino:
     // H:nnnnnnnn 
 
     // Now Convert from ASCII to HEXSTRING to FLOAT
-    printf("Converting to Float \n");
+    if (echo) {
+      printf("Converting to Float \n");
+    }
     inputvar.inversion = 0;
     for(i=2;i<10;i++){
-      printf("Hex Digit: i = %d char = %c \n",i,inLine[i]);
+      if (echo) {
+        printf("Hex Digit: i = %d char = %c \n",i,inLine[i]);
+      }
       inputvar.inversion <<= 4;
       inputvar.inversion |= (inLine[i] <= '9' ? inLine[i] - '0' : toupper(inLine[i]) - 'A' + 10);
     }
-    printf("Integer Received = %d \n",inputvar.inversion);
-    printf(" \n");
+    if (echo) {
+      printf("Integer Received = %d \n",inputvar.inversion);
+      printf(" \n");
+    }
     number_array[d] = inputvar.floatversion;
   }
 }
@@ -252,14 +278,18 @@ void SerialPutHello(HANDLE *hComm,int echo) {
 
 int SerialGetHello(HANDLE *hComm,int echo) {
   //Consume w\r\n
-  printf("Reading the Serial Buffer for w slash r slash n \n");
+  if (echo) {
+    printf("Reading the Serial Buffer for w slash r slash n \n");
+  }
   char inchar;
   int err = 0;
   for (int i = 0;i<3;i++) {
     inchar = SerialGetc(hComm);
     int val = int(inchar);
     err+=val;
-    printf("%d \n",val);
+    if (echo) {
+      printf("%d \n",val);
+    }
   }
   return err;
 }

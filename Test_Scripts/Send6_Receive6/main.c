@@ -22,18 +22,10 @@ int main() {
 	sleep(5);
 
 	//Send w\r to Arduino
-	printf("Sending w slash r \n");
-	SerialPutc(&my,'w');
-	SerialPutc(&my,'\r');
-	printf("Sent \n");
+	SerialPutHello(&my,1);
 
 	//Consume w\r\n
-	printf("Reading the Serial Buffer for w slash r slash n \n");
-	char inchar = '\r';
-	for (int i = 0;i<3;i++) {
-	  inchar = SerialGetc(&my);
-	  printf("%d \n",int(inchar));
-	}
+	SerialGetHello(&my,1);
 
 	//Create fictitious float
 	float number1 = -3.6;

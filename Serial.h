@@ -62,7 +62,9 @@ void SerialPutString(HANDLE *hComm, char *string);
 //AN ARRAY AND READING AN ARRAY REALLY NEEDS TO BE THE SAME
 //THERE IS NO REASON REALLY TO HAVE THEM BE DIFFERENT.
 void SerialPutArray(HANDLE *hComm,float array[],int num);
+void SerialPutArray(HANDLE *hComm,float array[],int num,int echo);
 void SerialGetArray(HANDLE *hComm,float array[],int num);
+void SerialGetArray(HANDLE *hComm,float array[],int num,int echo);
 void SerialGetAll(HANDLE *hComm);
 void SerialPutHello(HANDLE *hComm,int echo);
 int SerialGetHello(HANDLE *hComm,int echo);
