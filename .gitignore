@@ -5,6 +5,7 @@ Orbit/Model_Resources/EGM_EMM
 Test_Scripts/HIL_Send_Single_Number/Serial.*
 Test_Scripts/Send3_Receive3/Serial.*
 Test_Scripts/Send6_Receive6/Serial.*
+Test_Scripts/Telemetry_Test_Hardware_Side/Serial.*
 *.o
 *.pdf
 *.exe
