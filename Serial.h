@@ -68,5 +68,10 @@ void SerialGetArray(HANDLE *hComm,float array[],int num,int echo);
 void SerialGetAll(HANDLE *hComm);
 void SerialPutHello(HANDLE *hComm,int echo);
 int SerialGetHello(HANDLE *hComm,int echo);
+int IsAnyoneOutThere(HANDLE *hComm,int echo);
+int SerialListen(HANDLE *hComm,int echo);
+int SerialListen(HANDLE *hComm);
+void SerialRespond(HANDLE *hComm,int echo);
+void SerialRespond(HANDLE *hComm);
 
 #endif
