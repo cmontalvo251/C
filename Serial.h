@@ -73,5 +73,6 @@ int SerialListen(HANDLE *hComm,int echo);
 int SerialListen(HANDLE *hComm);
 void SerialRespond(HANDLE *hComm,int echo);
 void SerialRespond(HANDLE *hComm);
+void SerialDebug(HANDLE *hComm);
 
 #endif

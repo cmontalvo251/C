@@ -71,6 +71,7 @@ HANDLE SerialInit(char *ComPortName, int BaudRate)
 
   //On linux you need to open the tty port
   #ifdef __linux__
+  printf("Opening Com Port on Linux \n");
   hComm = open(ComPortName,  O_RDWR | O_NOCTTY);
   // Create new termios struc, we call it 'tty' for convention
   struct termios tty;
@@ -140,6 +141,7 @@ char SerialGetc(HANDLE *hComm)
     // Here we assume we received ASCII data, but you might be sending raw bytes (in that case, don't try and
     // print it to the screen like this!)
     //printf("Read %i bytes. Received message: %s", num_bytes, read_buf);
+    printf("Read %i bytes, rxchar = %c, ASCII = %d ",num_bytes,rxchar,int(rxchar));
     #endif
   return rxchar;
 }
@@ -302,7 +304,7 @@ int SerialListen(HANDLE *hComm,int echo) {
   //Listen implies that this is a drone/UAV/robot that is simply
   //listening on the airwaves for anyone sending out w \r
   //Listen w\r
-  if (echo) {
+  if (echo==1) {
     printf("Reading the Serial Buffer for w slash r \n");
   }
   char inchar;
@@ -310,12 +312,14 @@ int SerialListen(HANDLE *hComm,int echo) {
   //First we will just read one character
   inchar = SerialGetc(hComm);
   int val = int(inchar);
-  if (echo) {
-    printf("Character Received = %d \n",val);
+  if (echo==1) {
+    printf("Character Received = %c ASCII Code = %d \n",inchar,val);
   }
   ok+=val;
   if (val == 119) { //That's a w!
-    printf("w Received! \n");
+    if (echo) {
+      printf("w Received! \n");
+    }
     //If we received a w we need to read say 10 times and see if we get a \r
     //remember that \r is a 13 in ASCII and \n is 10 in ASCII
     int i = 0;
@@ -328,13 +332,20 @@ int SerialListen(HANDLE *hComm,int echo) {
     //There is nothing more we need to do so we will just print val
     //to the screen
     if (echo) {
-      printf("Character Received = %d \n",val);
+      printf("Character Received = %c ASCII Code = %d \n",inchar,val);
     }
     //and then increment ok
     ok+=val;
   }
   //either way we shall return ok
   return ok;
+}
+
+void SerialDebug(HANDLE *hComm) {
+  char inchar;
+  inchar = SerialGetc(hComm);
+  int val = int(inchar);
+  printf("Character Received = %c ASCII Code = %d \n",inchar,val);
 }
 
 void SerialRespond(HANDLE *hComm) {
@@ -357,3 +368,6 @@ void SerialRespond(HANDLE *hComm,int echo) {
     printf("Sent \n");
   }
 }
+
+  
+  
