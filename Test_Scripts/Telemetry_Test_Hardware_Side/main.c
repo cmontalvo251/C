@@ -9,15 +9,23 @@ int main() {
   //Initialize Serial Port
   //using this baudrate
   printf("Initializing the dev Port \n");
-  my = SerialInit("/dev/ttyAMA0",115200);  //This is the UART port on the RPI
+  my = SerialInit("/dev/ttyAMA0",9600);  //This is the UART port on the RPI
   printf("Dev Port Initialized. If no errors present we are currently listening \n");
+  sleep(5);
 
   //After we setup the while loop we need to create an infinite while loop
   //to emulate what an autopilot or robot routine would look like on an RPi
 
   while (1) {
+
+    SerialPutc(&my,'c');
+    char inchar = SerialGetc(&my);
+    printf("Sent \n");
+    sleep(0.5);
+    printf("Inchar = %c \n",inchar);
+    
     ///To debug just run SerialDebug
-    SerialDebug(&my);
+    //SerialDebug(&my);
     int ok = 0; //and set ok to zero 
     
     //From here we basically need to constantly read the serial port at least once
@@ -39,5 +47,5 @@ int main() {
       //Send over Serial
       SerialPutArray(&my,number_array,number_of_numbers);
     }
-  } //end robot while loop
+    } //end robot while loop
 } //end main loop robot
