@@ -2,6 +2,7 @@
 *.OUT
 *.lib
 Orbit/Model_Resources/EGM_EMM
+Test_Scripts/Send_and_Receive_AB_Processing_RPI/Serial.*
 Test_Scripts/HIL_Send_Single_Number/Serial.*
 Test_Scripts/Send3_Receive3/Serial.*
 Test_Scripts/Send6_Receive6/Serial.*
