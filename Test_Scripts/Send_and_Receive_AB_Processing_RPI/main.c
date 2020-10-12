@@ -13,33 +13,61 @@ int main() {
   printf("Dev Port Initialized. If no errors present we are currently listening \n");
   //sleep(5); //--This was an arduino hack. I don't think we need it.
 
+  //int i = 0;
+
   //After we setup the while loop we need to create an infinite while loop
   //to emulate what an autopilot or robot routine would look like on an RPi
 
   while (1) {
+    //i++;
     //From here we basically need to constantly read the serial port at least once
     //in the while loop and check for w\r from the computer so I'll need to write
 
     /////////////////THIS WORKS SO DON"T TOUCH
-    /*char dat;
-    if(serialDataAvail(my))
+    /*
+      char dat;
+      if(serialDataAvail(my))
       {
-	dat = serialGetchar(my);
-	printf("char = %c int(char) = %d \n", dat,int(dat));
-	}*/
+      dat = serialGetchar(my);
+      printf("char = %c int(char) = %d \n", dat,int(dat));
+      }
+    */
     //////////////////////////////////////////
 
-    int ok = SerialListen(&my,0); //set to 0 to turn echo off, 1 = all echos on, 2 = only echo if you receive anything
-    // w\r was received it means we need to responde
-    
+    //set to 0 to turn echo off, 1 = all echos on, 2 = only echo if you receive anything
+    int ok = SerialListen(&my,0); 
+    //int ok = 119+13;
+
+    // w\r was received it means we need to respond
     if (ok == (119+13)) { //119 is ASCII for w and 13 is ASCII for \r
       printf("w slash r received!! \n");
-    //}
 
-      sleep(1);
-      
-      ///THIS DOES NOT WORK BUT SENDAB TO PROCESSING DOES WORK SO TRY THAT CODE FIRST
+      //Once we get 119 and 13 we need to tell the groundstation that we heard them
+      //so we send 119,13,10 - w\r\n
       SerialRespond(&my,1);
+      
+      //////////////////THIS WORKS DO NOT TOUCH!!!!!///////////////////////////
+      /*
+      sleep(1);   ///AFTER SOME DEBUGGING THESE ARE NOT NEEDED BUT JUST LEAVE THEM FOR THIS DEBUG SCRIPT
+      fflush(stdout); //SAME WITH THIS LINE OF CODE
+      char dat;
+      dat = 'w';
+      printf("Sending char %c \n",dat);
+      serialPutchar(my, dat);
+      sleep(1);
+      fflush(stdout);
+      dat = '\r';
+      printf("Sending char %c \n",dat);
+      serialPutchar(my, dat);
+      sleep(1);
+      fflush(stdout);
+      dat = '\n';
+      printf("Sending char %c \n",dat);
+      serialPutchar(my, dat);
+      sleep(1);
+      */
+      ///////////////////////////////////////////////////////////////////////
+      
       /*
       //Once we've responded we must send whomever is talking to us some data
 

@@ -335,7 +335,7 @@ int SerialListen(HANDLE *hComm,int echo) {
   //listening on the airwaves for anyone sending out w \r
   //Listen w\r
   
-  ///////////////THIS WORKS DO NOT TOUCH
+  ///////////////THIS WORKS DO NOT TOUCH (RPI ONLY)
   /* char dat;
   if(serialDataAvail(*hComm))
     {
@@ -392,6 +392,20 @@ void SerialRespond(HANDLE *hComm) {
 //to a groundstation computer saying hi.
 //the response to hello (w\r) is hello, sir (w\r\n)
 void SerialRespond(HANDLE *hComm,int echo) {
+
+  /* THIS WORKS DO NOT TOUCH (RPI ONLY)
+  char dat;
+  dat = 'w';
+  printf("Sending char %c \n",dat);
+  serialPutchar(my, dat);
+  dat = '\r';
+  printf("Sending char %c \n",dat);
+  serialPutchar(my, dat);
+  dat = '\n';
+  printf("Sending char %c \n",dat);
+  serialPutchar(my, dat);
+  */
+  
   if (echo) {
     printf("Sending w slash r slash n \n");
   }
