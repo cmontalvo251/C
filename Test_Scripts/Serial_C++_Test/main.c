@@ -9,9 +9,9 @@ int main(int argc, char* argv[]) {
 	//Make sure Arduino is on this port and 
 	//using this baudrate
 	//my = SerialInit("/dev/ttyACM0",115200); 
-	my = SerialInit("/dev/ttyUSB0",115200);
+	my = SerialInit("/dev/ttyUSB0",57600);
 
-	for (int i = 1;i<argc;i++) {
+	/*for (int i = 1;i<argc;i++) {
 	  printf("%s \n",argv[i]);
 	  char c = ' ';
 	  int j = 0;
@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 	    }
 	    j++;
 	  }
-	}
+	}*/
 	//SerialPutc(&my,argv[1]); //1
 	//SerialPutc(&my,'a'); //2
 	//SerialPutc(&my,'a'); //3
@@ -64,9 +64,10 @@ int main(int argc, char* argv[]) {
 
 	//Consume w\r\n
 	//printf("Reading the Serial Buffer for w slash r slash n \n");
-	//char inchar;
+	char inchar;
 	//for (int i = 0;i<3;i++) {
-	//  inchar = SerialGetc(&my);
-	//  printf("%d \n",int(inchar));
-	//}
+	while (1) {
+	  inchar = SerialGetc(&my);
+	  printf("%d \n",int(inchar));
+	}
 } //end main loop desktop computer
