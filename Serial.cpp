@@ -20,7 +20,20 @@ void InitSerialPort(void)
 //Call this for higher level control
 HANDLE SerialInit(char *ComPortName, int BaudRate) 
 {
-  HANDLE hComm; 
+  HANDLE hComm;
+
+  #ifdef RPI
+  if(wiringPiSetup() == -1) {
+      fprintf(stdout, "Unable to start wiringPi: %s\n", strerror (errno));
+      return 1;
+    }
+  hComm = serialOpen(ComPortName,BaudRate);
+  if (hComm < 0) {
+      fprintf(stderr, "Unable to open serial device: %s\n", strerror (errno));
+      return 1;
+    }
+  return hComm;
+  #endif
   
   //Setup for Windows
   #ifdef __WIN32__  
@@ -119,12 +132,22 @@ HANDLE SerialInit(char *ComPortName, int BaudRate)
 char SerialGetc(HANDLE *hComm)
 {
   char rxchar;
+
+  #ifdef RPI
+  if (serialDataAvail(*hComm)) {
+      rxchar = serialGetchar(*hComm);
+      //fflush(stdout);
+    }
+  return rxchar;
+  #endif
+  
   #ifdef __WIN32__
     bool bReadRC;
     static DWORD iBytesRead;
     do {
       bReadRC = ReadFile(*hComm, &rxchar, 1, &iBytesRead, NULL);
     } while (iBytesRead==0);
+    return rxchar;
   #endif
   #ifdef __linux__
     // Allocate memory for read buffer, set size according to your needs
@@ -142,22 +165,29 @@ char SerialGetc(HANDLE *hComm)
     // print it to the screen like this!)
     //printf("Read %i bytes. Received message: %s", num_bytes, read_buf);
     printf("Read %i bytes, rxchar = %c, ASCII = %d ",num_bytes,rxchar,int(rxchar));
+    return rxchar;
     #endif
-  return rxchar;
+
 }
  
 void SerialPutc(HANDLE *hComm, char txchar)
 {
+  #ifdef RPI
+  serialPutchar(*hComm,txchar);
+  fflush(stdout);
+  return;
+  #endif
   #ifdef __WIN32__
   BOOL bWriteRC;
   static DWORD iBytesWritten;
   bWriteRC = WriteFile(*hComm, &txchar, 1, &iBytesWritten,NULL);
+  return;
   #endif
   #ifdef __linux__
   // Write to serial port
   write(*hComm,&txchar,sizeof(txchar));
-  #endif
   return;
+  #endif
 }
 
 void SerialPutString(HANDLE *hComm, char *string)
@@ -304,40 +334,44 @@ int SerialListen(HANDLE *hComm,int echo) {
   //Listen implies that this is a drone/UAV/robot that is simply
   //listening on the airwaves for anyone sending out w \r
   //Listen w\r
-  if (echo==1) {
-    printf("Reading the Serial Buffer for w slash r \n");
-  }
-  char inchar;
+  
+  ///////////////THIS WORKS DO NOT TOUCH
+  /* char dat;
+  if(serialDataAvail(*hComm))
+    {
+      dat = serialGetchar(*hComm);
+      printf("char = %c int(char) = %d \n", dat,int(dat));
+    }
+    return 0;*/
+  ///////////////////////////////////////
+
   int ok = 0;
-  //First we will just read one character
+  char inchar;
   inchar = SerialGetc(hComm);
   int val = int(inchar);
-  if (echo==1) {
-    printf("Character Received = %c ASCII Code = %d \n",inchar,val);
+  if ((echo) && (val > 0) && (val < 255)) {
+    printf("char = %c int(char) = %d \n", inchar,val);
   }
-  ok+=val;
+  
   if (val == 119) { //That's a w!
-    if (echo) {
-      printf("w Received! \n");
-    }
+    ok += 119;
     //If we received a w we need to read say 10 times and see if we get a \r
     //remember that \r is a 13 in ASCII and \n is 10 in ASCII
-    int i = 0;
-    while ((i<10) && (val !=13)){
-      i++;
-      inchar = SerialGetc(hComm);
-      val = int(inchar);
-    }
+    inchar = SerialGetc(hComm);
+    val = int(inchar);
     //If we received a 13 or reach max we will break out of this loop
     //There is nothing more we need to do so we will just print val
     //to the screen
+    if ((echo) && (val == 13)){
+      printf("Slash R Received!!!! \n");
+    }
     if (echo) {
       printf("Character Received = %c ASCII Code = %d \n",inchar,val);
     }
     //and then increment ok
     ok+=val;
   }
-  //either way we shall return ok
+//either way we shall return ok
   return ok;
 }
 

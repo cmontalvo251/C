@@ -27,23 +27,14 @@ int main()
       return 1;
     }
   
-  //while(1)
-  //{
-      //if(serialDataAvail(serial_port))
-      //{
-      //  dat = serialGetchar(serial_port);
-      //printf("%c", dat);
-      //fflush(stdout);
-      dat = 'A';
-      printf("Sending char 1 \n");
-      serialPutchar(serial_port, dat);
-      fflush(stdout);
-      sleep(1);
-      dat = 'B';
-      printf("Sending char 2 \n");
-      serialPutchar(serial_port, dat);
-      fflush(stdout);
-      sleep(1);
+  while(1)
+  {
+    if(serialDataAvail(serial_port))
+      {
+	dat = serialGetchar(serial_port);
+	printf("char = %c int(char) = %d \n", dat,int(dat));
+	fflush(stdout);
+      }
       //}
-  //}
+  }
 }

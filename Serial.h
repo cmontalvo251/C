@@ -36,6 +36,15 @@ bool bReadRC;
 #define HANDLE int //this is my hack that I've done so that I can use windows commands on linux
 #endif
 
+#ifdef RPI
+//sudo apt-get install wiringpi
+#include <wiringPi.h>
+#include <wiringSerial.h>
+
+//to compile run
+//g++ -o run.exe Telemetry.cpp -lwiringPi (this is already in the makefile)
+#endif
+
 //Shared my handle for linux/windows
 extern HANDLE my;
 
