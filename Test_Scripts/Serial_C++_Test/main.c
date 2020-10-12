@@ -11,7 +11,8 @@ int main(int argc, char* argv[]) {
 	//my = SerialInit("/dev/ttyACM0",115200); 
 	my = SerialInit("/dev/ttyUSB0",57600);
 
-	/*for (int i = 1;i<argc;i++) {
+	/*
+	for (int i = 1;i<argc;i++) {
 	  printf("%s \n",argv[i]);
 	  char c = ' ';
 	  int j = 0;
@@ -23,7 +24,16 @@ int main(int argc, char* argv[]) {
 	    }
 	    j++;
 	  }
-	}*/
+	}
+	*/
+	printf("Persistently in Listen Mode \n");
+	char inchar;
+	//for (int i = 0;i<3;i++) {
+	while (1) {
+	  inchar = SerialGetc(&my);
+	  printf("%d \n",int(inchar));
+	}
+
 	//SerialPutc(&my,argv[1]); //1
 	//SerialPutc(&my,'a'); //2
 	//SerialPutc(&my,'a'); //3
@@ -61,13 +71,4 @@ int main(int argc, char* argv[]) {
 	SerialPutc(&my,'\r'); //5
 	SerialPutc(&my,'c'); //actual character? */
 	//printf("Sent \n");
-
-	//Consume w\r\n
-	//printf("Reading the Serial Buffer for w slash r slash n \n");
-	char inchar;
-	//for (int i = 0;i<3;i++) {
-	while (1) {
-	  inchar = SerialGetc(&my);
-	  printf("%d \n",int(inchar));
-	}
 } //end main loop desktop computer

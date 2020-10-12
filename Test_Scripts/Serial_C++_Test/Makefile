@@ -1,5 +1,5 @@
 CC=g++
-EXECUTABLE=hello_arduino.exe
+EXECUTABLE=hello.exe
 CSOURCES=$(wildcard *.c)
 CPPSOURCES=$(wildcard *.cpp)
 COBJECTS=$(CSOURCES:.c=.o)
