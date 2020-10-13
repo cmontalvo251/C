@@ -37,8 +37,8 @@ int main() {
       number_array[0] = number1;
       number_array[1] = number2;
       int number_of_numbers = 2;
-      //Send over Serial
-      SerialPutArray(&my,number_array,number_of_numbers,1); //The trailing 1 is for echo
+      //Send over Serial (make sure to use the 1 hex \r format)
+      SerialSendArray(&my,number_array,number_of_numbers,1); //The trailing 1 is for echo
     }
       
   } //end robot while loop
