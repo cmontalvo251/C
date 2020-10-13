@@ -33,10 +33,12 @@ int main() {
       //Create fictitious floats
       float number1 = -3.6;
       float number2 = 4.5;
+      float number3 = -2.8;
       float number_array[MAXFLOATS]; //MAXFLOATS is set to 10 in Serial.h right now
       number_array[0] = number1;
       number_array[1] = number2;
-      int number_of_numbers = 2;
+      number_array[2] = number3;
+      int number_of_numbers = 3;
       //Send over Serial (make sure to use the 1 hex \r format)
       SerialSendArray(&my,number_array,number_of_numbers,1); //The trailing 1 is for echo
     }
