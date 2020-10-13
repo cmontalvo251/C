@@ -201,6 +201,44 @@ void SerialPutString(HANDLE *hComm, char *string)
   }
 }
 
+void SerialSendArray(HANDLE *hComm,float number_array[],int num) {
+  SerialSendArray(hComm,number_array,num,1);
+}
+
+void SerialSendArray(HANDLE *hComm,float number_array[],int num,int echo) {
+  union inparser inputvar;
+  char outline[20];
+  for (int i = 0;i<num;i++) {
+    inputvar.floatversion = number_array[i];
+    int int_var = inputvar.inversion;
+    if (echo) {
+      printf("Sending = %lf %d \n",number_array[i],int_var);
+    }
+    sprintf(outline,"H:%08x ",int_var);
+    if (echo) {
+      printf("Hex = %s \n",outline);
+    }
+    SerialPutString(hComm,outline);
+    //Send a slash r after every number
+    SerialPutc(hComm,'\r');
+  }
+  if (echo) {
+    printf("Numbers Sent \n");
+  }
+}
+
+///////////This is really annoying but when this Serial library was first written, the desktop
+////side would send 3 hex numbers at a time and then a \r at the end. The board would then
+///respond with 1 hex number at a time with \r at the end. Because of that the SerialPutArray is
+///for the desktop to send an array where 3 numbers are followed by \r
+///the SerialSendArray is literally the exact same code but it sends 1 number at a time with \r
+///at the end. In my opinion, it would be better to send 1 hex number and then \r back and forth
+///that way there's no confusion on which routine to use. Problem is that MultiSAT++/HIL is using
+//the 3 hex \r format and the RPI Groundstation is using 1 hex \r format. In an effort to not break
+//other people's code I have kept SerialPutArray and SerialSendArray. If we can ever get the MultiSAT
+//and HIL members in the room together and have a coding party I suggest we change everything to 1 hex \r
+//format but for now we will leave this here. CMontalvo 10/13/2020 (This was a Tuesday. Not a Friday)
+
 void SerialPutArray(HANDLE *hComm,float number_array[],int num) {
   SerialPutArray(hComm,number_array,num,1);
 }
