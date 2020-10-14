@@ -139,7 +139,7 @@ char SerialGetc(HANDLE *hComm)
       //fflush(stdout);
     }
   return rxchar;
-  #endif
+  #else
   
   #ifdef __WIN32__
     bool bReadRC;
@@ -164,9 +164,11 @@ char SerialGetc(HANDLE *hComm)
     // Here we assume we received ASCII data, but you might be sending raw bytes (in that case, don't try and
     // print it to the screen like this!)
     //printf("Read %i bytes. Received message: %s", num_bytes, read_buf);
-    printf("Read %i bytes, rxchar = %c, ASCII = %d ",num_bytes,rxchar,int(rxchar));
+    //printf("Read %i bytes, rxchar = %c, ASCII = %d ",num_bytes,rxchar,int(rxchar));
     return rxchar;
-    #endif
+  #endif
+
+  #endif
 
 }
  
@@ -388,7 +390,7 @@ int SerialListen(HANDLE *hComm,int echo) {
   inchar = SerialGetc(hComm);
   int val = int(inchar);
   if ((echo) && (val > 0) && (val < 255)) {
-    printf("char = %c int(char) = %d \n", inchar,val);
+    printf("SerialListen => char = %c int(char) = %d \n", inchar,val);
   }
   
   if (val == 119) { //That's a w!

@@ -19,7 +19,7 @@ int main() {
     //From here we basically need to constantly read the serial port at least once
     //in the while loop and check for w\r from the computer so I'll need to write
     //set to 0 to turn echo off, 1 = all echos on, 2 = only echo if you receive anything
-    int ok = SerialListen(&my,0); 
+    int ok = SerialListen(&my,1); 
 
     // w\r was received it means we need to respond
     if (ok == (119+13)) { //119 is ASCII for w and 13 is ASCII for \r
