@@ -23,7 +23,7 @@ bool bWriteRC;
 bool bReadRC;
 #endif
 //Linux just needs to open a file to write to Serial
-#ifdef __linux__
+#if defined __linux__ || __APPLE__
 //So this is kind of a hack but basically I change HANDLE to FILE so that 
 //I can use the exact same function declarations for Linux
 #include <sys/types.h>
