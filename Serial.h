@@ -88,6 +88,8 @@ void SerialPutc(HANDLE *hComm, char txchar);
 
 //This sends a string rather than 1 character
 void SerialPutString(HANDLE *hComm, char *string);
+//this is an overloaded function that uses a for loop instead of a while loop
+void SerialPutString(HANDLE *hComm, char *string,int len); 
 
 //This routine reads 1 character and prints to the screen what you received
 void SerialDebug(HANDLE *hComm);

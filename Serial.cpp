@@ -192,11 +192,26 @@ void SerialPutc(HANDLE *hComm, char txchar)
   #endif
 }
 
+void SerialPutString(HANDLE *hComm, char *string,int len) {
+  char outchar;
+  outchar = *string++;
+  for (int idx = 0;idx<len;idx++){
+    SerialPutc(hComm,outchar);
+    //printf("%c",outchar);
+    outchar = *string++;
+  }
+}
+
 void SerialPutString(HANDLE *hComm, char *string)
 {
   char outchar;
   outchar = *string++;
-  while (outchar!=NULL){
+  //This while loop. Does it always break?
+  //I would rather have a for loop
+  //I would rather have an input to the code be the length of
+  //the string so we just use a for loop
+  //The routine above is overloaded with length as an input
+  while (outchar!=NULL){ 
     SerialPutc(hComm,outchar);
     //printf("%c",outchar);
     outchar = *string++;
@@ -220,7 +235,7 @@ void SerialSendArray(HANDLE *hComm,float number_array[],int num,int echo) {
     if (echo) {
       printf("Hex = %s \n",outline);
     }
-    SerialPutString(hComm,outline);
+    SerialPutString(hComm,outline,11);
     //Send a slash r after every number
     SerialPutc(hComm,'\r');
   }
