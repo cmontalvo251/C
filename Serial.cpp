@@ -235,7 +235,14 @@ void SerialSendArray(HANDLE *hComm,float number_array[],int num,int echo) {
     if (echo) {
       printf("Hex = %s \n",outline);
     }
-    SerialPutString(hComm,outline,11);
+    //This routine uses a while loop until it hits a NULL char
+    //SerialPutSrting(hComm,outline);
+    //This routine uses a for loop
+    SerialPutString(hComm,outline,11); //The 11 here is the number of characters in the string
+    //H: - 2 chars
+    //followed by 8 hex chars
+    //followed by a space - 1
+    //11 total
     //Send a slash r after every number
     SerialPutc(hComm,'\r');
   }
