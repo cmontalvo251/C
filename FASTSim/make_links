@@ -1,0 +1,13 @@
+##First remove links
+
+##Location of C.git from Github
+CROOT=../
+
+rm timer.*
+
+#Then add the links
+for VARIABLE in timer.cpp timer.h
+do
+    echo 'Making Link for ' $VARIABLE 
+    ln -s ${CROOT}/$VARIABLE $VARIABLE
+done
