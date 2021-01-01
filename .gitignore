@@ -1,8 +1,12 @@
 *.out
 *.OUT
 *.lib
-FASTSim/timer.cpp
-FASTSim/timer.h
+FASTSim/mathp.*
+FASTSim/timer.*
+FASTSim/nrutils.h
+FASTSim/Datalogger.*
+FASTSim/MATLAB.*
+FASTSim/logs/*.txt
 Orbit/Model_Resources/EGM_EMM
 Test_Scripts/Send_and_Receive_AB_Processing_RPI/Serial.*
 Test_Scripts/Send_and_Receive_Floats_Processing_RPI/Serial.*

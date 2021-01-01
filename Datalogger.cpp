@@ -5,7 +5,6 @@ Datalogger::Datalogger() {
 }
 
 void Datalogger::findfile(char* directory) {
-  //int number = 0;
   int found = 0;
   //char filename[256];
   FILE* fileout;
@@ -19,7 +18,7 @@ void Datalogger::findfile(char* directory) {
       fclose(fileout);
       printf("File exists. Skipping \n");
     }
-    number+=1;
+    number+=1; //Number is global in header file
   }
   printf("File found for writing = %s \n",filename);
   //return number

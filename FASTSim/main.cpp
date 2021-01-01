@@ -1,11 +1,11 @@
 //////Facility for Aerial Systems and Technology (FAST) Real Time Simulator/////////
 /////Initial edited by Carlos Montalvo
 
+//See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 
 ///Revisions created - 12/10/2020 - Added Loop timer
 
 //Revisions Needed 
-//See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 //Datalogger
 //Once we are intialized we start to initialize some things if and only if we need them
 //If running on computer import the following
@@ -31,20 +31,33 @@
 #include <stdlib.h>
 #include <iostream>
 #include "timer.h"
+#include "rates.h"
+#include "MATLAB.h"
+#include "Datalogger.h"
 
+///REALTIME VARS
 #ifdef REALTIME
 TIMER timer;
 #endif
 
+///DATALOGGER IS ALWAYS RUNNING
+Datalogger logger;
+MATLAB logvars;
+#define NUMVARS 1 //num vars to log
+
 //////Main Loop/////////////
 int main() {
+
+	//Initialize Datalogger
+	logger.findfile("logs/");
+	logger.open();
+	logvars.zeros(NUMVARS,1,"Vars to Log");
 	
 	//Define time parameters for Integration
 	double t = 0;
-	double tfinal = 50000;
-	double timestep = .01; //only if we're not doing HIL
+	double tfinal = 50;
 	double PRINT = 0;
-	double PRINTRATE = 1.0;
+	double LOG = 0;
 
 	//Initialize timer if simulating in realtime
 	#ifdef REALTIME
@@ -63,12 +76,17 @@ int main() {
 		#endif
 
 		//Integrate time
-	  	t += timestep;
+	  	t += INTEGRATIONRATE;
 
 		if (PRINT<t) {
 			printf("%lf ",t);
 			printf("\n");
 			PRINT+=PRINTRATE;
+		}
+
+		if (LOG<t) {
+			logvars.set(1,1,t);
+			logger.println(logvars);
 		}
 
 	} //End while loop on main loop
