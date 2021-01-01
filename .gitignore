@@ -2,6 +2,7 @@
 *.OUT
 *.lib
 FASTSim/mathp.*
+FASTSim/RK4.*
 FASTSim/timer.*
 FASTSim/nrutils.h
 FASTSim/Datalogger.*

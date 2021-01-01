@@ -4,16 +4,16 @@
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 
 ///Revisions created - 12/10/2020 - Added Loop timer
+//1/1/2021 - Added Datalogger
 
 //Revisions Needed 
-//Datalogger
 //Once we are intialized we start to initialize some things if and only if we need them
 //If running on computer import the following
 //Rk4 routine including initial conditions and mass properties
 //aerodynamic model
 //openGL if requested
 //Environment
-//Vehicle 
+//Vehicle
 //Joystick if manual mode
 //Sensor block
 //Once everything is imported it's time to kick off the main loop which depends on the algorithm.
@@ -30,65 +30,118 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "timer.h"
 #include "rates.h"
 #include "MATLAB.h"
-#include "Datalogger.h"
 
 ///REALTIME VARS
 #ifdef REALTIME
+#include "timer.h"
 TIMER timer;
 #endif
 
+//Hardware specifics
+
+//If you're running on your desktop computer you have to have an RK4 Engine
+//that integrates the equations of motion
+#ifdef DESKTOP
+//Initialize RK4 Routine
+#include "RK4.h"
+RK4 integrator;
+#endif
+
+//Vehicle Specifics (Every vehicle will have its own dynamic model but everything
+//will be in a Dynamics class)
+#include "Dynamics.h";
+Dynamics vehicle;
+
 ///DATALOGGER IS ALWAYS RUNNING
+#include "Datalogger.h"
 Datalogger logger;
 MATLAB logvars;
-#define NUMVARS 1 //num vars to log
 
 //////Main Loop/////////////
 int main() {
+  
+  //Define time parameters for Integration
+  double t = 0;
+  double tfinal = 50;
+  double PRINT = 0;
+  double LOG = 0;
+  
+  //Initialize timer if simulating in realtime
+  #ifdef REALTIME
+  double startTime = timer.getTimeSinceStart();
+  double current_time = timer.getTimeSinceStart() - startTime;
+  #endif
 
-	//Initialize Datalogger
-	logger.findfile("logs/");
-	logger.open();
-	logvars.zeros(NUMVARS,1,"Vars to Log");
+  //Initialize Vehicle
+  vehicle.init();
+  #ifdef DEBUG
+  printf("Vehicle Initialized\n");
+  #endif
+
+  //Initialize Datalogger
+  logger.findfile("logs/");
+  logger.open();
+  logvars.zeros(vehicle.NUMSTATES+1,1,"Vars to Log"); //All states + time
+
+  /////////////////Initialize RK4 if integrating on desktop///////////////////
+
+  #ifdef DESKTOP
+  //First Initialize integrator and Dynamic Model
+  integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
+  //Import Initial Conditions
+  MATLAB icdata;
+  int ok;
+  ok = logger.ImportFile("Input_Files/Initial_Conditions.txt",&icdata,"icdata",vehicle.NUMSTATES);
+  if (!ok) { exit(1); } else {icdata.disp();}
+  //Set ICs in integrator 
+  integrator.set_ICs(icdata);
+  // and dynamic model
+  //vehicle.setState(icdata);
+  #ifdef DEBUG
+  printf("Integrator Initialized\n");
+  #endif
+  #endif
+
+  /////////////////////////////////////////////////////////////////////////////
 	
-	//Define time parameters for Integration
-	double t = 0;
-	double tfinal = 50;
-	double PRINT = 0;
-	double LOG = 0;
+  //Kick off integration loop
+  while (t < tfinal) {
+    #ifdef REALTIME
+    //Get current time 
+    while (current_time < t) {
+      current_time = timer.getTimeSinceStart()-startTime;		
+    }
+    #endif
 
-	//Initialize timer if simulating in realtime
-	#ifdef REALTIME
-	double startTime = timer.getTimeSinceStart();
-	double current_time = timer.getTimeSinceStart() - startTime;
-	#endif
+    /////////RK4 INTEGRATION LOOP///////////////
+    #ifdef DESKTOP
+    for (int i = 0;i<4;i++){
+      vehicle.Derivatives(integrator.StateDel,integrator.k);
+      integrator.integrate(i);
+    }
+    #endif
+    ////////////////////////////////////////////
 
-    //Kick off integration loop
-	while (t < tfinal) {
+    //Integrate time
+    t += INTEGRATIONRATE;
 
-		#ifdef REALTIME
-		//Get current time 
-		while (current_time < t) {
-			current_time = timer.getTimeSinceStart()-startTime;		
-		}
-		#endif
+    //Print to STDOUT
+    if (PRINT<t) {
+      printf("%lf ",t);
+      printf("\n");
+      PRINT+=PRINTRATE;
+    }
 
-		//Integrate time
-	  	t += INTEGRATIONRATE;
+    //LOG DATA
+    if (LOG<t) {
+      logvars.set(1,1,t);
+      for (int i = 0;i<vehicle.NUMSTATES;i++) {
+	logvars.set(2+i,1,integrator.State.get(i+1,1));
+      }
+      logger.println(logvars);
+    }
 
-		if (PRINT<t) {
-			printf("%lf ",t);
-			printf("\n");
-			PRINT+=PRINTRATE;
-		}
-
-		if (LOG<t) {
-			logvars.set(1,1,t);
-			logger.println(logvars);
-		}
-
-	} //End while loop on main loop
-
+  } //End while loop on main loop
 } //end main loop desktop computer

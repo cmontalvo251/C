@@ -60,3 +60,50 @@ void Datalogger::close() {
 void Datalogger::flush() {
   fflush(outfile);
 }
+
+int Datalogger::ImportFile(char* filename,MATLAB* data,char* name,int length) {
+  //cout << "Reading " << filename << endl;
+  //Gonna open this file the old school way
+  FILE *file;
+  file = fopen(filename,"r");
+  char dummy[256];
+  if (file) {
+    if (length == -99) {
+      length = 0;
+      while (!feof(file)) {
+	fgets(dummy,256,file);
+	//cout << dummy << endl;
+	length++;
+      }
+      fclose(file);
+    }
+    //cout << "File length is " << length << endl;
+    //Now that we know how big the file is we need to make a MATLAB vector the same size
+    data->zeros(length,1,name); //Because we passed a pointer we have to use the -> instead of .		//data.disp();
+    //Then we open the file with FSTREAM and throw it in there. Done. Boom.
+    fstream datafile;
+    datafile.open(filename);
+    if (datafile.is_open()) {
+      string input;
+      for (int idx = 0;idx<length;idx++) {
+	      getline(datafile,input);
+      	data->set(idx+1,1,atof(input.c_str()));
+      }
+      //For debug purposes let's make sure we read everything correctly. File I/O in C++
+      //is always hit or miss for me.
+      //data->disp();
+    } else {
+      cout << "Something went wrong in FSTREAM. Maybe the file wasn't closed properly?" << endl;
+      return 0;
+    }
+  } else {
+    cout << "File not found = " << filename << endl;
+    return 0;
+  }
+  //This code will automatically generate a MATLAB vector based on how many rows are in
+  //the file. Probably need to do an FSEEK or something and then do a ZEROS call to a MATLAB
+  //Array.
+  //If everything checks out we just return 1
+  return 1;
+}
+

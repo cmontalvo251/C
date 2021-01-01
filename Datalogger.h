@@ -2,6 +2,7 @@
 #define DATALOGGER_H
 
 #include "MATLAB.h"
+#include <iostream>
 
 class Datalogger {
  private:
@@ -16,6 +17,7 @@ class Datalogger {
   void close();
   void flush();
   void open();
+  int ImportFile(char* filename,MATLAB* data,char* name,int length);
   //Contructor
   Datalogger();
 };
