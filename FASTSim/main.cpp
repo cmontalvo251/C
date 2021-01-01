@@ -4,13 +4,13 @@
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 
 ///Revisions created - 12/10/2020 - Added Loop timer
-//1/1/2021 - Added Datalogger
+//1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
 
 //Revisions Needed 
 //Once we are intialized we start to initialize some things if and only if we need them
 //If running on computer import the following
-//Rk4 routine including initial conditions and mass properties
-//aerodynamic model
+//mass properties
+//force and moment model
 //openGL if requested
 //Environment
 //Vehicle
