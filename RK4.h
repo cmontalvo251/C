@@ -13,6 +13,7 @@ class RK4 {
   MATLAB k1,k2,k3,k4,phi;
   double TIMESTEP;
  public:
+  int NUMSTATES;
   MATLAB State,StateDel,k;
   //public vars and functions
   void init(int NUMSTATES,double dt);

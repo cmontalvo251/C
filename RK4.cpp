@@ -5,9 +5,10 @@ RK4::RK4() {
 
 };
 
-void RK4::init(int NUMSTATES,double dt) {
+void RK4::init(int n,double dt) {
   //Initialize State Vector
   TIMESTEP = dt;
+  NUMSTATES = n;
   State.zeros(NUMSTATES,1,"State");
   StateDel.zeros(NUMSTATES,1,"StateDel");
   k.zeros(NUMSTATES,1,"k");

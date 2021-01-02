@@ -32,10 +32,10 @@
 #include <iostream>
 #include "rates.h"
 #include "MATLAB.h"
+#include "timer.h" //Need the pause function
 
 ///REALTIME VARS
 #ifdef REALTIME
-#include "timer.h"
 TIMER timer;
 #endif
 
@@ -117,8 +117,11 @@ int main() {
 
     /////////RK4 INTEGRATION LOOP///////////////
     #ifdef DESKTOP
-    for (int i = 0;i<4;i++){
+    for (int i = 1;i<=4;i++){
       vehicle.Derivatives(integrator.StateDel,integrator.k);
+      //integrator.StateDel.disp();
+      //integrator.k.disp();
+      //PAUSE();
       integrator.integrate(i);
     }
     #endif
@@ -137,7 +140,7 @@ int main() {
     //LOG DATA
     if (LOG<t) {
       logvars.set(1,1,t);
-      for (int i = 0;i<vehicle.NUMSTATES;i++) {
+      for (int i = 0;i<integrator.NUMSTATES;i++) {
 	logvars.set(2+i,1,integrator.State.get(i+1,1));
       }
       logger.println(logvars);

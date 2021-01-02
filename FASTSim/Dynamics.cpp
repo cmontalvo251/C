@@ -31,8 +31,8 @@ void Dynamics::Derivatives(MATLAB State,MATLAB k) {
 
   ///This is a point mass in space so no external forces
   #ifdef POINTSPACE
-  for (int i = 1;i<=6;i++){
-    k.set(i,1,State.get(i,1));
+  for (int i = 1;i<=3;i++){
+    k.set(i,1,State.get(i+3,1));
   }
   #endif
 

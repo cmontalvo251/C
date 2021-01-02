@@ -1,9 +1,9 @@
 0.0	!Initial X Position (m) ////Point Mass in Space
 0.0	!Initial Y Position (m)
 0.0	!Initial Z Position (m)
-0.0	!Initial Xbody Velocity (m/s)
-0.0	!Initial Ybody Velocity (m/s)
-0.0	!Initial Zbody Velocity (m/s)
+10.0	!Initial Xbody Velocity (m/s)
+-20.0	!Initial Ybody Velocity (m/s)
+5.0	!Initial Zbody Velocity (m/s)
 
 
 0.0	!Initial X Position (m) ///Sixdof Model
