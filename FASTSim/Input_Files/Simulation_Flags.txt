@@ -1,0 +1,5 @@
+50.0 !Final Integration time
+0.01 !Integration rate // seconds
+10.0 !Standard Out Print Rate // seconds
+1.0  !Data logging rate // seconds
+1    !Gravity Model (0=off,1=flat earth 9.81 m/s^2)

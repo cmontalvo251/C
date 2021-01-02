@@ -7,10 +7,10 @@
 //1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
 
 //Revisions Needed 
-//Once we are intialized we start to initialize some things if and only if we need them
 //If running on computer import the following
 //mass properties
 //force and moment model
+
 //openGL if requested
 //Environment
 //Vehicle
@@ -30,9 +30,12 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "rates.h"
 #include "MATLAB.h"
 #include "timer.h" //Need the pause function
+
+#if defined (SIL) || (HIL) || (AUTO)
+#define REALTIME
+#endif
 
 ///REALTIME VARS
 #ifdef REALTIME
@@ -41,9 +44,9 @@ TIMER timer;
 
 //Hardware specifics
 
-//If you're running on your desktop computer you have to have an RK4 Engine
+//If you're simulating the vehicle you have to have an RK4 Engine
 //that integrates the equations of motion
-#ifdef DESKTOP
+#if defined (SIL) || (SIMONLY) || (HIL)
 //Initialize RK4 Routine
 #include "RK4.h"
 RK4 integrator;
@@ -62,13 +65,13 @@ MATLAB logvars;
 //////Main Loop/////////////
 int main() {
   
-  //Define time parameters for Integration
+  //Define time parameters 
   double t = 0;
-  double tfinal = 50;
   double PRINT = 0;
   double LOG = 0;
+  int ok;
   
-  //Initialize timer if simulating in realtime
+  //Initialize timer if code running realtime
   #ifdef REALTIME
   double startTime = timer.getTimeSinceStart();
   double current_time = timer.getTimeSinceStart() - startTime;
@@ -84,21 +87,33 @@ int main() {
   logger.findfile("logs/");
   logger.open();
   logvars.zeros(vehicle.NUMSTATES+1,1,"Vars to Log"); //All states + time
+  //Import Simulation Flags
+  MATLAB simdata;
+  ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",vehicle.NUMSTATES);
+  if (!ok) { exit(1); } else {simdata.disp();}
+  double tfinal = simdata.get(1,1);
+  double INTEGRATIONRATE = simdata.get(2,1);
+  double PRINTRATE = simdata.get(3,1);
+  double LOGRATE = simdata.get(4,1);
+  int GRAVITY = simdata.get(5,1);
 
-  /////////////////Initialize RK4 if integrating on desktop///////////////////
+  /////////////////Initialize RK4 if simulating///////////////////
 
-  #ifdef DESKTOP
+  #if defined (SIMONLY) || (SIL) || (HIL)
   //First Initialize integrator and Dynamic Model
   integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
-  //Import Initial Conditions
-  MATLAB icdata;
-  int ok;
+  //Import Initial Conditions, mass properties
+  MATLAB icdata,massdata;
   ok = logger.ImportFile("Input_Files/Initial_Conditions.txt",&icdata,"icdata",vehicle.NUMSTATES);
   if (!ok) { exit(1); } else {icdata.disp();}
+  ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
+  if (!ok) { exit(1); } else {massdata.disp();}
   //Set ICs in integrator 
   integrator.set_ICs(icdata);
-  // and dynamic model
-  //vehicle.setState(icdata);
+  //Send Mass Data to Dynamic Model
+  vehicle.setMassProps(massdata);
+  //Initialize Environment
+  vehicle.setEnvironment(GRAVITY);
   #ifdef DEBUG
   printf("Integrator Initialized\n");
   #endif
@@ -108,15 +123,27 @@ int main() {
 	
   //Kick off integration loop
   while (t < tfinal) {
-    #ifdef REALTIME
+
+    /////////////UPDATE CURRENT TIME//////////////////////////////////
+    #if defined (SIL) || (HIL)
+    //Wait loop to make sure we run in realtime
+    //Don't do in AUTO or SIMONLY because we want to run as fast as possible
     //Get current time 
     while (current_time < t) {
       current_time = timer.getTimeSinceStart()-startTime;		
     }
     #endif
 
+    #ifdef REALTIME
+    //Keep simulating until user hits CTRL+C when running in AUTO or HIL mode
+    tfinal = t+100; 
+    //Get Time right now
+    current_time = timer.getTimeSinceStart()-startTime;
+    #endif
+    ///////////////////////////////////////////////////////////////////
+
     /////////RK4 INTEGRATION LOOP///////////////
-    #ifdef DESKTOP
+    #if defined (SIL) || (SIMONLY) || (HIL)
     for (int i = 1;i<=4;i++){
       vehicle.Derivatives(integrator.StateDel,integrator.k);
       //integrator.StateDel.disp();
@@ -124,11 +151,10 @@ int main() {
       //PAUSE();
       integrator.integrate(i);
     }
-    #endif
-    ////////////////////////////////////////////
-
     //Integrate time
     t += INTEGRATIONRATE;
+    #endif
+    ////////////////////////////////////////////
 
     //Print to STDOUT
     if (PRINT<t) {

@@ -49,8 +49,8 @@ void RK4::integrate(int i) {
     break;
   case (4):
     //Fourth Call
-    k4.overwrite(k);
     //Derivatives(StateDel,k4);
+    k4.overwrite(k);
     //Put it all together
     // phi = k1/6 + k2/3 + k3/3 + k4/6
     phi.mult(k1,1.0/6.0); // phi = k1/6
