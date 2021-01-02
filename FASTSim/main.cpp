@@ -5,15 +5,11 @@
 
 ///Revisions created - 12/10/2020 - Added Loop timer
 //1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
+//1/2/2021 - Added point mass model on flat earth, added environment class. Fixed some compilation flags.
 
 //Revisions Needed 
-//If running on computer import the following
-//mass properties
-//force and moment model
-
-//openGL if requested
-//Environment
-//Vehicle
+//force and moment model (sixdof model as well)
+//openGL if requested 
 //Joystick if manual mode
 //Sensor block
 //Once everything is imported it's time to kick off the main loop which depends on the algorithm.
