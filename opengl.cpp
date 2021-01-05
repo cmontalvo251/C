@@ -25,8 +25,6 @@
 // f v/vt/vn v/vt/vn v/vt/vn face values
 // f ...
 
-#ifdef OPENGL_FLAG
-
 //////////DEFINE LIBRARIES TO LOAD/////////////
 
 #include <math.h>
@@ -59,13 +57,6 @@ GLubyte Special[2][24] = {{0x00,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x0
 OPENGL::OPENGL() {
   ok = 0;
   counter = 0;
-}
-
-void error(char *output)
-{
-  printf("Error -> %s \n",output);
-  printf("Program Quit \n");
-  exit(1);
 }
 
 void OPENGL::Initialize(VISOBJECT* statetime_in,int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
@@ -1237,4 +1228,3 @@ double VISOBJECT::getTime()
   return simtime_;
 }
 
-#endif //ends the really big OPENGL_FLAG

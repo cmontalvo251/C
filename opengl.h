@@ -43,8 +43,7 @@ public:
 };
 
 ///VISUALIZER OBJECT CLASS - Holds all the state information
-class VISOBJECT
-{
+class VISOBJECT {
  public:
   void Initialize(double,int);
   void setTime(double);
@@ -83,22 +82,27 @@ uint16_t bfReserved1;
 uint16_t bfReserved2;
 uint32_t bfOffBits;
 };
+
 #pragma pack()
+
 struct ObjVertex
 {
   GLfloat x, y, z;
 };
+
 typedef ObjVertex ObjNormal;
 struct ObjTexCoord
 {
   GLfloat u, v;
 };
+
 struct ObjTriangle
 {
   int Vertex[3];
   int Normal[3];
   int TexCoord[3];
 };
+
 struct ObjModel
 {
   int nVertex, nNormal, nTexCoord, nTriangle;
@@ -111,8 +115,7 @@ struct ObjModel
 
 /////////////ALL OTHER CLASSES/////////////////
 
-class StateHistory
-{
+class StateHistory {
 public:
   int advance,objects,filesize,rowdx,ok;
   double freq,maxval,**data,T,scale,timestep,**finaldata;
@@ -139,8 +142,7 @@ public:
   void yaw(double);
 };
 
-class MouseControl
-{
+class MouseControl {
 public:
   int mousex,mousey;
   double prevTime,GetNewMouse;
@@ -155,8 +157,7 @@ struct Image {
   char *data;
 };
 
-class OBJSETUP
-{
+class OBJSETUP {
 public:
   int objects,ok;
   GLuint texture[MAX_TEXTURE];
@@ -169,8 +170,7 @@ public:
   int ImageLoad(char*,Image*);
 };
 
-class KeyboardControl
-{
+class KeyboardControl {
 public:
   int lightflag;
   void Initialize();
@@ -178,6 +178,7 @@ public:
 
 
 class OPENGL {
+ private:
  public:
   int figure,Width,Height;
   int savepics,counter,itime;
@@ -193,7 +194,6 @@ class OPENGL {
   //GLDraw draw;
   KeyboardControl keyboard;
   VISOBJECT* statetime_objects;
-
   //OpenGL Methods
   void Initialize(VISOBJECT*,int,char**,int,int,int,int);
   //GLDraw Methods
@@ -202,13 +202,12 @@ class OPENGL {
   void WindowInitialize(bool,int,char**);
   //Statehistory functions
   void GetNewState();
-
- //Constructor
- OPENGL();
+  //Constructor
+  OPENGL();
 };
 
-//Create OPENGL variable but make it extern so it isn't created more than once
-extern OPENGL glhandle_g;
+/* //Create OPENGL variable but make it extern so it isn't created more than once */
+/* extern OPENGL glhandle_g; */
 //Create OPENGL static member functions
 void DrawGLScene();
 void ResizeGLScene(int,int);

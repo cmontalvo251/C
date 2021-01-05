@@ -15,6 +15,7 @@
 
 void cross_sleep(double);
 void PAUSE();
+void error(char *);
 
 class TIMER {
  private:

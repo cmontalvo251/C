@@ -3,6 +3,7 @@
 *.lib
 FASTSim/mathp.*
 FASTSim/RK4.*
+FASTSim/opengl.*
 FASTSim/timer.*
 FASTSim/nrutils.h
 FASTSim/Datalogger.*

@@ -9,6 +9,13 @@
 #include "windows.h"
 #endif
 
+void error(char *output)
+{
+  printf("Error -> %s \n",output);
+  printf("Program Quit \n");
+  exit(1);
+}
+
 void PAUSE()
 {
   printf("%s","Function Paused\n");

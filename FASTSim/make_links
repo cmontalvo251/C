@@ -3,10 +3,10 @@
 ##Location of C.git from Github
 CROOT=../
 
-rm timer.* Datalogger.* MATLAB.* mathp.* nrutils.h RK4.*
+rm timer.* Datalogger.* MATLAB.* mathp.* nrutils.h RK4.* opengl.*
 
 #Then add the links
-for VARIABLE in timer.cpp timer.h Datalogger.cpp Datalogger.h MATLAB.cpp MATLAB.h mathp.h mathp.cpp nrutils.h RK4.cpp RK4.h
+for VARIABLE in timer.cpp timer.h Datalogger.cpp Datalogger.h MATLAB.cpp MATLAB.h mathp.h mathp.cpp nrutils.h RK4.cpp RK4.h opengl.cpp opengl.h
 do
     echo 'Making Link for ' $VARIABLE 
     ln -s ${CROOT}/$VARIABLE $VARIABLE

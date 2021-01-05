@@ -7,10 +7,10 @@ CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
 VEHICLE=-DPOINTMASS #-DPORTALCUBE #-DAIRCRAFT #-DQUADCOPTER #-DX8
-EXETYPE=-DSIMONLY #-DSIL #-DHIL #-DAUTO 
+EXETYPE=-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI -DARDUINO
 FLAGS=-DDEBUG
-LIB= -L/usr/local/lib 
+LIB= -L/usr/local/lib -lGL -lGLU -lglut #you need these if you're compiling OpenGL
 
 #Flags
 
@@ -20,12 +20,12 @@ LIB= -L/usr/local/lib
 
 ##EXETYPE
 #SIMONLY - this as fast as possible to generate plots
-#SIL - this is software in the loop 
-#HIL - this is in real time and thus 
+#SIL - this is software in the loop running in realtime
+#HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
 
 #HARDWARE
-#DESKTOP - 
+#DESKTOP - running on a laptop or desktop macine
 #RPI - running on a raspbery pi 
 #ARDUINO - running on an arduino (may require a separate ino)
 
