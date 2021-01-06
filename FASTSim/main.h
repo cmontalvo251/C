@@ -32,7 +32,7 @@
 #endif
 
 ///Functions
-void runSimulation();
+void runMainLoop();
 void renderInit(int argc,char** argv);
 
 #endif

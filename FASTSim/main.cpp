@@ -6,10 +6,10 @@
 ///Revisions created - 12/10/2020 - Added Loop timer
 //1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
 //1/2/2021 - Added point mass model on flat earth, added environment class. Fixed some compilation flags.
+//1/5/2021 - Added opengl but system does not move. Still need to add boost threads to get this to work properly
 
 //Revisions Needed 
 //force and moment model (sixdof model as well)
-//openGL if requested 
 //Joystick if manual mode
 //Sensor block
 //Once everything is imported it's time to kick off the main loop which depends on the algorithm.
@@ -55,37 +55,40 @@ MATLAB logvars;
 //////Main/////////////
 int main(int argc,char** argv) {
 
-  //Initialize timer if code running realtime
-  #ifdef REALTIME
-  startTime = timer.getTimeSinceStart();
-  current_time = timer.getTimeSinceStart() - startTime;
-  #endif
-
-  //Initialize Vehicle
+  /////////////////////////Initialize Vehicle///////////////////////////////
   vehicle.init();
   #ifdef DEBUG
   printf("Vehicle Initialized\n");
   #endif
+  ///////////////////////////////////////////////////////////////////////////
 
-  //Initialize Datalogger
+  //////////////////////////Initialize Datalogger//////////////////////////////
   logger.findfile("logs/");
   logger.open();
   logvars.zeros(vehicle.NUMSTATES+1,1,"Vars to Log"); //All states + time
-  //Import Simulation Flags
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////Import Simulation Flags//////////////////////////////////
   MATLAB simdata;
   int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",vehicle.NUMSTATES);
   if (!ok) { exit(1); } else {simdata.disp();}
   tfinal = simdata.get(1,1);
   INTEGRATIONRATE = simdata.get(2,1);
-  PRINTRATE = simdata.get(3,1);
+  PRINTRATE = simdata.get(3,1); 
+  LOGRATE = simdata.get(4,1); //We need to do this no matter what because the LOGRATE is required all the time
+  int GRAVITY = simdata.get(5,1);
+  //////////////////////////////////////////////////////////////////////////////
+
+  //////////////////Initialize timer if code running realtime////////////////////
   #ifdef REALTIME
+  startTime = timer.getTimeSinceStart();
+  current_time = timer.getTimeSinceStart() - startTime;
   PRINTRATE = 1.0;
   #endif
-  LOGRATE = simdata.get(4,1);
-  int GRAVITY = simdata.get(5,1);
+  ///////////////////////////////////////////////////////////////////////////////
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
-  #if defined (SIMONLY) || (SIL) || (HIL)
+  #ifdef RK4_H
   //First Initialize integrator and Dynamic Model
   integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
   //Import Initial Conditions, mass properties
@@ -105,16 +108,20 @@ int main(int argc,char** argv) {
   #endif
   #endif
 
-  ///Initialize the Rendering Environment Must be done in a boost thread
+  //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
   renderInit(argc,argv);
   #endif
+  /////////////////////////////////////////////////////////////////////////////////////////////
 
-  ////Begin Simulation
-  runSimulation();
+  //////////////////////////////Begin MainLoop///////////////////////////////////////////////
+  runMainLoop();
+  /////////////////////////////////////////////////////////////////////////////////////////////
   
 } //end main loop desktop computer
 
+///////////////////////////RENDERERING ENVIRONMENT///////////////////////////////////
+///////////////////////////MUST BE CALLED IN A BOOST THREAD//////////////////////////
 #ifdef OPENGL_H
 void renderInit(int argc,char** argv) {
   int Farplane = 10000;
@@ -124,10 +131,15 @@ void renderInit(int argc,char** argv) {
   glhandle_g.Initialize(argc,argv,Farplane,width,height,defaultcamera);
 }
 #endif
+////////////////////////////////////////////////////////////////////////////////////////
 
-void runSimulation() {
-  printf("Running Simulation \n");
-  //Kick off integration loop
+///////////////////////////////MAIN LOOP/////////////////////////////////////////////
+void runMainLoop() {
+  #ifdef DEBUG
+  printf("Running MainLoop \n");
+  #endif
+
+  //Kick off main while loop
   while (t < tfinal) {
 
     /////////////UPDATE CURRENT TIME//////////////////////////////////
@@ -140,6 +152,7 @@ void runSimulation() {
     }
     #endif
 
+    //////////////////GET CURRENT TIME////////////////////////////////////
     #ifdef REALTIME
     //Keep simulating until user hits CTRL+C when running in AUTO or HIL mode
     tfinal = t+100; 
@@ -149,7 +162,7 @@ void runSimulation() {
     ///////////////////////////////////////////////////////////////////
 
     /////////RK4 INTEGRATION LOOP///////////////
-    #if defined (SIL) || (SIMONLY) || (HIL)
+    #ifdef RK4_H
     for (int i = 1;i<=4;i++){
       vehicle.Derivatives(integrator.StateDel,integrator.k);
       //integrator.StateDel.disp();
@@ -171,6 +184,7 @@ void runSimulation() {
       printf("\n");
       PRINT+=PRINTRATE;
     }
+    /////////////////////////////////////////////////
 
     ////////////////LOG DATA////////////////////////
     if (LOG<t) {
