@@ -159,7 +159,7 @@ void OPENGL::GetNewState()
   //Here are some example open ended versions. If you uncomment this the first object
   //will rise and fall
   //state.T += 0.1;
-  //state.cg.set(3,1,-200.0*state.T+0.5*(9.81)*state.T*state.T);
+  state.cg.set(3,1,-200.0*state.T+0.5*(9.81)*state.T*state.T);
   //////////////////////////////////////////////////
 
   //Scale the state.cg variable
@@ -419,7 +419,7 @@ void StateHistory::UpdateObject(double time,MATLAB cgin,MATLAB ptpin,int objectn
   setTime(time);
   
   for (int idx = 1;idx<=3;idx++) {
-     cg.set(idx,objectnumber,cgin.get(idx,1));
+    //cg.set(idx,objectnumber,cgin.get(idx,1));
      ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
 
