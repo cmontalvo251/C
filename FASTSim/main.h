@@ -33,5 +33,6 @@
 
 ///Functions
 void runSimulation();
+void renderInit(int argc,char** argv);
 
 #endif

@@ -105,13 +105,9 @@ int main(int argc,char** argv) {
   #endif
   #endif
 
-  ///Initialize the Rendering Environment
+  ///Initialize the Rendering Environment Must be done in a boost thread
   #ifdef OPENGL_H
-  int Farplane = 10000;
-  int width = 600;
-  int height = 600;
-  int defaultcamera = 0;
-  glhandle_g.Initialize(argc,argv,Farplane,width,height,defaultcamera);
+  renderInit(argc,argv);
   #endif
 
   ////Begin Simulation
@@ -119,7 +115,18 @@ int main(int argc,char** argv) {
   
 } //end main loop desktop computer
 
+#ifdef OPENGL_H
+void renderInit(int argc,char** argv) {
+  int Farplane = 10000;
+  int width = 600;
+  int height = 600;
+  int defaultcamera = 0;
+  glhandle_g.Initialize(argc,argv,Farplane,width,height,defaultcamera);
+}
+#endif
+
 void runSimulation() {
+  printf("Running Simulation \n");
   //Kick off integration loop
   while (t < tfinal) {
 
