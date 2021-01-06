@@ -40,9 +40,9 @@
 #include <fstream>
 #include "timer.h"
 
-using namespace std;
-
 OPENGL glhandle_g;
+
+using namespace std;
 
 /////////Define Letters/////
 GLubyte Letters[2][24] = {{0xC0,0x30,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xFF,0xF0,0xFF,0xF0,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xFF,0xF0,0xFF,0xF0},{0x06,0x00,0x0F,0x00,0x0F,0x00,0x19,0x80,0x19,0x80,0x30,0xC0,0x30,0xC0,0x60,0x60,0x60,0x60,0xE0,0x70,0xC0,0x30,0x00,0x00,
@@ -52,135 +52,106 @@ GLubyte Numbers[10][24] = {{0x7E,0x00,0xFF,0x00,0xE3,0x00,0xD3,0x00,0xD3,0x00,0x
 }};
 GLubyte Special[2][24] = {{0x00,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x00,0x00,0x00,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x3E,0x00,0x00,0x00},{0xF0,0x00,0xF0,0x00,0xF0,0x00,0xF0,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}};
 
-
 //Constructor
 OPENGL::OPENGL() {
   ok = 0;
   counter = 0;
 }
 
-void OPENGL::Initialize(VISOBJECT* statetime_in,int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
+void OPENGL::Initialize(int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
   bool Full;
   int NumObjects,ii;
   char objectfile[256];
   double scalefactor;
   char err[256];
   int filefound = 0;
-  int counter = 1;
   ifstream file;
-  //Copy the statetime_in object over to itself
-  statetime_objects = statetime_in;
-  while (!filefound) {
-    printf("Opening Project File = %s \n",argv[counter]);
-    file.open(argv[counter]);
-    if (file.is_open()) {
-      filefound = 1;
-    } else {
-      printf("Error Opening File = %s \n",argv[counter]);
-      counter++;
-      if (counter > argc) {
-	sprintf(err,"%s","Maximum ARGV reached and filed not found \n");
-	error(err);
-      }
-    }
-  }
-
   //Initialize itime which governs when to print to std out
   itime = 0;
-
-  if (file.is_open())
-     {
-       string input;
-       getline(file,input);
-       savepics = atoi(input.c_str());
-       if (savepics) {
-	 printf("Saving Each Frame to Image File \n");
-       }
-       //Initial Parameters
-       Full = 0; //Fullscreen set to zeron
-       getline(file,input);
-       NumObjects = atoi(input.c_str());
-       if (NumObjects) {
-	 printf("Number of Objects to Render = %d \n",NumObjects);
-       }
-       state.Initialize(NumObjects);
-       if (state.ok)	 {
-	 //Initialize Camera
-	 camera.Initialize(NumObjects,state.cg,state.ptp,defaultcamera);
-	 //Initialize Window
-	 Farplane = inFarplane;
-	 Height = inHeight;
-	 Width = inWidth;
-	 int argc = 1;
-	 WindowInitialize(Full,argc,argv);
-	 //Initialize Mouse Inputs
-	 mouse.Initialize();
-	 //Setup OBJs
-	 objs.Initialize(NumObjects);
-
-	 if (objs.ok)
-	   {
-	     for(ii = 0;ii<NumObjects;ii++)
-	       {
-		 //Import Objects
-		 string trash;
-		 char delimeter(' '); //It is always ' ' <- a space
-		 getline(file,input, delimeter);
-		 getline(file,trash);
-		 strcpy(objectfile, input.c_str());
-		 printf("Object = %s \n",objectfile);
-		 getline(file,input);
-		 scalefactor = atof(input.c_str());
-		 objs.Load(objectfile,ii+1,1,scalefactor);
-		 if (!objs.ok)
-		   {
-		     //printf("Object File not specified properly \n");
-		     sprintf(err,"%s %s","Objectfile Not Specified Properly: ",objectfile);
-		     error(err);
-   		    }
-		 getline(file,input);
-		 state.positionscale.set(ii+1,1,atof(input.c_str()));
-		 printf("Position Scale Factor = %lf \n",state.positionscale.get(ii+1,1));
-	       }
-	   }
-	 else
-	   {
-	      sprintf(err,"%s","OBJSETUP Error");
-	      error(err);
-	   }
-
-	 //Initialize Setup Routines
-	 simtime = 0;
-	 initial = 0;
-	 glutDisplayFunc(&DrawGLScene);
-	 glutIdleFunc(&MainLoop);
-	 glutReshapeFunc(&ResizeGLScene);
-      
-	 //Setup Keyboard Control
-	 keyboard.Initialize();
-      
-	 printf("Starting Visualizer \n");
-      
-	 //Kick Off Program
-	 glutMainLoop();
-       }
-	 else	   {
-	   sprintf(err,"%s","StateHistory Error");
-       }
-     }
-  else
-    {
-      sprintf(err,"%s %s","File Not Found: ",argv[counter]);
+  printf("Initializeing OpenGL Rendering Environment\n");
+  sprintf(objectfile,"Input_Files/Render.txt");
+  file.open(objectfile);
+  if (!file.is_open()) {
+    	sprintf(err,"Error Opening File = %s \n",objectfile);
       error(err);
+    } else {
+      string input;
+      getline(file,input);
+      savepics = atoi(input.c_str());
+      if (savepics) {
+        printf("Saving Each Frame to Image File \n");
+      }
+      //Initial Parameters
+      Full = 0; //Fullscreen set to zeron
+      getline(file,input);
+      NumObjects = atoi(input.c_str());
+      if (NumObjects) {
+        printf("Number of Objects to Render = %d \n",NumObjects);
+      }
+      printf("Initializing State History\n");
+      state.Initialize(NumObjects);
+      if (state.ok)	 {
+        printf("State Ok!! \n");
+        //Initialize Camera
+        camera.Initialize(NumObjects,state.cg,state.ptp,defaultcamera);
+        //Initialize Window
+        Farplane = inFarplane;
+        Height = inHeight;
+        Width = inWidth;
+        int argc = 1;
+        WindowInitialize(Full,argc,argv);
+        //Initialize Mouse Inputs
+        mouse.Initialize();
+        //Setup OBJs
+        objs.Initialize(NumObjects);
+        if (objs.ok) {
+	         for(ii = 0;ii<NumObjects;ii++) {
+              //Import Objects
+              string trash;
+              char delimeter(' '); //It is always ' ' <- a space
+              getline(file,input, delimeter);
+              getline(file,trash);
+              strcpy(objectfile, input.c_str());
+              printf("Object = %s \n",objectfile);
+              getline(file,input);
+              scalefactor = atof(input.c_str());
+              objs.Load(objectfile,ii+1,1,scalefactor);
+              if (!objs.ok) {
+		            //printf("Object File not specified properly \n");
+                sprintf(err,"%s %s","Objectfile Not Specified Properly: ",objectfile);
+                error(err);
+              }
+		          getline(file,input);
+		          state.positionscale.set(ii+1,1,atof(input.c_str()));
+		          printf("Position Scale Factor = %lf \n",state.positionscale.get(ii+1,1));
+            }
+        } else {
+          sprintf(err,"%s","OBJSETUP Error");
+          error(err);
+        }
+        //Initialize Setup Routines
+      	simtime = 0;
+        initial = 0;
+        glutDisplayFunc(&DrawGLScene);
+        glutIdleFunc(&MainLoop);
+        glutReshapeFunc(&ResizeGLScene);
+        //Setup Keyboard Control
+        keyboard.Initialize();
+        printf("Starting Visualizer \n");
+      	//Kick Off Program
+	      glutMainLoop(); 
+      } else {
+        sprintf(err,"%s","StateHistory Error");
+      }
     }
   printf("Visualizer Initialized and Running... \n");
-  PAUSE();
+  PAUSE(); //If all is good the program will hang here. Hence the need for boost
 }
 
 void OPENGL::GetNewState()
 {
-  statetime_objects->getState(state.cg,state.ptp);
-  state.T = statetime_objects->getTime();
+  //statetime_objects->getState(state.cg,state.ptp);
+  //state.T = statetime_objects->getTime();
   //Scale the state.cg variable
   for (int idx = 1;idx<=state.objects;idx++) {
     for (int jdx = 1;jdx<=3;jdx++) {
@@ -397,24 +368,55 @@ void DrawGLScene()
 
 ///////////////////STATEHISTORY/////////////////////////
 
-void StateHistory::Initialize (int NumObjects) 
+void StateHistory::Initialize (int NumberofObjects) 
 {
   ok = 0;
 
+  //Set Time to zero initially
+  setTime(0);
+
+  //Set number of objects
+  numobjects_ = NumberofObjects;
+
   //Initialize cg and ptp variables
-  cg.zeros(3,NumObjects,"state.cg");
-  ptp.zeros(3,NumObjects,"state.ptp");
+  cg.zeros(3,numobjects_,"state.cg");
+  ptp.zeros(3,numobjects_,"state.ptp");
 
   //Initialize Position Scale variable
-  positionscale.zeros(NumObjects,1,"positionscale");
+  positionscale.zeros(numobjects_,1,"positionscale");
 
   //Initialize Variables
   advance = 0;
-  objects = NumObjects;
+  objects = numobjects_;
 
   ok = 1;
 
 };
+
+void StateHistory::setTime(double simtime)
+{
+  simtime_ = simtime;
+}
+
+void StateHistory::setState(MATLAB cgin,MATLAB ptpin,int objectnumber)
+{
+  for (int idx = 1;idx<=3;idx++) {
+    cg.set(idx,objectnumber,cgin.get(idx,1));
+    ptp.set(idx,objectnumber,ptpin.get(idx,1));
+  }
+}
+
+void StateHistory::getState(MATLAB cgout,MATLAB ptpout)
+{
+  ptpout.overwrite(ptp);
+  cgout.overwrite(cg);
+}
+
+double StateHistory::getTime()
+{
+  return simtime_;
+}
+
 
 
 /////////////////CAMERA CONTROL////////////////
@@ -1194,37 +1196,4 @@ void KeyboardControl::Initialize()
   glutKeyboardFunc(&KeyPressed);
 }
 
-////VISOBJECT CLASS
-void VISOBJECT::Initialize(double simtime,int NumberofObjects)
-{
-  printf("Number of Objects to Render = %d \n",NumberofObjects);
-  numobjects_ = NumberofObjects;
-  setTime(simtime);
-  cg_.zeros(3,numobjects_,"Visualizer Object CG \n");
-  ptp_.zeros(3,numobjects_,"Visualizer Object PTP \n");
-}
-
-void VISOBJECT::setTime(double simtime)
-{
-  simtime_ = simtime;
-}
-
-void VISOBJECT::setState(MATLAB cg,MATLAB ptp,int objectnumber)
-{
-  for (int idx = 1;idx<=3;idx++) {
-    cg_.set(idx,objectnumber,cg.get(idx,1));
-    ptp_.set(idx,objectnumber,ptp.get(idx,1));
-  }
-}
-
-void VISOBJECT::getState(MATLAB cg,MATLAB ptp)
-{
-  ptp.overwrite(ptp_);
-  cg.overwrite(cg_);
-}
-
-double VISOBJECT::getTime()
-{
-  return simtime_;
-}
 

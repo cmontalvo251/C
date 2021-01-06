@@ -42,20 +42,6 @@ public:
   bool texexist;
 };
 
-///VISUALIZER OBJECT CLASS - Holds all the state information
-class VISOBJECT {
- public:
-  void Initialize(double,int);
-  void setTime(double);
-  void setState(MATLAB,MATLAB,int);
-  void getState(MATLAB,MATLAB);
-  double getTime();
- private:
-  int numobjects_;
-  double simtime_;
-  MATLAB cg_,ptp_;
-};
-
 ///////////STRUCTURES FOR OBJLOADER/////
 
 #pragma pack(1)
@@ -119,8 +105,21 @@ class StateHistory {
 public:
   int advance,objects,filesize,rowdx,ok;
   double freq,maxval,**data,T,scale,timestep,**finaldata;
-  MATLAB cg,ptp,positionscale;
+  MATLAB positionscale;
+  MATLAB cg,ptp;
   void Initialize(int);
+  void setTime(double);
+  void setState(MATLAB,MATLAB,int);
+  void getState(MATLAB,MATLAB);
+  double getTime();
+ private:
+  int numobjects_;
+  double simtime_;
+};
+
+///VISUALIZER OBJECT CLASS - Holds all the state information
+class VISOBJECT {
+ public:
 };
 
 class CameraControl
@@ -195,7 +194,7 @@ class OPENGL {
   KeyboardControl keyboard;
   VISOBJECT* statetime_objects;
   //OpenGL Methods
-  void Initialize(VISOBJECT*,int,char**,int,int,int,int);
+  void Initialize(int argc,char** argv,int,int,int,int);
   //GLDraw Methods
   //void drawInitialize();
   //Main Window Methods
@@ -206,8 +205,8 @@ class OPENGL {
   OPENGL();
 };
 
-/* //Create OPENGL variable but make it extern so it isn't created more than once */
-/* extern OPENGL glhandle_g; */
+//Create OPENGL variable but make it extern so it isn't created more than once */
+extern OPENGL glhandle_g; 
 //Create OPENGL static member functions
 void DrawGLScene();
 void ResizeGLScene(int,int);

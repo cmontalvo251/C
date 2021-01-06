@@ -24,31 +24,157 @@
 //If desktop pass control signals to RK4 routine
 //Integrate RK4 1 step If desktop
 
-///If running SIL or HIL and on a desktop (anything with a rendering environment)
-//we need to turn on OPENGL this way the PIC actually has something to fly.
-#if defined (SIL) || (HIL)
-#if defined (DESKTOP)
-#define RENDER
-#endif
+#include "main.h"
+
+//define time parameters 
+double t = 0;
+double PRINT = 0;
+double LOG = 0;
+double startTime,current_time;
+double tfinal,INTEGRATIONRATE,PRINTRATE;
+double LOGRATE;
+
+///REALTIME VARS
+#ifdef REALTIME
+TIMER timer;
 #endif
 
-//If we are rendering use the preferred rendering environment
-#ifdef RENDER
-#include "opengl.h"
-OPENGL render; //this will create our render variable
+//Simulator
+#ifdef RK4_H
+RK4 integrator;
 #endif
 
-///Create a scheduler for everything we want to run
-#include "scheduler.h";
-scheduler schedule;
+//Vehicle Specifics (Every vehicle will have its own dynamic model but everything
+//will be in a Dynamics class)
+Dynamics vehicle;
 
-//////Main Loop/////////////
-int main() {
-  
-  //Initialize the scheduler
-  schedule.init();
+///DATALOGGER IS ALWAYS RUNNING
+Datalogger logger;
+MATLAB logvars;
+
+//////Main/////////////
+int main(int argc,char** argv) {
+
+  //Initialize timer if code running realtime
+  #ifdef REALTIME
+  startTime = timer.getTimeSinceStart();
+  current_time = timer.getTimeSinceStart() - startTime;
+  #endif
+
+  //Initialize Vehicle
+  vehicle.init();
+  #ifdef DEBUG
+  printf("Vehicle Initialized\n");
+  #endif
+
+  //Initialize Datalogger
+  logger.findfile("logs/");
+  logger.open();
+  logvars.zeros(vehicle.NUMSTATES+1,1,"Vars to Log"); //All states + time
+  //Import Simulation Flags
+  MATLAB simdata;
+  int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",vehicle.NUMSTATES);
+  if (!ok) { exit(1); } else {simdata.disp();}
+  tfinal = simdata.get(1,1);
+  INTEGRATIONRATE = simdata.get(2,1);
+  PRINTRATE = simdata.get(3,1);
+  #ifdef REALTIME
+  PRINTRATE = 1.0;
+  #endif
+  LOGRATE = simdata.get(4,1);
+  int GRAVITY = simdata.get(5,1);
+
+  /////////////////Initialize RK4 if simulating Dynamics///////////////////
+  #if defined (SIMONLY) || (SIL) || (HIL)
+  //First Initialize integrator and Dynamic Model
+  integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
+  //Import Initial Conditions, mass properties
+  MATLAB icdata,massdata;
+  ok = logger.ImportFile("Input_Files/Initial_Conditions.txt",&icdata,"icdata",vehicle.NUMSTATES);
+  if (!ok) { exit(1); } else {icdata.disp();}
+  ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
+  if (!ok) { exit(1); } else {massdata.disp();}
+  //Set ICs in integrator 
+  integrator.set_ICs(icdata);
+  //Send Mass Data to Dynamic Model
+  vehicle.setMassProps(massdata);
+  //Initialize Environment
+  vehicle.setEnvironment(GRAVITY);
+  #ifdef DEBUG
+  printf("Integrator Initialized\n");
+  #endif
+  #endif
+
+  ///Initialize the Rendering Environment
+  #ifdef OPENGL_H
+  int Farplane = 10000;
+  int width = 600;
+  int height = 600;
+  int defaultcamera = 0;
+  glhandle_g.Initialize(argc,argv,Farplane,width,height,defaultcamera);
+  #endif
 
   ////Begin Simulation
-  schedule.run();	
+  runSimulation();
   
 } //end main loop desktop computer
+
+void runSimulation() {
+  //Kick off integration loop
+  while (t < tfinal) {
+
+    /////////////UPDATE CURRENT TIME//////////////////////////////////
+    #if defined (SIL) || (HIL)
+    //Wait loop to make sure we run in realtime
+    //Don't do in AUTO or SIMONLY because we want to run as fast as possible
+    //Get current time 
+    while (current_time < t) {
+      current_time = timer.getTimeSinceStart()-startTime;   
+    }
+    #endif
+
+    #ifdef REALTIME
+    //Keep simulating until user hits CTRL+C when running in AUTO or HIL mode
+    tfinal = t+100; 
+    //Get Time right now
+    current_time = timer.getTimeSinceStart()-startTime;
+    #endif
+    ///////////////////////////////////////////////////////////////////
+
+    /////////RK4 INTEGRATION LOOP///////////////
+    #if defined (SIL) || (SIMONLY) || (HIL)
+    for (int i = 1;i<=4;i++){
+      vehicle.Derivatives(integrator.StateDel,integrator.k);
+      //integrator.StateDel.disp();
+      //integrator.k.disp();
+      //PAUSE();
+      integrator.integrate(i);
+    }
+    //Integrate time
+    t += INTEGRATIONRATE;
+    #endif
+    ////////////////////////////////////////////
+
+    /////////////////Print to STDOUT////////////////
+    if (PRINT<t) {
+      printf("%lf ",t);
+      for (int i = 0;i<integrator.NUMSTATES;i++) {
+        printf("%lf ",integrator.State.get(i+1,1));
+      }
+      printf("\n");
+      PRINT+=PRINTRATE;
+    }
+
+    ////////////////LOG DATA////////////////////////
+    if (LOG<t) {
+      logvars.set(1,1,t);
+      for (int i = 0;i<integrator.NUMSTATES;i++) {
+        logvars.set(2+i,1,integrator.State.get(i+1,1));
+      }
+      logger.println(logvars);
+    }
+    ////////////////////////////////////////////////
+
+  } //End while loop on main loop
+  printf("Simulation Complete\n");
+}

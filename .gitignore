@@ -1,6 +1,7 @@
 *.out
 *.OUT
 *.lib
+*.blend*
 FASTSim/mathp.*
 FASTSim/RK4.*
 FASTSim/opengl.*
