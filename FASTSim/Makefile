@@ -10,7 +10,9 @@ VEHICLE=-DPOINTMASS #-DPORTALCUBE #-DAIRCRAFT #-DQUADCOPTER #-DX8
 EXETYPE=-DSIL #-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI -DARDUINO
 FLAGS=-DDEBUG
-LIB= -L/usr/local/lib -lGL -lGLU -lglut #you need these if you're compiling OpenGL
+LIB= -L/usr/local/lib 
+RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We aren't using this anymore so yea #sudo apt-get install libboost-all-dev
 
 #Flags
 
@@ -41,11 +43,11 @@ LIB= -L/usr/local/lib -lGL -lGLU -lglut #you need these if you're compiling Open
 
 all: $(CSOURCES) $(CPPSOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LIB)
+	$(CC) $(OBJECTS) -o $@ $(LIB) $(RENDER) $(THREAD)
 .c.o:
-	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB)
+	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
 .cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB)
+	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
 clean:
 	rm -rf $(EXECUTABLE) *.o
 rebuild:

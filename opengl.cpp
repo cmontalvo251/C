@@ -40,7 +40,9 @@
 #include <fstream>
 #include "timer.h"
 
+//This creates a variable called glhandle_g (_g for global)
 OPENGL glhandle_g;
+mutex statemutex; //this is so we can access the glhandle_g.state variables externally and internally
 
 using namespace std;
 
@@ -150,8 +152,16 @@ void OPENGL::Initialize(int argc,char** argv,int inFarplane,int inWidth,int inHe
 
 void OPENGL::GetNewState()
 {
+  //These are archaic function calls to set the state of the objects on screen
   //statetime_objects->getState(state.cg,state.ptp);
   //state.T = statetime_objects->getTime();
+
+  //Here are some example open ended versions. If you uncomment this the first object
+  //will rise and fall
+  //state.T += 0.1;
+  //state.cg.set(3,1,-200.0*state.T+0.5*(9.81)*state.T*state.T);
+  //////////////////////////////////////////////////
+
   //Scale the state.cg variable
   for (int idx = 1;idx<=state.objects;idx++) {
     for (int jdx = 1;jdx<=3;jdx++) {
@@ -361,9 +371,14 @@ void DrawGLScene()
   //   }
 
   // //Get New cg and ptp coordinates
+  //It's possible to change the state of the objects externally using
+  //StateHistory::setState() so we need to create a lock here
+  statemutex.lock();
   glhandle_g.GetNewState();
   //Get new camera position
   glhandle_g.camera.Update(glhandle_g.state);
+  statemutex.unlock();
+  ///////////////////////////////////////////////////////////
 }
 
 ///////////////////STATEHISTORY/////////////////////////
@@ -395,15 +410,38 @@ void StateHistory::Initialize (int NumberofObjects)
 
 void StateHistory::setTime(double simtime)
 {
-  simtime_ = simtime;
+  T = simtime;
+}
+
+void StateHistory::UpdateObject(double time,MATLAB cgin,MATLAB ptpin,int objectnumber) {
+  statemutex.lock();
+
+  setTime(time);
+  
+  for (int idx = 1;idx<=3;idx++) {
+     cg.set(idx,objectnumber,cgin.get(idx,1));
+     ptp.set(idx,objectnumber,ptpin.get(idx,1));
+  }
+
+  //cg.set(3,1,-200.0*T+0.5*(9.81)*T*T);
+  
+  statemutex.unlock();
 }
 
 void StateHistory::setState(MATLAB cgin,MATLAB ptpin,int objectnumber)
 {
+  //This function can be called externally which means we need a mutex for it
+  statemutex.lock();
+  
   for (int idx = 1;idx<=3;idx++) {
     cg.set(idx,objectnumber,cgin.get(idx,1));
     ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
+  //Z-axis must be flipped
+  //cg.mult_eq1(3,objectnumber,-1.0);
+  //cg.set(3,1,-200.0*T+0.5*(9.81)*T*T);
+  //cg.disp();
+  statemutex.unlock();
 }
 
 void StateHistory::getState(MATLAB cgout,MATLAB ptpout)

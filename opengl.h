@@ -1,7 +1,7 @@
 #ifndef OPENGL_H
 #define OPENGL_H
 
-//This creates a variable called glhandle_g (_g for global)
+//This also creates the extern variable glhandle_h
 //You need opengl for this
 // sudo apt-get install freeglut3-dev
 // For windows
@@ -23,6 +23,11 @@
 #include <GLUT/glut.h>
 #include <OpenGL/glu.h>
 #endif
+
+//In order to get this to work on linux you need to run sudo apt-get install libboost-all-dev
+//You need boost to run opengl because opengl must run in a separate loop from the main integration loop
+#include <boost/thread.hpp> 
+using namespace boost;
 
 #include "MATLAB.h" //Included in BlackBox/C++ directory
 
@@ -111,6 +116,7 @@ public:
   void setTime(double);
   void setState(MATLAB,MATLAB,int);
   void getState(MATLAB,MATLAB);
+  void UpdateObject(double,MATLAB,MATLAB,int);
   double getTime();
  private:
   int numobjects_;
@@ -206,7 +212,8 @@ class OPENGL {
 };
 
 //Create OPENGL variable but make it extern so it isn't created more than once */
-extern OPENGL glhandle_g; 
+extern OPENGL glhandle_g;
+extern mutex statemutex;
 //Create OPENGL static member functions
 void DrawGLScene();
 void ResizeGLScene(int,int);

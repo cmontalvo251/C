@@ -12,8 +12,9 @@ class Dynamics {
   double m;
  public:
   //Public Functions and vars
+  MATLAB cg,ptp;
   int NUMSTATES;
-  //void setState(MATLAB istate);
+  void setState(MATLAB);
   void Derivatives(MATLAB State,MATLAB k);
   void init();
   void setMassProps(MATLAB massdata);

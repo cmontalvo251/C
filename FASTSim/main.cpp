@@ -110,12 +110,23 @@ int main(int argc,char** argv) {
 
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
-  renderInit(argc,argv);
+  boost::thread render(renderInit,argc,argv);
+  cross_sleep(2); //Give the render a bit of time to start
   #endif
   /////////////////////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////Begin MainLoop///////////////////////////////////////////////
+  #ifdef OPENGL_H 
+  //When you have opengl running you need to kick this off as a thread
+  boost::thread run(runMainLoop); 
+  //Now there is a problem here. When you kick off the rendering environment and the Mainloop
+  //above the code actually has 3 threads now. The MainLoop, the rendering environment and this main.cpp
+  //In otherwords you need to create an infinite loop here
+  while(1){cross_sleep(1);}; 
+  #else
+  //If you aren't rendering you just need to kick off the mainloop without a thread
   runMainLoop();
+  #endif
   /////////////////////////////////////////////////////////////////////////////////////////////
   
 } //end main loop desktop computer
@@ -172,8 +183,19 @@ void runMainLoop() {
     }
     //Integrate time
     t += INTEGRATIONRATE;
+    //Set State of Vehicle for use elsewhere
+    vehicle.setState(integrator.State);
     #endif
     ////////////////////////////////////////////
+
+    //////////////IF RENDERING//////////////////
+    ////Send state vector to OpenGL
+    #ifdef OPENGL_H
+    //glhandle_g.state.setTime(t);
+    //vehicle.cg.set(3,1,-200.0*t+0.5*(9.81)*t*t);
+    //glhandle_g.state.setState(vehicle.cg,vehicle.ptp,1);
+    glhandle_g.state.UpdateObject(t,vehicle.cg,vehicle.ptp,1);
+    #endif
 
     /////////////////Print to STDOUT////////////////
     if (PRINT<t) {

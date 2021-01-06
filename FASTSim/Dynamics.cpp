@@ -9,18 +9,20 @@ void Dynamics::init() {
   #ifdef POINTMASS
   NUMSTATES = 6;
   #endif
-  
-  //If Simulating you need these variables
-  //To keep track of states and derivatives
-  //#ifdef SIMONLY
-  //State.zeros(NUMSTATES,1,"State Vector");
-  //k.zeros(NUMSTATES,1,"Derivative of State Vector");
-  //#endif
+  //Always create these just because I don't want to think about
+  //when we actually need them and it's really easy to create them
+  cg.zeros(3,1,"Center of Mass");
+  ptp.zeros(3,1,"Roll Pitch Yaw");
 }
 
-//void Dynamics::setState(MATLAB istate) {
-//  State.overwrite(istate);
-//}
+void Dynamics::setState(MATLAB state) {
+  #ifdef POINTMASS
+  cg.set(1,1,state.get(1,1));
+  cg.set(2,1,state.get(2,1));
+  cg.set(3,1,state.get(3,1));
+  //ptp is just zeros because it's a point mass
+  #endif
+}
 
 void Dynamics::setEnvironment(int G) {
   env.init(G);
