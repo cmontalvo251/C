@@ -110,7 +110,7 @@ int main(int argc,char** argv) {
 
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
-  boost::thread render(renderInit,argc,argv);
+  boost::thread render(runRenderLoop,argc,argv);
   cross_sleep(2); //Give the render a bit of time to start
   #endif
   /////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,12 +134,12 @@ int main(int argc,char** argv) {
 ///////////////////////////RENDERERING ENVIRONMENT///////////////////////////////////
 ///////////////////////////MUST BE CALLED IN A BOOST THREAD//////////////////////////
 #ifdef OPENGL_H
-void renderInit(int argc,char** argv) {
+void runRenderLoop(int argc,char** argv) {
   int Farplane = 10000;
   int width = 600;
   int height = 600;
   int defaultcamera = 0;
-  glhandle_g.Initialize(argc,argv,Farplane,width,height,defaultcamera);
+  glhandle_g.loop(argc,argv,Farplane,width,height,defaultcamera);
 }
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -191,10 +191,7 @@ void runMainLoop() {
     //////////////IF RENDERING//////////////////
     ////Send state vector to OpenGL
     #ifdef OPENGL_H
-    //glhandle_g.state.setTime(t);
-    //vehicle.cg.set(3,1,-200.0*t+0.5*(9.81)*t*t);
-    //glhandle_g.state.setState(vehicle.cg,vehicle.ptp,1);
-    glhandle_g.state.UpdateObject(t,vehicle.cg,vehicle.ptp,1);
+    glhandle_g.state.UpdateRender(t,vehicle.cg,vehicle.ptp,1);
     #endif
 
     /////////////////Print to STDOUT////////////////

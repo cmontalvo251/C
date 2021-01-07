@@ -1,5 +1,6 @@
 //Carlos Montalvo General 6DOF Animation Program
 //Developed March 2012
+//Edited and Revised 2020
 //References
 // Websites:
 // http://pyopengl.sourceforge.net/
@@ -43,10 +44,12 @@
 //This creates a variable called glhandle_g (_g for global)
 OPENGL glhandle_g;
 mutex statemutex; //this is so we can access the glhandle_g.state variables externally and internally
+mutex timemutex;
 
 using namespace std;
 
 /////////Define Letters/////
+/////Numbers and Special characters///
 GLubyte Letters[2][24] = {{0xC0,0x30,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xFF,0xF0,0xFF,0xF0,0xC0,0x30,0xC0,0x30,0xC0,0x30,0xFF,0xF0,0xFF,0xF0},{0x06,0x00,0x0F,0x00,0x0F,0x00,0x19,0x80,0x19,0x80,0x30,0xC0,0x30,0xC0,0x60,0x60,0x60,0x60,0xE0,0x70,0xC0,0x30,0x00,0x00,
     }};
 GLubyte Numbers[10][24] = {{0x7E,0x00,0xFF,0x00,0xE3,0x00,0xD3,0x00,0xD3,0x00,0xD3,0x00,0xCB,0x00,0xCB,0x00,0xCB,0x00,0xC7,0x00,0xFF,0x00,0x7E,0x00},{0x18,0x00,0x18,0x00,0x18,0x00,0x18,0x00,0x18,0x00,0x18,0x00,0x18,0x00,0xD8,0x00,0xF8,0x00,0x78,0x00,0x38,0x00,0x18,0x00},{0xFF,0x00,0xFF,0x00,0x70,0x00,0x38,0x00,0x1C,0x00,0x0E,0x00,0x07,0x00,0x03,0x00,0xC3,0x00,0xE7,0x00,0x7E,0x00,0x3C,0x00},{0xFE,0x00,0xFF,0x00,0x03,0x00,0x03,0x00,0x03,0x00,0x7E,0x00,0x7E,0x00,0x03,0x00,0x03,0x00,0x03,0x00,0xFF,0x00,0xFE,0x00,
@@ -60,7 +63,7 @@ OPENGL::OPENGL() {
   counter = 0;
 }
 
-void OPENGL::Initialize(int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
+void OPENGL::loop(int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
   bool Full;
   int NumObjects,ii;
   char objectfile[256];
@@ -150,27 +153,6 @@ void OPENGL::Initialize(int argc,char** argv,int inFarplane,int inWidth,int inHe
   PAUSE(); //If all is good the program will hang here. Hence the need for boost
 }
 
-void OPENGL::GetNewState()
-{
-  //These are archaic function calls to set the state of the objects on screen
-  //statetime_objects->getState(state.cg,state.ptp);
-  //state.T = statetime_objects->getTime();
-
-  //Here are some example open ended versions. If you uncomment this the first object
-  //will rise and fall
-  //state.T += 0.1;
-  state.cg.set(3,1,-200.0*state.T+0.5*(9.81)*state.T*state.T);
-  //////////////////////////////////////////////////
-
-  //Scale the state.cg variable
-  for (int idx = 1;idx<=state.objects;idx++) {
-    for (int jdx = 1;jdx<=3;jdx++) {
-      //state.cg.set(jdx,idx,state.cg.get(jdx,idx)*state.positionscale.get(idx,1));
-      state.cg.mult_eq1(jdx,idx,state.positionscale.get(idx,1));
-    }
-  }
-}
-
 void ResizeGLScene(int inWidth,int inHeight)
 {
   if (inHeight == 0)
@@ -258,6 +240,14 @@ void DrawGLScene()
     }
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
+
+  //It's possible to change the state of the objects externally using
+  //StateHistory::setState() so we need to create a lock here
+  statemutex.lock();
+  //Get new camera position
+  glhandle_g.camera.Update(glhandle_g.state);
+  statemutex.unlock();
+
   //Set up camera
   gluLookAt(glhandle_g.camera.pos[0],glhandle_g.camera.pos[1],glhandle_g.camera.pos[2],glhandle_g.camera.target[0],glhandle_g.camera.target[1],glhandle_g.camera.target[2],glhandle_g.camera.up[0],glhandle_g.camera.up[1],glhandle_g.camera.up[2]);
   
@@ -267,11 +257,13 @@ void DrawGLScene()
       glBindTexture(GL_TEXTURE_2D,glhandle_g.objs.texture[ii-1]);
       //state.cg and state.ptp are MATLAB operators that are Nx3
       //so you must use setters and getters
+      statemutex.lock();
       for (jj = 1;jj<=3;jj++)
   	{
   	  cg[jj-1] = glhandle_g.state.cg.get(jj,ii);
 	  ptp[jj-1] = glhandle_g.state.ptp.get(jj,ii);
   	}
+      statemutex.unlock();
 
       glTranslatef(cg[0],cg[1],cg[2]);
       glRotatef(ptp[2]*RAD2DEG,0,0,1);
@@ -287,25 +279,16 @@ void DrawGLScene()
       glTranslatef(-cg[0],-cg[1],-cg[2]);
     }
 
-  //Draw The time on the screen
+  ////////////Draw The time on the screen///////////////
   glColor3f(1.0,1.0,1.0);
   glRasterPos3f(glhandle_g.camera.target[0],glhandle_g.camera.target[1],glhandle_g.camera.target[2]);
   double offsety = -glhandle_g.Height/2.5;
   double offsetx = glhandle_g.Width/2.1;
   char timechar[256];
   int asciicode;
+  timemutex.lock();
   sprintf(timechar,"%lf ",glhandle_g.state.T);
-  //sprintf(timechar,"%lf ",1.0);
-
-  #ifdef PRINT_TIME
-  if (glhandle_g.state.T > glhandle_g.itime) {
-    printf("Visualization time = %lf \n",glhandle_g.state.T);
-    glhandle_g.itime++;
-    glhandle_g.state.cg.disp();
-    glhandle_g.state.ptp.disp();
-  }
-  #endif
-
+  timemutex.unlock();
   for (ii = 0;ii<6;ii++)
     {
       asciicode = timechar[ii]-48;
@@ -321,63 +304,18 @@ void DrawGLScene()
     }
   //printf("offsetx = %lf \n",offsetx);
   //printf("offsety = %lf \n",offsety);
+  ////////////////////////////////////////////////////////////////
 
+
+  #ifdef PRINT_TIME //to stdout
+  if (glhandle_g.state.T > glhandle_g.itime) {
+    printf("Visualization time = %lf \n",glhandle_g.state.T);
+    glhandle_g.itime++;
+    glhandle_g.state.cg.disp();
+    glhandle_g.state.ptp.disp();
+  }
+  #endif
   glutSwapBuffers();
-
-  // //Save Image
-  // //if (counter == 0)
-  // if ((savepics) && (state.advance))
-  //   {
-  //     //printf("Exporting Frame \n");
-  //     glPixelStorei(GL_PACK_ALIGNMENT,1);
-  //     glReadPixels(0,0,window.Width,window.Height,GL_RGB,GL_UNSIGNED_BYTE,framebuffer->data);
-  //     int i;
-  //     char temp;
-  //     char fname[32];
-  //     sprintf(fname,"Frames/Movie_%04d.bmp",counter);
-  //     counter++;
-  //     //Create a new file for writing
-  //     FILE *pFile = fopen(fname, "wb");
-  //     BITMAPINFOHEADER BMIH;
-  //     BMIH.biSize = (uint32_t)sizeof(BITMAPINFOHEADER);
-  //     BMIH.biWidth = framebuffer->sizeX;
-  //     BMIH.biHeight = framebuffer->sizeY;
-  //     BMIH.biPlanes = (uint16_t)1;
-  //     BMIH.biBitCount = (uint16_t)24;
-  //     BMIH.biCompression = (uint32_t)0;
-  //     BMIH.biSizeImage = (uint32_t)(framebuffer->sizeX * framebuffer->sizeY * 3); 
-  //     BMIH.biColors = 0;
-  //     BMIH.biImportantColors = 0;
-  //     BITMAPFILEHEADER bmfh;
-  //     bmfh.bfType = 'B'+('M'<<8);
-  //     bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + BMIH.biSize; 
-  //     bmfh.bfSize = bmfh.bfOffBits + BMIH.biSizeImage;
-  //     bmfh.bfReserved1 = 0;
-  //     bmfh.bfReserved2 = 0;
-  //     //Write the bitmap file header
-  //     fwrite(&bmfh, 1, sizeof(BITMAPFILEHEADER), pFile);
-  //     //And then the bitmap info header
-  //     fwrite(&BMIH, 1, sizeof(BITMAPINFOHEADER), pFile);
-  //     //Finally, write the image data itself 
-  //     //-- the data represents our drawing
-  //     for (i=0;i<BMIH.biSizeImage;i+=3) 
-  // 	{
-  // 	  temp = framebuffer->data[i];
-  // 	  framebuffer->data[i] = framebuffer->data[i+2];
-  // 	  framebuffer->data[i+2] = temp;
-  // 	}
-  //     fwrite(framebuffer->data, 1, BMIH.biSizeImage, pFile);
-  //     fclose(pFile);
-  //   }
-
-  // //Get New cg and ptp coordinates
-  //It's possible to change the state of the objects externally using
-  //StateHistory::setState() so we need to create a lock here
-  statemutex.lock();
-  glhandle_g.GetNewState();
-  //Get new camera position
-  glhandle_g.camera.Update(glhandle_g.state);
-  statemutex.unlock();
   ///////////////////////////////////////////////////////////
 }
 
@@ -410,37 +348,20 @@ void StateHistory::Initialize (int NumberofObjects)
 
 void StateHistory::setTime(double simtime)
 {
+  timemutex.lock();
   T = simtime;
+  timemutex.unlock();
 }
 
-void StateHistory::UpdateObject(double time,MATLAB cgin,MATLAB ptpin,int objectnumber) {
-  statemutex.lock();
+void StateHistory::UpdateRender(double time,MATLAB cgin,MATLAB ptpin,int objectnumber) {
 
   setTime(time);
   
-  for (int idx = 1;idx<=3;idx++) {
-    //cg.set(idx,objectnumber,cgin.get(idx,1));
-     ptp.set(idx,objectnumber,ptpin.get(idx,1));
-  }
-
-  //cg.set(3,1,-200.0*T+0.5*(9.81)*T*T);
-  
-  statemutex.unlock();
-}
-
-void StateHistory::setState(MATLAB cgin,MATLAB ptpin,int objectnumber)
-{
-  //This function can be called externally which means we need a mutex for it
   statemutex.lock();
-  
   for (int idx = 1;idx<=3;idx++) {
     cg.set(idx,objectnumber,cgin.get(idx,1));
     ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
-  //Z-axis must be flipped
-  //cg.mult_eq1(3,objectnumber,-1.0);
-  //cg.set(3,1,-200.0*T+0.5*(9.81)*T*T);
-  //cg.disp();
   statemutex.unlock();
 }
 
@@ -683,7 +604,6 @@ void CameraControl::Update(StateHistory state)
       psi = atan2(xcamera[1],xcamera[0]);
       ComputeUp();
     }
-
 }
 
 

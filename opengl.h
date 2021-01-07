@@ -114,18 +114,12 @@ public:
   MATLAB cg,ptp;
   void Initialize(int);
   void setTime(double);
-  void setState(MATLAB,MATLAB,int);
   void getState(MATLAB,MATLAB);
-  void UpdateObject(double,MATLAB,MATLAB,int);
+  void UpdateRender(double,MATLAB,MATLAB,int);
   double getTime();
  private:
   int numobjects_;
   double simtime_;
-};
-
-///VISUALIZER OBJECT CLASS - Holds all the state information
-class VISOBJECT {
- public:
 };
 
 class CameraControl
@@ -198,9 +192,8 @@ class OPENGL {
   OBJSETUP objs;
   //GLDraw draw;
   KeyboardControl keyboard;
-  VISOBJECT* statetime_objects;
   //OpenGL Methods
-  void Initialize(int argc,char** argv,int,int,int,int);
+  void loop(int argc,char** argv,int,int,int,int);
   //GLDraw Methods
   //void drawInitialize();
   //Main Window Methods
@@ -214,6 +207,7 @@ class OPENGL {
 //Create OPENGL variable but make it extern so it isn't created more than once */
 extern OPENGL glhandle_g;
 extern mutex statemutex;
+extern mutex timemutex;
 //Create OPENGL static member functions
 void DrawGLScene();
 void ResizeGLScene(int,int);

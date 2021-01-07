@@ -33,6 +33,6 @@
 
 ///Functions
 void runMainLoop();
-void renderInit(int argc,char** argv);
+void runRenderLoop(int argc,char** argv);
 
 #endif
