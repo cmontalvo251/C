@@ -8,7 +8,7 @@ class environment {
  private:
   int GRAVITY;
  public:
-   MATLAB FGRAV;
+   MATLAB FGRAVI;
    void init(int G);
    void gravitymodel();
    environment(); //constructor   

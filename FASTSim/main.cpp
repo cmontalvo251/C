@@ -8,8 +8,10 @@
 //1/2/2021 - Added point mass model on flat earth, added environment class. Fixed some compilation flags.
 //1/5/2021 - Added opengl but system does not move. Still need to add boost threads to get this to work properly
 //1/6/2021 - opengl model is finally working and ready to go!!!
+//1/7/2021 - 
 
 //Revisions Needed 
+//6DOF Dynamic model
 //force and moment model (sixdof model as well)
 //Joystick if manual mode
 //Sensor block
@@ -107,7 +109,7 @@ int main(int argc,char** argv) {
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
   boost::thread render(runRenderLoop,argc,argv);
-  cross_sleep(2); //Give the render a bit of time to start
+  cross_sleep(1); //Give the render a bit of time to start
   #endif
   /////////////////////////////////////////////////////////////////////////////////////////////
 
