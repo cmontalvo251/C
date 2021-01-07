@@ -49,11 +49,11 @@ void joystick::readJoystickState() {
 
 void joystick::printJoystickState() {
 	printf("Axis State = ");
-   	for (int x = 0;x<num_of_axis;x++){
+   	for (x = 0;x<num_of_axis;x++){
     	printf("%d ",x,axis[x]);
     }
  	printf(" Button State = ");
-    for (int x = 0;x<num_of_buttons;x++){
+    for (x = 0;x<num_of_buttons;x++){
     	printf("%d ",button[x]);
     }
 }

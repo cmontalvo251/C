@@ -15,7 +15,7 @@ using namespace std;
 
 class joystick {
 	private:
-		int joy_fd, *axis=NULL,num_of_axis=0,num_of_buttons=0,x;
+		int joy_fd,*axis=NULL,num_of_axis=0,num_of_buttons=0,x;
 		char *button = NULL,name_of_joystick[NAME_LENGTH];
 		struct js_event js;
 	public:
