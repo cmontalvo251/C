@@ -11,6 +11,7 @@ MATLAB_FILES='MATLAB.cpp MATLAB.h nrutils.h'
 RK4_FILES='RK4.cpp RK4.h'
 OPENGL_FILES='opengl.cpp opengl.h'
 SIXDOF_FILES='Rotation3.cpp Rotation3.h'
+JOYSTICK_FILES='joystick.cpp joystick.h'
 declare -A FILES
 FILES[0]=${GLOBAL_FILES}
 FILES[1]=${DATALOGGER_FILES}
@@ -18,10 +19,11 @@ FILES[2]=${MATLAB_FILES}
 FILES[3]=${RK4_FILES}
 FILES[4]=${OPENGL_FILES}
 FILES[5]=${SIXDOF_FILES}
-FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/ 6DOF/)
+FILES[6]=${JOYSTICK_FILES}
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/ 6DOF/ Joystick/)
 
 ##First Remove Files
-for i in {0..5}
+for i in {0..6}
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES
@@ -31,7 +33,7 @@ do
 	done
 done
 
-for i in {0..5}
+for i in {0..6}
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES

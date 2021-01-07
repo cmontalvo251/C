@@ -3,6 +3,7 @@
 *.lib
 *.blend*
 FASTSim/mathp.*
+FASTSim/joystick.*
 FASTSim/Rotation3.*
 FASTSim/RK4.*
 FASTSim/opengl.*
