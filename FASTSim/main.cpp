@@ -7,22 +7,18 @@
 //1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
 //1/2/2021 - Added point mass model on flat earth, added environment class. Fixed some compilation flags.
 //1/5/2021 - Added opengl but system does not move. Still need to add boost threads to get this to work properly
+//1/6/2021 - opengl model is finally working and ready to go!!!
 
 //Revisions Needed 
 //force and moment model (sixdof model as well)
 //Joystick if manual mode
 //Sensor block
-//Once everything is imported it's time to kick off the main loop which depends on the algorithm.
-//My vote is we do it in this order
-//Send state vector to openGL if rendering and desktop
 //Send state vector via serial if HIL
 //Send state vector to sensor routine if desktop
-//Render OpenGL if turned on
 //Call the sensor block which polls fictitious sensors on desktop
 //Read Joystick or Hardcoded guidance commands (skip if HIL and desktop)
 //Pass Commands and Measurements to autopilot specific to drone being simulated (skip if HIL and desktop)
 //If desktop pass control signals to RK4 routine
-//Integrate RK4 1 step If desktop
 
 #include "main.h"
 
