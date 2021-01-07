@@ -1,13 +1,40 @@
+#!/bin/bash
+
 ##First remove links
 
 ##Location of C.git from Github
 CROOT=../
 
-rm timer.* Datalogger.* MATLAB.* mathp.* nrutils.h RK4.* opengl.*
+GLOBAL_FILES='timer.cpp timer.h mathp.cpp mathp.h'
+DATALOGGER_FILES='Datalogger.cpp Datalogger.h'
+MATLAB_FILES='MATLAB.cpp MATLAB.h nrutils.h'
+RK4_FILES='RK4.cpp RK4.h'
+OPENGL_FILES='opengl.cpp opengl.h'
+declare -A FILES
+FILES[0]=${GLOBAL_FILES}
+FILES[1]=${DATALOGGER_FILES}
+FILES[2]=${MATLAB_FILES}
+FILES[3]=${RK4_FILES}
+FILES[4]=${OPENGL_FILES}
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/)
 
-#Then add the links
-for VARIABLE in timer.cpp timer.h Datalogger.cpp Datalogger.h MATLAB.cpp MATLAB.h mathp.h mathp.cpp nrutils.h RK4.cpp RK4.h opengl.cpp opengl.h
+##First Remove Files
+for i in {0..4}
 do
-    echo 'Making Link for ' $VARIABLE 
-    ln -s ${CROOT}/$VARIABLE $VARIABLE
+	IFILES=${FILES[$i]}
+	for VARIABLE in $IFILES
+	do
+		echo 'Removing File = ' $VARIABLE
+		rm $VARIABLE
+	done
+done
+
+for i in {0..4}
+do
+	IFILES=${FILES[$i]}
+	for VARIABLE in $IFILES
+	do
+		echo 'Making Link for ' ${CROOT}${FILES_SUB_DIR[$i]}$VARIABLE
+		ln -s ${CROOT}/${FILES_SUB_DIR[$i]}$VARIABLE $VARIABLE
+	done
 done
