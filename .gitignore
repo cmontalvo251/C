@@ -2,7 +2,10 @@
 *.OUT
 *.lib
 *.blend*
+FASTSim/aerodynamics.*
+FASTSim/controller.*
 FASTSim/mathp.*
+FASTSim/RCInput.*
 FASTSim/joystick.*
 FASTSim/Rotation3.*
 FASTSim/RK4.*

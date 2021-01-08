@@ -9,9 +9,14 @@ RCInput::RCInput() {
 
 //Here's the initialize routine
 void RCInput::initialize() {
+
+  //Receiver on Raspberry Pi
   #ifdef RECEIVER
   num_of_axis = 8;
-  #else
+  #endif
+
+  ///Joystick on Desktop
+  #ifdef JOYSTICK
   printf("Initializing joystick \n");
   if((joy_fd = open(JOY_DEV,O_RDONLY)) == -1 ) {
     printf("Couldn't open joysticks \n");
@@ -30,12 +35,18 @@ void RCInput::initialize() {
   fcntl(joy_fd,F_SETFL,O_NONBLOCK);
   #endif
 
+  //Running as fast as possible. Just need a dummy variable here
+  #ifdef SIMONLY
+  num_of_axis = 6;
+  #endif
+
   printf("Allocating Axes \n");
   printf("Number of axes = %d \n",num_of_axis);
   axis = (int *) calloc(num_of_axis,sizeof(int));
   axis_id = (int *) calloc(num_of_axis,sizeof(int));
   printf("Done \n");
 
+  //Extra stuff on RPi
   #ifdef RECEIVER
   for (size_t i = 0; i < num_of_axis; i++) {
     axis_id[i] = open_axis(i);
@@ -53,7 +64,9 @@ void RCInput::readRCstate()
   for (int idx = 0;idx<num_of_axis;idx++) {
     axis[idx] = read_axis(idx);
   }
-  #else
+  #endif
+
+  #ifdef JOYSTICK
   // cout << "Current time = " <<  << endl;
   // cout << "Reading Joystick state \n";
   read(joy_fd,&js,sizeof(struct js_event));
@@ -67,6 +80,12 @@ void RCInput::readRCstate()
     break;
   }
   #endif
+
+  #ifdef SIMONLY
+  for (int idx = 0;idx<num_of_axis;idx++) {
+    axis[idx] = 1500; //Middle of PWM signal
+  }
+  #endif
 }
 
 void RCInput::printRCstate(int all) {
@@ -74,7 +93,7 @@ void RCInput::printRCstate(int all) {
   for (x = 0;x<num_of_axis;x++){
     printf("%d ",axis[x]);
   }
-  #ifndef RECEIVER
+  #ifdef JOYSTICK
   if (all == 1) {
     printf(" Button State = ");
     for (x = 0;x<num_of_buttons;x++){

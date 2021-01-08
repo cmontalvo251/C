@@ -10,22 +10,49 @@
 #include <stdlib.h>
 #include <iostream>
 
-//If on the raspberry pi and running HIL or AUTO mode. We need the receiver
-#if defined (HIL) || (AUTO)
+//////////Here are the iterations
+
+////SIMONLY - no rx at all
+////SIL,HIL,AUTO - Need Receiver or Joystick
+////    RPI - Receiver
+////    Arduino - Receiver Ard
+////    Desktop - Joystick 
+
+///Running SIL/HIL/AUTO on RPI - Use Receiver
+#if defined (SIL) || (HIL) || (AUTO)
 #ifdef RPI
 #define RECEIVER
 #endif
 #endif
 
+//?Running in Realtime on Desktop
+//If HIL - RPI handles comms
+#if defined (SIL) && (DESKTOP)
+#define JOYSTICK
+#endif
+
 #ifdef RECEIVER
 //Using a receiver on the Raspberry Pi
 #include <Common/Util.h>
-#define RCIN_SYSFS_PATH "/sys/kernel/rcio/rcin"
-#else
+#endif
+
+#ifdef JOYSTICK
 #include <linux/joystick.h>
+//Using Microsoft X-Box 360 pad 
+//Throttle = 1 (inv)
+//Rudder = 0 
+//Aileron =  3
+//Elevator = 4
+//Left Trigger = 2
+//Right Trigger = 5
+//UD Dpad = 7
+//LR Dpad = 6
+#endif
+
+//Leaving these defines here just in case
+#define RCIN_SYSFS_PATH "/sys/kernel/rcio/rcin"
 #define JOY_DEV "/dev/input/js0"
 #define NAME_LENGTH 80
-#endif
 
 class RCInput {
 public:
@@ -39,7 +66,7 @@ public:
     
     int joy_fd,*axis=NULL,*axis_id=NULL,num_of_axis=0,num_of_buttons=0,x;
     char *button = NULL,name_of_joystick[NAME_LENGTH];
-    #ifndef RECEIVER
+    #ifdef JOYSTICK
     struct js_event js;
     #endif
 private:

@@ -6,8 +6,7 @@ COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
-VEHICLE=-DPORTALCUBE #-DPOINTMASS #-DPORTALCUBE #-DAIRCRAFT #-DQUADCOPTER #-DX8
-EXETYPE=-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
+EXETYPE=-DSIMONLY #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI -DARDUINO
 FLAGS=-DDEBUG
 LIB= -L/usr/local/lib 
@@ -16,9 +15,7 @@ THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We aren't usin
 
 #Flags
 
-##VEHICLE
-#Vehicle can be anything
-#Point Mass, Portal Cube, Aircraft, Quadcopter or DX8
+#VEHICLE TYPE IS SELECTED IN THE MAKE LINKS FILE
 
 ##EXETYPE
 #SIMONLY - this as fast as possible to generate plots
@@ -45,9 +42,9 @@ all: $(CSOURCES) $(CPPSOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LIB) $(RENDER) $(THREAD)
 .c.o:
-	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
 .cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $(VEHICLE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
 clean:
 	rm -rf $(EXECUTABLE) *.o
 rebuild:

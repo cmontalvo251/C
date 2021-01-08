@@ -6,7 +6,7 @@
 
 class environment {
  private:
-  int GRAVITY;
+  int GRAVITY_FLAG;
  public:
    MATLAB FGRAVI;
    void init(int G);

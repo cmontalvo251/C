@@ -2,22 +2,14 @@
 
 //Constructor
 Dynamics::Dynamics() {
-  
-}
-
-void Dynamics::init() {
-  #ifdef POINTMASS
-  NUMSTATES = 6;
-  #endif
+  NUMSTATES = 13; //Using Quaternions
   //Always create these just because I don't want to think about
   //when we actually need them and it's really easy to create them
   cg.zeros(3,1,"Center of Mass");
   ptp.zeros(3,1,"Roll Pitch Yaw");
   FTOTALI.zeros(3,1,"Total Forces Inertial Frame");
 
-  //The following variables are only needed if you're simulating a 6DOF system
-  #ifdef SIXDOF
-  NUMSTATES = 13;
+  //Six DoF Model is always running
   q0123.zeros(4,1,"Quaternions");
   cgdotI.zeros(3,1,"Velocity Inertial");
   cgdotB.zeros(3,1,"Velocity Body Frame");
@@ -32,18 +24,9 @@ void Dynamics::init() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
-  #endif
-
 }
 
 void Dynamics::setState(MATLAB state) {
-  #ifdef POINTMASS
-  cg.set(1,1,state.get(1,1));
-  cg.set(2,1,state.get(2,1));
-  cg.set(3,1,state.get(3,1));
-  //ptp is just zeros because it's a point mass
-  #endif
-  #ifdef SIXDOF
   //First 3 states are inertial position
   cg.set(1,1,state.get(1,1));
   cg.set(2,1,state.get(2,1));
@@ -63,10 +46,18 @@ void Dynamics::setState(MATLAB state) {
   pqr.set(1,1,state.get(11,1));
   pqr.set(2,1,state.get(12,1));
   pqr.set(3,1,state.get(13,1));
-  #endif
 }
 
-void Dynamics::setEnvironment(int G) {
+void Dynamics::initExternalModels(int G,int A) {
+  //If the AERO Model is on we initialize the aero model
+  if (A) {
+    MATLAB var;
+    var.zeros(1,1,"aero model vars");
+    var.set(1,1,A); //Sending Aerodynamics to this var 
+    aero.setup(var);
+  }
+  //Initialize the Gravity model no matter what. The type of model is handled
+  //inside this init routine
   env.init(G);
 }
 
@@ -79,9 +70,23 @@ void Dynamics::setMassProps(MATLAB massdata) {
   Iinv.overwrite(I,"Iinv");
   Iinv.inverse();
 }
-      
 
-void Dynamics::Derivatives(MATLAB State,MATLAB k) {
+void Dynamics::loop(double t,MATLAB State,MATLAB Statedot) {
+  ////////////////////Poll External Inputs////////////////////////////
+  rcin.readRCstate();    
+  //////////////////////////////////////////////////////////////////
+
+  ////////////////////Call the Control loop////////////////////////
+  //This only happens once every timestep
+  controlloop(t,State,Statedot);
+  /////////////////////////////////////////////////////////////////
+}
+
+void Dynamics::controlloop(double time,MATLAB State,MATLAB Statedot) {
+  ctl.loop(time,State,Statedot,rcin.axis);
+}      
+
+void Dynamics::Derivatives(double time,MATLAB State,MATLAB k) {
   //The Derivatives are vehicle specific
 
   //Dynamics boils down to F=ma and M=Ia so we need a force a moment model
@@ -89,27 +94,12 @@ void Dynamics::Derivatives(MATLAB State,MATLAB k) {
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
   //Aerodynamic Model
+  aero.ForceMoment(time,State,k,ctl.ctlcomms);
 
   //Gravity Model
   env.gravitymodel();
 
   ///////////And then finally an acceleration model////////////
-
-  ///This is a point mass with no inertia
-  #ifdef POINTMASS
-  //Kinematics
-  for (int i = 1;i<=3;i++){
-    k.set(i,1,State.get(i+3,1));
-  }
-  //Dynamics
-  for (int i = 4;i<=6;i++) {
-    k.set(i,1,env.FGRAVI.get(i-3,1)/m);
-  }
-  #endif
-
-  //This is a Six Degree of Freedom Dynamic Model
-  #ifdef SIXDOF
-
   //Extract individual States from State Vector
   cgdotB.vecset(1,3,State,8);
   q0123.vecset(1,4,State,4);
@@ -140,11 +130,17 @@ void Dynamics::Derivatives(MATLAB State,MATLAB k) {
   //Rotate Forces to body frame
   ine2bod321.rotateInertial2Body(FTOTALB,FTOTALI);
 
+  //Add Aero Forces and Moments
+  FTOTALB.plus_eq(aero.FAEROB);
+
   //Translational Dynamics
   Kuvw_pqr.cross(pqr,cgdotB);
   FTOTALB.mult_eq(1.0/m); 
   uvwdot.minus(FTOTALB,Kuvw_pqr); 
   k.vecset(8,10,uvwdot,1);
+
+  //Moments vector
+  MTOTALB.overwrite(aero.MAEROB);
 
   ///Rotational Dynamics
   //pqrskew = [0 -r q;r 0 -p;-q p 0];  
@@ -162,7 +158,6 @@ void Dynamics::Derivatives(MATLAB State,MATLAB k) {
   
   //Save pqrdot
   k.vecset(11,13,pqrdot,1);
-  #endif
 
   ////////////////////////////////////////////////////////////////
 }

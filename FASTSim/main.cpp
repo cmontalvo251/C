@@ -4,21 +4,37 @@
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 
 ///Revisions created - 12/10/2020 - Added Loop timer
-//1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using Dynamics class
-//1/2/2021 - Added point mass model on flat earth, added environment class. Fixed some compilation flags.
-//1/5/2021 - Added opengl but system does not move. Still need to add boost threads to get this to work properly
+//1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using 
+//Dynamics class
+//1/2/2021 - Added point mass model on flat earth, added environment class. 
+//Fixed some compilation flags.
+//1/5/2021 - Added opengl but system does not move. Still need to add boost 
+//threads to get this to work properly
 //1/6/2021 - opengl model is finally working and ready to go!!!
-//1/7/2021 - Added 6DOF dynamic model
+//1/7/2021 - Added 6DOF dynamic model. Added RCInput class but it is not 
+//implemented. My suggestion is to make a bare bones aerodynamic model first 
+//and test open loop
 
 //Revisions Needed 
-//aerodynamic model for every vehicle
+//aerodynamic model for every vehicle - My vote is to name every aerodynamic 
+//model aerodynamic.cpp and have the exact same methods in each one. 
+//Then we either #include the one we want to use or we link the appropriate one.
+// My vote is we #include the correct one.
+//My vote is to have it accept a MATLAB vector of channels and a MATLAB state
+// vector
+//Then have it return a FORCEB and MOMENTB which are forces and moments in the 
+///body frame
+//The number of channels is dependent on the model you are using. 
+//For the portalcube we are using - with TAERA1A2 (throttle, aileron, 
+//elevator, rudder,Aux1,Aux2) 
 //Joystick if manual mode
 //Sensor block
 //Send state vector via serial if HIL
 //Send state vector to sensor routine if desktop
 //Call the sensor block which polls fictitious sensors on desktop
 //Read Joystick or Hardcoded guidance commands (skip if HIL and desktop)
-//Pass Commands and Measurements to autopilot specific to drone being simulated (skip if HIL and desktop)
+//Pass Commands and Measurements to autopilot specific to drone being simulated
+// (skip if HIL and desktop)
 //If desktop pass control signals to RK4 routine
 
 #include "main.h"
@@ -43,27 +59,15 @@ RK4 integrator;
 
 //Vehicle Specifics (Every vehicle will have its own dynamic model but everything
 //will be in a Dynamics class)
+//Vehicle is initialized on creation in the constructor
 Dynamics vehicle;
 
 ///DATALOGGER IS ALWAYS RUNNING
 Datalogger logger;
 MATLAB logvars;
 
-//No matter what we need a way to receive commands from the PIC
-//The rcin class can handle anything we throw at it. 
-//Joystick commands or even a receiver on the raspberry pi or an Arduino
-//RCInput rcin;
-
 //////Main/////////////
 int main(int argc,char** argv) {
-
-  /////////////////////////Initialize Vehicle///////////////////////////////
-  vehicle.init();
-  #ifdef DEBUG
-  printf("Vehicle Initialized\n");
-  #endif
-  ///////////////////////////////////////////////////////////////////////////
-
   //////////////////////////Initialize Datalogger//////////////////////////////
   logger.findfile("logs/");
   logger.open();
@@ -72,13 +76,14 @@ int main(int argc,char** argv) {
 
   //////////////////////Import Simulation Flags//////////////////////////////////
   MATLAB simdata;
-  int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",vehicle.NUMSTATES);
+  int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",-99);
   if (!ok) { exit(1); } else {simdata.disp();}
   tfinal = simdata.get(1,1);
   INTEGRATIONRATE = simdata.get(2,1);
   PRINTRATE = simdata.get(3,1); 
   LOGRATE = simdata.get(4,1); //We need to do this no matter what because the LOGRATE is required all the time
-  int GRAVITY = simdata.get(5,1);
+  int GRAVITY_FLAG = simdata.get(5,1);
+  int AERO_FLAG = simdata.get(6,1);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////Initialize timer if code running realtime////////////////////
@@ -103,13 +108,14 @@ int main(int argc,char** argv) {
   integrator.set_ICs(icdata);
   //Send Mass Data to Dynamic Model
   vehicle.setMassProps(massdata);
-  //Initialize Environment
-  vehicle.setEnvironment(GRAVITY);
+  //Initialize Environment and Aero Model
+  vehicle.initExternalModels(GRAVITY_FLAG,AERO_FLAG);
   #ifdef DEBUG
   printf("Integrator Initialized\n");
   #endif
   #endif
-
+  ////////////////////////////////////////////////////////////////////////////
+  
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
   boost::thread render(runRenderLoop,argc,argv);
@@ -174,10 +180,15 @@ void runMainLoop() {
     #endif
     ///////////////////////////////////////////////////////////////////
 
+    //////////////////////Run the Main Vehicle Loop////////////////////
+    //This polls the RC inputs and the controller
+    vehicle.loop(t,integrator.State,integrator.k);
+    ///////////////////////////////////////////////////////////////////
+    
     /////////RK4 INTEGRATION LOOP///////////////
     #ifdef RK4_H
     for (int i = 1;i<=4;i++){
-      vehicle.Derivatives(integrator.StateDel,integrator.k);
+      vehicle.Derivatives(t,integrator.StateDel,integrator.k);
       //integrator.StateDel.disp();
       //integrator.k.disp();
       //PAUSE();
@@ -214,6 +225,7 @@ void runMainLoop() {
         logvars.set(2+i,1,integrator.State.get(i+1,1));
       }
       logger.println(logvars);
+      LOG+=LOGRATE;
     }
     ////////////////////////////////////////////////
 
