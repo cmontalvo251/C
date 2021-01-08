@@ -3,39 +3,48 @@
 
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 
-///Revisions created - 12/10/2020 - Added Loop timer
-//1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using 
-//Dynamics class
-//1/2/2021 - Added point mass model on flat earth, added environment class. 
-//Fixed some compilation flags.
-//1/5/2021 - Added opengl but system does not move. Still need to add boost 
-//threads to get this to work properly
-//1/6/2021 - opengl model is finally working and ready to go!!!
-//1/7/2021 - Added 6DOF dynamic model. Added RCInput class but it is not 
-//implemented. My suggestion is to make a bare bones aerodynamic model first 
-//and test open loop
+/*///Revisions created - 12/10/2020 - Added Loop timer
 
-//Revisions Needed 
-//aerodynamic model for every vehicle - My vote is to name every aerodynamic 
-//model aerodynamic.cpp and have the exact same methods in each one. 
-//Then we either #include the one we want to use or we link the appropriate one.
-// My vote is we #include the correct one.
-//My vote is to have it accept a MATLAB vector of channels and a MATLAB state
-// vector
-//Then have it return a FORCEB and MOMENTB which are forces and moments in the 
-///body frame
-//The number of channels is dependent on the model you are using. 
-//For the portalcube we are using - with TAERA1A2 (throttle, aileron, 
-//elevator, rudder,Aux1,Aux2) 
-//Joystick if manual mode
-//Sensor block
-//Send state vector via serial if HIL
-//Send state vector to sensor routine if desktop
+1/1/2021 - Added Datalogger, RK4 routine and point mass model in space using 
+Dynamics class
+
+1/2/2021 - Added point mass model on flat earth, added environment class. 
+Fixed some compilation flags.
+
+1/5/2021 - Added opengl but system does not move. Still need to add boost 
+threads to get this to work properly
+
+1/6/2021 - opengl model is finally working and ready to go!!!
+
+1/7/2021 - Added 6DOF dynamic model. Added RCInput class but it is not 
+implemented. My suggestion is to make a bare bones aerodynamic model first 
+and test open loop
+
+1/8/2021 - Alright I added placeholders for aerodynamics and controller models with 
+hooks in place. We basically need to test everything I just wrote. My vote is to get
+the fictitious sensors to work. After that my vote is to work on the aircraft autopilot.
+Then to work on the quad autopilot
+
+*/
+
+/* //Revisions Needed 
+
+Need to test
+Aerodynamics
+Autopilot
+RCInput
+
 //Call the sensor block which polls fictitious sensors on desktop
-//Read Joystick or Hardcoded guidance commands (skip if HIL and desktop)
-//Pass Commands and Measurements to autopilot specific to drone being simulated
-// (skip if HIL and desktop)
-//If desktop pass control signals to RK4 routine
+//Send state vector via serial if HIL
+//Read control vector via serial if HIL
+
+Aero and Autopilot models needs
+PortalCube
+Aircraft
+Quad
+X8
+
+*/
 
 #include "main.h"
 
@@ -181,8 +190,11 @@ void runMainLoop() {
     ///////////////////////////////////////////////////////////////////
 
     //////////////////////Run the Main Vehicle Loop////////////////////
-    //This polls the RC inputs and the controller
+    //This polls the RC inputs and the controller but only if we're HIL and DESKTOP
+    //are not defined. Instead we need to send the state vector to the external hardware
+    #if not defined (HIL) && (DESKTOP)
     vehicle.loop(t,integrator.State,integrator.k);
+    #endif
     ///////////////////////////////////////////////////////////////////
     
     /////////RK4 INTEGRATION LOOP///////////////
