@@ -59,6 +59,7 @@ public:
     void initialize();
     void readRCstate();
     void printRCstate(int);
+    void setStickMin();
     //Constructor
     RCInput();
     //Destructor

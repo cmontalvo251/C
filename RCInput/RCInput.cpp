@@ -11,7 +11,8 @@ RCInput::RCInput() {
 void RCInput::initialize() {
 
   //Receiver on Raspberry Pi
-  #ifdef RECEIVER
+  //Or running as fast as possible
+  #if defined (RECEIVER) || (SIMONLY)
   num_of_axis = 8;
   #endif
 
@@ -20,24 +21,21 @@ void RCInput::initialize() {
   printf("Initializing joystick \n");
   if((joy_fd = open(JOY_DEV,O_RDONLY)) == -1 ) {
     printf("Couldn't open joysticks \n");
-    exit(1);
+    printf("Defaulting to Stick min \n");
+    printf("joy_fd = %d \n",joy_fd);
+  } else {
+    printf("Getting information from the joystick \n");
+    ioctl(joy_fd,JSIOCGAXES,&num_of_axis);
+    ioctl(joy_fd,JSIOCGBUTTONS,&num_of_buttons);
+    printf("Number of buttons = %d \n",num_of_buttons);
+    ioctl(joy_fd,JSIOCGNAME(NAME_LENGTH),&name_of_joystick);
+    printf("Name of Joystick = %s \n",name_of_joystick);
+    printf("Allocating Buttons for Joysticks. Cross your fingers \n");
+    button = (char *) calloc(num_of_buttons,sizeof(int));
+    printf("Success!!!! \n");
+    printf("Setting non-blocking mode \n");
+    fcntl(joy_fd,F_SETFL,O_NONBLOCK);
   }
-  printf("Getting information from the joystick \n");
-  ioctl(joy_fd,JSIOCGAXES,&num_of_axis);
-  ioctl(joy_fd,JSIOCGBUTTONS,&num_of_buttons);
-  printf("Number of buttons = %d \n",num_of_buttons);
-  ioctl(joy_fd,JSIOCGNAME(NAME_LENGTH),&name_of_joystick);
-  printf("Name of Joystick = %s \n",name_of_joystick);
-  printf("Allocating Buttons for Joysticks. Cross your fingers \n");
-  button = (char *) calloc(num_of_buttons,sizeof(int));
-  printf("Success!!!! \n");
-  printf("Setting non-blocking mode \n");
-  fcntl(joy_fd,F_SETFL,O_NONBLOCK);
-  #endif
-
-  //Running as fast as possible. Just need a dummy variable here
-  #ifdef SIMONLY
-  num_of_axis = 6;
   #endif
 
   printf("Allocating Axes \n");
@@ -46,7 +44,7 @@ void RCInput::initialize() {
   axis_id = (int *) calloc(num_of_axis,sizeof(int));
   printf("Done \n");
 
-  //Extra stuff on RPi
+  //Extra stuff on RPi using a Receiver
   #ifdef RECEIVER
   for (size_t i = 0; i < num_of_axis; i++) {
     axis_id[i] = open_axis(i);
@@ -58,6 +56,12 @@ void RCInput::initialize() {
   #endif
 }
 
+void RCInput::setStickMin() {
+  for (int idx = 0;idx<num_of_axis;idx++) {
+    axis[idx] = 1500; //Middle of PWM signal
+  }
+}
+
 void RCInput::readRCstate()
 {
   #ifdef RECEIVER
@@ -67,24 +71,26 @@ void RCInput::readRCstate()
   #endif
 
   #ifdef JOYSTICK
-  // cout << "Current time = " <<  << endl;
-  // cout << "Reading Joystick state \n";
-  read(joy_fd,&js,sizeof(struct js_event));
-  // cout << "What is the joystick state? \n";
-  switch (js.type & ~JS_EVENT_INIT) {
-  case JS_EVENT_AXIS:
-    axis[js.number] = js.value;
-    break;
-  case JS_EVENT_BUTTON:
-    button[js.number] = js.value;
-    break;
+  if (joy_fd != -1) {
+    // cout << "Current time = " <<  << endl;
+    // cout << "Reading Joystick state \n";
+    read(joy_fd,&js,sizeof(struct js_event));
+    // cout << "What is the joystick state? \n";
+    switch (js.type & ~JS_EVENT_INIT) {
+    case JS_EVENT_AXIS:
+      axis[js.number] = js.value;
+      break;
+    case JS_EVENT_BUTTON:
+      button[js.number] = js.value;
+      break;
+    }
+  } else {
+    setStickMin();
   }
   #endif
 
   #ifdef SIMONLY
-  for (int idx = 0;idx<num_of_axis;idx++) {
-    axis[idx] = 1500; //Middle of PWM signal
-  }
+  setStickMin();
   #endif
 }
 
