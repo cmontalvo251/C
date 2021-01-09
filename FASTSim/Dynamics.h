@@ -25,18 +25,19 @@ class Dynamics {
   Rotation3 ine2bod321;
   environment env;
   aerodynamics aero;
-  RCInput rcin;
   controller ctl;
  public:
   //Public Functions and vars
   MATLAB cg,ptp;
-  int NUMSTATES;
+  RCInput rcin;
+  int NUMSTATES,NUMLOGS;
   void setState(MATLAB);
   void Derivatives(double time,MATLAB State,MATLAB k);
-  void initExternalModels(int G,int A);
+  void initExtModels(int G,int A,int C);
   void setMassProps(MATLAB massdata);
   void loop(double time,MATLAB State,MATLAB Statedot);
   void controlloop(double time,MATLAB State,MATLAB Statedot);
+  void printRC(int all);
   //Constructor
   Dynamics();
 };

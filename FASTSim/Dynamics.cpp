@@ -24,6 +24,14 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
+
+  //Run the initialize routine for RCInput so we can compute the number of logvars;
+  rcin.initialize();
+
+  //Number of states to log
+  //13 states + time + 8 channels or so on rcin
+  NUMLOGS = NUMSTATES + 1 + rcin.num_of_axis;
+
 }
 
 void Dynamics::setState(MATLAB state) {
@@ -48,7 +56,7 @@ void Dynamics::setState(MATLAB state) {
   pqr.set(3,1,state.get(13,1));
 }
 
-void Dynamics::initExternalModels(int G,int A) {
+void Dynamics::initExtModels(int G,int A,int C) {
   //If the AERO Model is on we initialize the aero model
   if (A) {
     MATLAB var;
@@ -59,6 +67,7 @@ void Dynamics::initExternalModels(int G,int A) {
   //Initialize the Gravity model no matter what. The type of model is handled
   //inside this init routine
   env.init(G);
+  //Initialize control system model  
 }
 
 void Dynamics::setMassProps(MATLAB massdata) {
@@ -78,15 +87,15 @@ void Dynamics::loop(double t,MATLAB State,MATLAB Statedot) {
 
   ////////////////////Call the Control loop////////////////////////
   //This only happens once every timestep
-  controlloop(t,State,Statedot);
+  ctl.loop(t,State,Statedot,rcin.axis);
   /////////////////////////////////////////////////////////////////
 }
 
-void Dynamics::controlloop(double time,MATLAB State,MATLAB Statedot) {
-  ctl.loop(time,State,Statedot,rcin.axis);
-}      
+void Dynamics::printRC(int all) {
+  rcin.printRCstate(all);  
+}
 
-void Dynamics::Derivatives(double time,MATLAB State,MATLAB k) {
+void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   //The Derivatives are vehicle specific
 
   //Dynamics boils down to F=ma and M=Ia so we need a force a moment model
@@ -94,7 +103,7 @@ void Dynamics::Derivatives(double time,MATLAB State,MATLAB k) {
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
   //Aerodynamic Model
-  aero.ForceMoment(time,State,k,ctl.ctlcomms);
+  aero.ForceMoment(t,State,k,ctl.ctlcomms);
 
   //Gravity Model
   env.gravitymodel();

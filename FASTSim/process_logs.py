@@ -10,14 +10,20 @@ except:
     print('You need pdf from Python.git')
     sys.exit()
 
-#Clean Logs
-os.system('./clean_logs')
 
-#Compile software
-os.system('make')
+if len(sys.argv) > 1:
+    print(sys.argv)
+    SIMULATE = int(sys.argv[1])
+else:
+    SIMULATE = 1
 
-#Run Software
-os.system('./FASTSim.exe')
+if SIMULATE == 1:
+    #Clean Logs
+    os.system('./clean_logs')
+    #Compile software
+    os.system('make')
+    #Run Software
+    os.system('./FASTSim.exe')
 
 #Read Log File
 data = np.loadtxt('logs/0.txt')
@@ -33,8 +39,8 @@ time = data[:,0]
 #labels = ['x (m)','y (m)','z (m)','xdot (m/s)','ydot (m/s)','zdot (m/s)']
 #NUMSTATES = 6
 #For sixdof model
-labels = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)']
-NUMSTATES = 13
+labels = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)','Throttle (us)','Aileron (us)','Elevator (us)','Rudder (us)','Aux1','Aux2','Aux3','Aux4']
+NUMSTATES = 21
 
 for x in range(0,NUMSTATES):
     plt.figure()
@@ -43,7 +49,6 @@ for x in range(0,NUMSTATES):
     plt.ylabel(labels[x])
     plt.grid()
     pp.savefig()
-
 
 #For sixdof models
 import sixdof as dof

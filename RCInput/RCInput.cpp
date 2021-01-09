@@ -2,14 +2,9 @@
 
 //constructor class
 RCInput::RCInput() {
-  //Run the initialize routine
-  initialize();
 }
 
-
-//Here's the initialize routine
 void RCInput::initialize() {
-
   //Receiver on Raspberry Pi
   //Or running as fast as possible
   #if defined (RECEIVER) || (SIMONLY)
@@ -56,10 +51,18 @@ void RCInput::initialize() {
   #endif
 }
 
-void RCInput::setStickMin() {
+void RCInput::setStick(int val) {
   for (int idx = 0;idx<num_of_axis;idx++) {
-    axis[idx] = STICK_MIN; //STICK_MIN #define
+    axis[idx] = val; //STICK_MIN #define
   }
+}
+
+void RCInput::setStickNeutral() {
+  setStick(STICK_MIN); //First set all sticks to min
+  //but then set the Aileron, Elevator and Rudder to mid
+  axis[1] = STICK_MID;
+  axis[2] = STICK_MID;
+  axis[3] = STICK_MID;
 }
 
 void RCInput::readRCstate()
@@ -85,23 +88,23 @@ void RCInput::readRCstate()
       break;
     }
   } else {
-    setStickMin();
+    setStickNeutral();
   }
   #endif
 
   #ifdef SIMONLY
-  setStickMin();
+  setStickNeutral();
   #endif
 }
 
 void RCInput::printRCstate(int all) {
-  printf("Axis State = ");
+  //printf("Axis State = ");
   for (x = 0;x<num_of_axis;x++){
     printf("%d ",axis[x]);
   }
   #ifdef JOYSTICK
   if (all == 1) {
-    printf(" Button State = ");
+    //printf(" Button State = ");
     for (x = 0;x<num_of_buttons;x++){
       printf("%d ",button[x]);
     }

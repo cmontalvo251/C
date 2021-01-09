@@ -14,7 +14,7 @@ public:
 	//state is a standard 13x1 vector using quaternions
 	//statedot is a standard 13x1 vector of derivatives
 	//rxcomms is a TAERA1A2 of PWM signals from a receiver
-	void loop(double time,MATLAB state,MATLAB statedot,int* rxcomms);
+	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);
 	void setup(MATLAB var); //var is open ended right now
 	controller(); //constructor
 };

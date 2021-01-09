@@ -69,6 +69,7 @@ RK4 integrator;
 //Vehicle Specifics (Every vehicle will have its own dynamic model but everything
 //will be in a Dynamics class)
 //Vehicle is initialized on creation in the constructor
+//so is the rcin class which is in side the Dynamics class
 Dynamics vehicle;
 
 ///DATALOGGER IS ALWAYS RUNNING
@@ -80,7 +81,7 @@ int main(int argc,char** argv) {
   //////////////////////////Initialize Datalogger//////////////////////////////
   logger.findfile("logs/");
   logger.open();
-  logvars.zeros(vehicle.NUMSTATES+1,1,"Vars to Log"); //All states + time
+  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log"); //All states + time
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////Import Simulation Flags//////////////////////////////////
@@ -93,6 +94,7 @@ int main(int argc,char** argv) {
   LOGRATE = simdata.get(4,1); //We need to do this no matter what because the LOGRATE is required all the time
   int GRAVITY_FLAG = simdata.get(5,1);
   int AERO_FLAG = simdata.get(6,1);
+  int CTL_FLAG = simdata.get(7,1);
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////Initialize timer if code running realtime////////////////////
@@ -108,22 +110,28 @@ int main(int argc,char** argv) {
   //First Initialize integrator and Dynamic Model
   integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
   //Import Initial Conditions, mass properties
-  MATLAB icdata,massdata;
+  MATLAB icdata;
   ok = logger.ImportFile("Input_Files/Initial_Conditions.txt",&icdata,"icdata",vehicle.NUMSTATES);
   if (!ok) { exit(1); } else {icdata.disp();}
-  ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
-  if (!ok) { exit(1); } else {massdata.disp();}
   //Set ICs in integrator 
   integrator.set_ICs(icdata);
-  //Send Mass Data to Dynamic Model
-  vehicle.setMassProps(massdata);
-  //Initialize Environment and Aero Model
-  vehicle.initExternalModels(GRAVITY_FLAG,AERO_FLAG);
   #ifdef DEBUG
   printf("Integrator Initialized\n");
   #endif
   #endif
   ////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////MASS DATA, ENV MODEL, AERO MODEL, CTL MODEL///////////////////
+  MATLAB massdata;
+  ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
+  if (!ok) { exit(1); } else {massdata.disp();}
+  //Send Mass Data to Dynamic Model
+  vehicle.setMassProps(massdata);
+  //Initialize Environment, Aero and Control System
+  vehicle.initExtModels(GRAVITY_FLAG,AERO_FLAG,CTL_FLAG);
+  #ifdef DEBUG
+  printf("Extra Models Initialized \n");
+  #endif
   
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
@@ -193,6 +201,7 @@ void runMainLoop() {
     //This polls the RC inputs and the controller but only if we're HIL and DESKTOP
     //are not defined. Instead we need to send the state vector to the external hardware
     #if not defined (HIL) && (DESKTOP)
+    printf("Running Loop \n");
     vehicle.loop(t,integrator.State,integrator.k);
     #endif
     ///////////////////////////////////////////////////////////////////
@@ -225,6 +234,7 @@ void runMainLoop() {
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         printf("%lf ",integrator.State.get(i+1,1));
       }
+      vehicle.printRC(0); //the zero means just the sticks
       printf("\n");
       PRINT+=PRINTRATE;
     }
@@ -233,8 +243,14 @@ void runMainLoop() {
     ////////////////LOG DATA////////////////////////
     if (LOG<t) {
       logvars.set(1,1,t);
+      int ctr = 2;
       for (int i = 0;i<integrator.NUMSTATES;i++) {
-        logvars.set(2+i,1,integrator.State.get(i+1,1));
+        logvars.set(ctr,1,integrator.State.get(i+1,1));
+        ctr++;
+      }
+      for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
+        logvars.set(ctr,1,vehicle.rcin.axis[i]);
+        ctr++;
       }
       logger.println(logvars);
       LOG+=LOGRATE;

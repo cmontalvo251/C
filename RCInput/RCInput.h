@@ -55,10 +55,18 @@
 #define NAME_LENGTH 80
 
 ///SERVO VALUES
-#define STICK_MAX 2016. /*uS*/
-#define STICK_MIN 992. /*us*/
-#define STICK_MID 1504. /*us*/
-#define IDLE 1200. /*uS*/
+/*
+#define STICK_MAX 2016. //uS
+#define STICK_MIN 992. //uS
+#define STICK_MID 1504. //uS
+#define IDLE 1200. //uS
+*/
+
+//Default simonly vals
+#define STICK_MAX 2000. //uS
+#define STICK_MIN 1000. //uS
+#define STICK_MID 1500. //uS
+#define IDLE 1200. //uS
 
 
 class RCInput {
@@ -66,7 +74,8 @@ public:
     void initialize();
     void readRCstate();
     void printRCstate(int);
-    void setStickMin();
+    void setStick(int val);
+    void setStickNeutral();
     //Constructor
     RCInput();
     //Destructor
