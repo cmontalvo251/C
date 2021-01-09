@@ -49,10 +49,17 @@
 //LR Dpad = 6
 #endif
 
-//Leaving these defines here just in case
+//Leaving these defines here just in case. Some are for RPi and some are for joystick
 #define RCIN_SYSFS_PATH "/sys/kernel/rcio/rcin"
 #define JOY_DEV "/dev/input/js0"
 #define NAME_LENGTH 80
+
+///SERVO VALUES
+#define STICK_MAX 2016. /*uS*/
+#define STICK_MIN 992. /*us*/
+#define STICK_MID 1504. /*us*/
+#define IDLE 1200. /*uS*/
+
 
 class RCInput {
 public:

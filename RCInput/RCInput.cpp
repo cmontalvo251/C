@@ -58,7 +58,7 @@ void RCInput::initialize() {
 
 void RCInput::setStickMin() {
   for (int idx = 0;idx<num_of_axis;idx++) {
-    axis[idx] = 1500; //Middle of PWM signal
+    axis[idx] = STICK_MIN; //STICK_MIN #define
   }
 }
 
