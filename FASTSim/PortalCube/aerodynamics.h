@@ -12,6 +12,9 @@ functions otherwise the software will completely break.
 */
 
 #include "MATLAB.h" //This is needed for variable length arrays as inputs
+#include "mathp.h" //this is for density at sea-level
+#include "timer.h" //for pause function
+#include "RCInput.h" //for stick min values
 
 class aerodynamics {
 	private:

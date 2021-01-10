@@ -24,6 +24,8 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
+  state.zeros(13,1,"Vehicle state vector");
+  statedot.zeros(13,1,"Vehicle statedot vector");
 
   //Run the initialize routine for RCInput so we can compute the number of logvars;
   rcin.initialize();
@@ -34,7 +36,7 @@ Dynamics::Dynamics() {
 
 }
 
-void Dynamics::setState(MATLAB state) {
+void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   //First 3 states are inertial position
   cg.set(1,1,state.get(1,1));
   cg.set(2,1,state.get(2,1));
@@ -54,6 +56,9 @@ void Dynamics::setState(MATLAB state) {
   pqr.set(1,1,state.get(11,1));
   pqr.set(2,1,state.get(12,1));
   pqr.set(3,1,state.get(13,1));
+  //Also set the entire state vector
+  state.overwrite(state_in);
+  statedot.overwrite(statedot_in);
 }
 
 void Dynamics::initExtModels(int G,int A,int C) {
@@ -67,7 +72,10 @@ void Dynamics::initExtModels(int G,int A,int C) {
   //Initialize the Gravity model no matter what. The type of model is handled
   //inside this init routine
   env.init(G);
-  //Initialize control system model  
+  //Initialize control system model
+  CONTROLLER_FLAG_INITIAL = C; //The ctl.loop routine can change the controller flag
+  //in the ctl.loop so we need to save the initial control value in case we need
+  //it for SIMONLY.
   if (C) {
     var.set(1,1,C);
     ctl.setup(var);
@@ -84,17 +92,46 @@ void Dynamics::setMassProps(MATLAB massdata) {
   Iinv.inverse();
 }
 
-void Dynamics::loop(double t,MATLAB State,MATLAB Statedot) {
+void Dynamics::loop(double t) {
+  
   ////////////////////Poll External Inputs////////////////////////////
   rcin.readRCstate();    
+  ////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
+  /*If you're running in SIMONLY. The Input_Files/Simulation_Flags.txt
+  controls the CONTROLLER_FLAG. Since whomever is writing the controller.cpp
+  has jurisdiction on what to do the best way is to simply set Aux1 to HIGH.
+  In this way when you call the control loop you can turn the control
+  system on or off if Aux1 is HIGH
+  */
+  #ifdef SIMONLY
+  if (CONTROLLER_FLAG_INITIAL == 1) {
+    rcin.rxcomm[4] = STICK_MAX;
+  }
+  #endif
+  //////////////////////////////////////////////////////////////////////
+
+  ///////////////////////Call the Sensor Block////////////////////////
+  #ifdef AUTO
+  err.readSensors(); //this calls onboard sensors on the Navio
+  #else
+  err.readSensors(state,statedot); //this simulates sensors
+  #endif
+  ///////////////////////////////////////////////////////////////////
+  
   //////////////////////////////////////////////////////////////////
 
   ////////////////////Call the Control loop////////////////////////
-  //This only happens once every timestep
-  ctl.loop(t,State,Statedot,rcin.rxcomm);
-  //Need to call a saturation block to make sure we don't send a command that's too big
+  ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
+  /////////////////////////////////////////////////////////////////
+
+  /////////////////////Saturation Block/////////////////////////////////
+  /*Need to call a saturation block to make sure we don't send a 
+  command that's too big. This needs to happen here in the dynamics
+  routine because the controller.cpp is written by someone else.
+  */
   saturation_block();
-  //ctl.ctlcomms.disp();
   /////////////////////////////////////////////////////////////////
 }
 

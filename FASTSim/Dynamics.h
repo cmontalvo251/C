@@ -16,28 +16,36 @@
 #include "aerodynamics.h" 
 #include "controller.h"
 
+
+/*This sensor block does alot of different things. If we're running
+SIMONLY or SIL these will call ficitious sensor blocks.
+Even in HIL they will call fictitious sensor blocks. 
+Only in AUTO will we call the onboard sensors
+*/
+#include "sensors.h"
+
 class Dynamics {
  private:
   //Private functions and vars
   MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,MTOTALI,MTOTALB;
-  MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr;
+  MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
   double m;
   Rotation3 ine2bod321;
   environment env;
   aerodynamics aero;
   controller ctl;
+  sensors err;
  public:
   //Public Functions and vars
   MATLAB cg,ptp;
   RCInput rcin;
-  int NUMSTATES,NUMLOGS;
+  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL;
   void saturation_block();
-  void setState(MATLAB);
+  void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
   void initExtModels(int G,int A,int C);
   void setMassProps(MATLAB massdata);
-  void loop(double time,MATLAB State,MATLAB Statedot);
-  void controlloop(double time,MATLAB State,MATLAB Statedot);
+  void loop(double time);
   void printRC(int all);
   //Constructor
   Dynamics();

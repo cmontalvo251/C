@@ -2,7 +2,6 @@
 //own
 
 #include "controller.h"
-#include "RCInput.h" //this is for STICK values
 
 controller::controller() {
 	NUMSIGNALS = 8;
@@ -19,6 +18,24 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		ctlcomms.set(idx+1,1,rxcomms[idx]);
 	}
 
+	//I also want to keep track of timeElapsed so that I can run integrators
+	timeElapsed = t - lastTime;
+	lastTime = t;
+	//printf("Time Elapsed = %lf \n",timeElapsed);
+
+	//First extract the relavent commands from the receiver.
+	double throttle = rxcomms[0];
+	double aileron = rxcomms[1];
+	double elevator = rxcomms[2];
+	double rudder = rxcomms[3];
+	double autopilot = rxcomms[4];
+	//printf("autopilot = %lf \n",autopilot);
+
+	//Determine if the user wants the controller on or not
+	if (autopilot > STICK_MID) {
+		CONTROLLER_FLAG = 1;
+	}
+
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
 		//For this portal cube we want an altitude controller
@@ -29,5 +46,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double kdz = 50;
 		double thrust_comm = kpz*(z-zcommand) + kdz*(zdot) + STICK_MIN;
 		ctlcomms.set(1,1,thrust_comm);
+		//We are then going to code a roll and pitch contoller
+		
 	}
 }

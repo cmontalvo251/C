@@ -9,9 +9,6 @@ functions otherwise the software will completely break.
 */
 
 #include "aerodynamics.h"
-#include "mathp.h" //this is for density at sea-level
-#include "timer.h" //for pause function
-#include "RCInput.h" //for stick min values
 
 //Constructor
 aerodynamics::aerodynamics() {

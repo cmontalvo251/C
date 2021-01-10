@@ -119,6 +119,8 @@ int main(int argc,char** argv) {
   if (!ok) { exit(1); } else {icdata.disp();}
   //Set ICs in integrator 
   integrator.set_ICs(icdata);
+  //Set State of Vehicle for use elsewhere
+  vehicle.setState(integrator.State,integrator.k);
   #ifdef DEBUG
   printf("Integrator Initialized\n");
   #endif
@@ -205,7 +207,7 @@ void runMainLoop() {
     //This polls the RC inputs and the controller but only if we're HIL and DESKTOP
     //are not defined. Instead we need to send the state vector to the external hardware
     #if not defined (HIL) && (DESKTOP)
-    vehicle.loop(t,integrator.State,integrator.k);
+    vehicle.loop(t);
     #endif
     ///////////////////////////////////////////////////////////////////
     
@@ -221,7 +223,7 @@ void runMainLoop() {
     //Integrate time
     t += INTEGRATIONRATE;
     //Set State of Vehicle for use elsewhere
-    vehicle.setState(integrator.State);
+    vehicle.setState(integrator.State,integrator.k);
     #endif
     ////////////////////////////////////////////
 

@@ -13,6 +13,7 @@ OPENGL_FILES='opengl.cpp opengl.h'
 SIXDOF_FILES='Rotation3.cpp Rotation3.h'
 RCINPUT_FILES='RCInput.cpp RCInput.h'
 AERO_CTL_FILES='aerodynamics.cpp aerodynamics.h controller.cpp controller.h'
+NAVIO_FILES='sensors.cpp sensors.h'
 declare -A FILES
 FILES[0]=${GLOBAL_FILES}
 FILES[1]=${DATALOGGER_FILES}
@@ -22,13 +23,14 @@ FILES[4]=${OPENGL_FILES}
 FILES[5]=${SIXDOF_FILES}
 FILES[6]=${RCINPUT_FILES}
 FILES[7]=${AERO_CTL_FILES}
+FILES[8]=${NAVIO_FILES}
 
 #//In this variable below you need to change PortalCube to whichever vehicle 
 #you want to use
-FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/ 6DOF/ RCInput/ FASTSim/PortalCube/)
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/)
 
 ##First Remove Files
-for i in {0..7}
+for i in {0..8}
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES
@@ -38,7 +40,7 @@ do
 	done
 done
 
-for i in {0..7}
+for i in {0..8}
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES
