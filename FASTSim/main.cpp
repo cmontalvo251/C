@@ -28,22 +28,40 @@ Then to work on the quad autopilot
 1/9/2021 - Test aerodynamics and autopilot. Autopilot is not completely done but I'm making
 progress
 
+1/10/2021 - Added full autopilot for portal cube, I have not coded a stabilize mode but I
+I think I know how to do it. If you hold the left joystick you can turn the autopilot on
+and off just like a trainer switch. I also created a mapping function to map the joystick
+keys to standard receiver inputs
+
 */
 
 /* //Revisions Needed 
 
-Need to test
-Add a full autopilot
-Add a stabilize mode like a quad
-Need a way to turn autopilot on and off using the joystick and the simulation_flags file
-Inputs from a Joystick - Have something on the d-pad set the autopilot
+A couple bugs I'd like to fix before moving on to the Aircraft and Quad dynamics
+1.) I'd like the default camera to face object #1 so I don't have to hit C a few times
+2.) right now the camera is in the ground so you can't see the ground. The easiest thing
+to do in my opinion is to put the camera at 0,0,10 or something. The other option would
+be to move all objects down but that sounds like a bad hack. Maybe in the Render.txt
+you can add an offset to shift everything?
+3.) In the dynamics routine I would like to add a stop if you hit the ground. Either full
+stop and you have to restart or make the zdot derivative zero. Don't worry about the sky
+for now. That's too complicated. Once you've made these changes I think you can move 
+to the airplane and quad.
+
+//SIMONLY DESKTOP - Working
+//SIL DESKTOP - Working
+
+//SIMONLY RPI - Needs testing
+//SIL RPI - no need to test but what happens if you compile in this mode?
+//HIL DESKTOP and RPI - Need to add Serial debugging
+//AUTO DESKTOP - What happens if you compile in this mode?
+//AUTO RPI - Need to poll all the sensors
 
 //Call the sensor block which polls fictitious sensors on desktop
 //Send state vector via serial if HIL
 //Read control vector via serial if HIL
 
 Aero and Autopilot models needs
-PortalCube
 Aircraft
 Quad
 X8
