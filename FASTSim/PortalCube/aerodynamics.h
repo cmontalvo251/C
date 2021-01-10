@@ -18,6 +18,9 @@ class aerodynamics {
 		//You can put any private functions or vars in here that you like but it 
 		//must adhere to the standards below
 	public:
+		//This variable turns the aerodynamics model on and off and is set in 
+		//Input_Files/Simulation_Flags.txt
+		int AERODYNAMICS_FLAG=0;
 		//These are 3x1 MATLAB vectors that must be in units of Newtons
 		//and in the body frame
 		MATLAB FAEROB,MAEROB; 

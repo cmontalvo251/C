@@ -58,9 +58,9 @@ void Dynamics::setState(MATLAB state) {
 
 void Dynamics::initExtModels(int G,int A,int C) {
   //If the AERO Model is on we initialize the aero model
+  MATLAB var;
+  var.zeros(1,1,"ext model vars");
   if (A) {
-    MATLAB var;
-    var.zeros(1,1,"aero model vars");
     var.set(1,1,A); //Sending Aerodynamics to this var 
     aero.setup(var);
   }
@@ -68,6 +68,10 @@ void Dynamics::initExtModels(int G,int A,int C) {
   //inside this init routine
   env.init(G);
   //Initialize control system model  
+  if (C) {
+    var.set(1,1,C);
+    ctl.setup(var);
+  }
 }
 
 void Dynamics::setMassProps(MATLAB massdata) {
@@ -87,8 +91,23 @@ void Dynamics::loop(double t,MATLAB State,MATLAB Statedot) {
 
   ////////////////////Call the Control loop////////////////////////
   //This only happens once every timestep
-  ctl.loop(t,State,Statedot,rcin.axis);
+  ctl.loop(t,State,Statedot,rcin.rxcomm);
+  //Need to call a saturation block to make sure we don't send a command that's too big
+  saturation_block();
+  //ctl.ctlcomms.disp();
   /////////////////////////////////////////////////////////////////
+}
+
+void Dynamics::saturation_block() {
+  for (int idx=0;idx<ctl.NUMSIGNALS;idx++) {
+    double val = ctl.ctlcomms.get(idx+1,1);
+    if (val > STICK_MAX) {
+      ctl.ctlcomms.set(idx+1,1,STICK_MAX);
+    }
+    if (val < STICK_MIN) {
+      ctl.ctlcomms.set(idx+1,1,STICK_MIN);
+    }
+  }
 }
 
 void Dynamics::printRC(int all) {

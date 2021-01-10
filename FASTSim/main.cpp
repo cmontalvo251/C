@@ -248,7 +248,7 @@ void runMainLoop() {
         ctr++;
       }
       for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
-        logvars.set(ctr,1,vehicle.rcin.axis[i]);
+        logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
       logger.println(logvars);

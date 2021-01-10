@@ -35,7 +35,7 @@ void RCInput::initialize() {
 
   printf("Allocating Axes \n");
   printf("Number of axes = %d \n",num_of_axis);
-  axis = (int *) calloc(num_of_axis,sizeof(int));
+  rxcomm = (int *) calloc(num_of_axis,sizeof(int));
   axis_id = (int *) calloc(num_of_axis,sizeof(int));
   printf("Done \n");
 
@@ -53,23 +53,23 @@ void RCInput::initialize() {
 
 void RCInput::setStick(int val) {
   for (int idx = 0;idx<num_of_axis;idx++) {
-    axis[idx] = val; //STICK_MIN #define
+    rxcomm[idx] = val; //STICK_MIN #define
   }
 }
 
 void RCInput::setStickNeutral() {
   setStick(STICK_MIN); //First set all sticks to min
   //but then set the Aileron, Elevator and Rudder to mid
-  axis[1] = STICK_MID;
-  axis[2] = STICK_MID;
-  axis[3] = STICK_MID;
+  rxcomm[1] = STICK_MID;
+  rxcomm[2] = STICK_MID;
+  rxcomm[3] = STICK_MID;
 }
 
 void RCInput::readRCstate()
 {
   #ifdef RECEIVER
   for (int idx = 0;idx<num_of_axis;idx++) {
-    axis[idx] = read_axis(idx);
+    rxcomm[idx] = read_axis(idx);
   }
   #endif
 
@@ -81,7 +81,7 @@ void RCInput::readRCstate()
     // cout << "What is the joystick state? \n";
     switch (js.type & ~JS_EVENT_INIT) {
     case JS_EVENT_AXIS:
-      axis[js.number] = js.value;
+      rxcomm[js.number] = js.value;
       break;
     case JS_EVENT_BUTTON:
       button[js.number] = js.value;
@@ -100,7 +100,7 @@ void RCInput::readRCstate()
 void RCInput::printRCstate(int all) {
   //printf("Axis State = ");
   for (x = 0;x<num_of_axis;x++){
-    printf("%d ",axis[x]);
+    printf("%d ",rxcomm[x]);
   }
   #ifdef JOYSTICK
   if (all == 1) {

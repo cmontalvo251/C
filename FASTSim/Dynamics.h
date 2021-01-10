@@ -31,6 +31,7 @@ class Dynamics {
   MATLAB cg,ptp;
   RCInput rcin;
   int NUMSTATES,NUMLOGS;
+  void saturation_block();
   void setState(MATLAB);
   void Derivatives(double time,MATLAB State,MATLAB k);
   void initExtModels(int G,int A,int C);
