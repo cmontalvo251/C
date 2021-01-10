@@ -201,7 +201,6 @@ void runMainLoop() {
     //This polls the RC inputs and the controller but only if we're HIL and DESKTOP
     //are not defined. Instead we need to send the state vector to the external hardware
     #if not defined (HIL) && (DESKTOP)
-    printf("Running Loop \n");
     vehicle.loop(t,integrator.State,integrator.k);
     #endif
     ///////////////////////////////////////////////////////////////////
