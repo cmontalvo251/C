@@ -42,8 +42,8 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double rudderUS = control.get(4,1);
 
 		//Convert throttle signals to thruster value
-		double TMAX = 100;
-		double TORQUEMAX = 1.0;
+		double TMAX = 1000;
+		double TORQUEMAX = 10.0;
 		double max_slope = (STICK_MAX-STICK_MIN);
 		double mid_slope = (STICK_MAX-STICK_MID);
 		double Zthrust = -(throttleUS - STICK_MIN)/max_slope*TMAX;
@@ -98,8 +98,8 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		MAEROB.mult_eq1(3,1,-V*rbar*c*CM);
 		//Add Thruster
 		MAEROB.plus_eq1(1,1,Lthrust);
-		MAEROB.plus_eq1(1,1,Mthrust);
-		MAEROB.plus_eq1(1,1,Nthrust);
+		MAEROB.plus_eq1(2,1,Mthrust);
+		MAEROB.plus_eq1(3,1,Nthrust);
 
 		//FAEROB.disp();
 		//MAEROB.disp();

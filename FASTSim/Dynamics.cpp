@@ -103,10 +103,11 @@ void Dynamics::loop(double t) {
   controls the CONTROLLER_FLAG. Since whomever is writing the controller.cpp
   has jurisdiction on what to do the best way is to simply set Aux1 to HIGH.
   In this way when you call the control loop you can turn the control
-  system on or off if Aux1 is HIGH
+  system on or off if Aux1 is HIGH. It's also possible you're running
+  in SIL mode and the joystick did not initialize
   */
-  #ifdef SIMONLY
-  if (CONTROLLER_FLAG_INITIAL == 1) {
+  #if defined (SIMONLY) || (SIL)
+  if ((CONTROLLER_FLAG_INITIAL == 1) && (rcin.joy_fd == -1)) {
     rcin.rxcomm[4] = STICK_MAX;
   }
   #endif

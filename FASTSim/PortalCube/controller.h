@@ -14,8 +14,8 @@ public:
 	double lastTime = 0; //same with this one
 	MATLAB ctlcomms; //This is a vector of TAERA1A2 in PWM signals
 	//time is in seconds
-	//state is a standard 13x1 vector using quaternions
-	//statedot is a standard 13x1 vector of derivatives
+	//state is a standard 12x1 vector
+	//statedot is a standard 12x1 vector of derivatives
 	//rxcomms is a TAERA1A2 of PWM signals from a receiver
 	int CONTROLLER_FLAG = 0,NUMSIGNALS;
 	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);

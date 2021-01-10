@@ -34,10 +34,13 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//Determine if the user wants the controller on or not
 	if (autopilot > STICK_MID) {
 		CONTROLLER_FLAG = 1;
+	} else {
+		CONTROLLER_FLAG = 0;
 	}
 
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
+		printf("Auto ON \n");
 		//For this portal cube we want an altitude controller
 		double z = state.get(3,1);
 		double zdot = statedot.get(3,1);
@@ -47,6 +50,18 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double thrust_comm = kpz*(z-zcommand) + kdz*(zdot) + STICK_MIN;
 		ctlcomms.set(1,1,thrust_comm);
 		//We are then going to code a roll and pitch contoller
-		
+		double roll = state.get(4,1);
+		double pitch = state.get(5,1); 
+		double p = state.get(10,1);
+		double q = state.get(11,1);
+		double kpE = -100;
+		double kdE = -1000;
+		double rollcommand = 0;
+		double pitchcommand = 0;
+		double roll_comm = kpE*(roll-rollcommand) + kdE*p + STICK_MID;
+		double pitch_comm = kpE*(pitch-pitchcommand) + kdE*q + STICK_MID;
+		ctlcomms.set(2,1,roll_comm);
+		//printf("Aileron = %lf \n",ctlcomms.get(2,1));
+		ctlcomms.set(3,1,pitch_comm);
 	}
 }

@@ -7,9 +7,8 @@ RCInput::RCInput() {
 void RCInput::initialize() {
   //Receiver on Raspberry Pi
   //Or running as fast as possible
-  #if defined (RECEIVER) || (SIMONLY)
-  num_of_axis = 8;
-  #endif
+  num_of_axis = 8; //default num_of_axis to 8 no matter what.
+  //It might change if you have a joystick but at least it's initialized to 8
 
   ///Joystick on Desktop
   #ifdef JOYSTICK
@@ -36,6 +35,7 @@ void RCInput::initialize() {
   printf("Allocating Axes \n");
   printf("Number of axes = %d \n",num_of_axis);
   rxcomm = (int *) calloc(num_of_axis,sizeof(int));
+  joycomm = (int *) calloc(num_of_axis,sizeof(int));
   axis_id = (int *) calloc(num_of_axis,sizeof(int));
   printf("Done \n");
 
@@ -65,6 +65,11 @@ void RCInput::setStickNeutral() {
   rxcomm[3] = STICK_MID;
 }
 
+int RCInput::bit2PWM(int val) {
+  ///the values from the joystick are from -32678 to 32768 which is a 16 bit number
+  return (STICK_MAX-STICK_MID)*val/32768.0 + STICK_MID;
+}
+
 void RCInput::readRCstate()
 {
   #ifdef RECEIVER
@@ -81,12 +86,13 @@ void RCInput::readRCstate()
     // cout << "What is the joystick state? \n";
     switch (js.type & ~JS_EVENT_INIT) {
     case JS_EVENT_AXIS:
-      rxcomm[js.number] = js.value;
+      joycomm[js.number] = bit2PWM(js.value);
       break;
     case JS_EVENT_BUTTON:
       button[js.number] = js.value;
       break;
     }
+    mapjoy2rx();
   } else {
     setStickNeutral();
   }
@@ -95,6 +101,36 @@ void RCInput::readRCstate()
   #ifdef SIMONLY
   setStickNeutral();
   #endif
+}
+
+int RCInput::invert(int val) {
+  //A value that is STICK_MIN will produce STICK_MAX and viceversa
+  int delta = val - STICK_MID;
+  int inverse = -delta;
+  int out = STICK_MID + inverse;
+  return out;
+}
+
+void RCInput::mapjoy2rx() {
+  //So the problem is that my Xbox controller is not mapped properly. Here
+  //is the mapping
+  //Using Microsoft X-Box 360 pad 
+  //Throttle = 1 (inv)
+  //Aileron =  3
+  //Elevator = 4
+  //Rudder = 0 
+  //Left Trigger = 2
+  //Right Trigger = 5
+  //UD Dpad = 7
+  //LR Dpad = 6
+  rxcomm[0] = invert(joycomm[1]);
+  rxcomm[1] = joycomm[3];
+  rxcomm[2] = joycomm[4];
+  rxcomm[3] = joycomm[0];
+  rxcomm[4] = joycomm[2];
+  rxcomm[5] = joycomm[5];
+  rxcomm[6] = joycomm[7];
+  rxcomm[7] = joycomm[6];
 }
 
 void RCInput::printRCstate(int all) {

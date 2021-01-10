@@ -76,12 +76,15 @@ public:
     void printRCstate(int);
     void setStick(int val);
     void setStickNeutral();
+    int bit2PWM(int val);
+    void mapjoy2rx();
+    int invert(int);
     //Constructor
     RCInput();
     //Destructor
     ~RCInput();
     
-    int joy_fd,*rxcomm=NULL,*axis_id=NULL,num_of_axis=0,num_of_buttons=0,x;
+    int joy_fd=-1,*joycomm=NULL,*rxcomm=NULL,*axis_id=NULL,num_of_axis=0,num_of_buttons=0,x;
     char *button = NULL,name_of_joystick[NAME_LENGTH];
     #ifdef JOYSTICK
     struct js_event js;
