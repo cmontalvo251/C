@@ -25,14 +25,18 @@ hooks in place. We basically need to test everything I just wrote. My vote is to
 the fictitious sensors to work. After that my vote is to work on the aircraft autopilot.
 Then to work on the quad autopilot
 
+1/9/2021 - Test aerodynamics and autopilot. Autopilot is not completely done but I'm making
+progress
+
 */
 
 /* //Revisions Needed 
 
 Need to test
-Aerodynamics
-Autopilot
-RCInput
+Add a full autopilot
+Add a stabilize mode like a quad
+Need a way to turn autopilot on and off using the joystick and the simulation_flags file
+Inputs from a Joystick - Have something on the d-pad set the autopilot
 
 //Call the sensor block which polls fictitious sensors on desktop
 //Send state vector via serial if HIL
