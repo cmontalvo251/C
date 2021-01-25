@@ -184,6 +184,13 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   ine2bod321.rotateBody2Inertial(cgdotI,cgdotB);
   k.vecset(1,3,cgdotI,1);
 
+  ///Check for ground plane
+  double z = State.get(3,1);
+  double zdot = k.get(3,1);
+  if ((z > 0) && (zdot > 0)) {
+    k.set(3,1,0);
+  }
+
   ///Rotational Kinematics (Quaternion Derivatives)
   k.set(4,1,(-p*q1-q*q2-r*q3)/2.0);
   k.set(5,1,(p*q0+r*q2-q*q3)/2.0);

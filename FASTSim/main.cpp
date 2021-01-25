@@ -35,21 +35,14 @@ keys to standard receiver inputs
 
 1/25/2021 - Changed the default camera to follow the first object in the series which if
 you set it up correctly is the main object. I also added a zaxis offset to the camera in
-render.txt file so now you can have the camera slightly above the ground
+render.txt file so now you can have the camera slightly above the ground. I also added a
+ground plane check. When you're below the ground and with a negative zdot you stop. It's
+not completely tested but at least it somewhat works for now. I would say the sim is ready
+to add the quadcopter obj and dynamic model.
 
 */
 
 /* //Revisions Needed 
-
-A couple bugs I'd like to fix before moving on to the Aircraft and Quad dynamics
-2.) right now the camera is in the ground so you can't see the ground. The easiest thing
-to do in my opinion is to put the camera at 0,0,10 or something. The other option would
-be to move all objects down but that sounds like a bad hack. Maybe in the Render.txt
-you can add an offset to shift everything?
-3.) In the dynamics routine I would like to add a stop if you hit the ground. Either full
-stop and you have to restart or make the zdot derivative zero. Don't worry about the sky
-for now. That's too complicated. Once you've made these changes I think you can move 
-to the airplane and quad.
 
 //SIMONLY DESKTOP - Working
 //SIL DESKTOP - Working
