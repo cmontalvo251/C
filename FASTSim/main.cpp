@@ -33,12 +33,14 @@ I think I know how to do it. If you hold the left joystick you can turn the auto
 and off just like a trainer switch. I also created a mapping function to map the joystick
 keys to standard receiver inputs
 
+1/25/2021 - Changed the default camera to follow the first object in the series which if
+you set it up correctly is the main object
+
 */
 
 /* //Revisions Needed 
 
 A couple bugs I'd like to fix before moving on to the Aircraft and Quad dynamics
-1.) I'd like the default camera to face object #1 so I don't have to hit C a few times
 2.) right now the camera is in the ground so you can't see the ground. The easiest thing
 to do in my opinion is to put the camera at 0,0,10 or something. The other option would
 be to move all objects down but that sounds like a bad hack. Maybe in the Render.txt
@@ -187,7 +189,12 @@ void runRenderLoop(int argc,char** argv) {
   int Farplane = 10000;
   int width = 600;
   int height = 600;
-  int defaultcamera = 0;
+  int defaultcamera = 3; //This is where you set the default camera
+  //#camera 0-objects-1 = follow cameras
+  //#objects-objects*2 - origin cameras
+  //so a 0 will follow the first object
+  //if there are 3 objects (cube, sky, ground) then defcam = 3 would
+  //be an origin camera following the cube
   glhandle_g.loop(argc,argv,Farplane,width,height,defaultcamera);
 }
 #endif

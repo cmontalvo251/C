@@ -387,7 +387,8 @@ void CameraControl::Initialize(int NumObjects,MATLAB state_cg,MATLAB state_ptp,i
   // if (defaultcamera > NumObjects) {
   //   defaultcamera = 0;
   // }
-  //Default is follow cam behind first object 
+  //Default is follow cam behind first object but I've since changed this to be an 
+  //input to this function
   ctype = defaultcamera;
   rearview = 50;
   //state.cg and state.ptp are MATLAB operators that are 3xN
@@ -399,10 +400,10 @@ void CameraControl::Initialize(int NumObjects,MATLAB state_cg,MATLAB state_ptp,i
   ptp[1] = state_ptp.get(2,1);
   ptp[2] = state_ptp.get(3,1);
   psi = ptp[2];
-  freepos[0] = 0;
+  freepos[0]=0;
   freepos[1]=0;
   freepos[2]=0;
-  freetarget[0] = -10;
+  freetarget[0]=-10;
   freetarget[1]=0;
   freetarget[2]=-1;
   pos[0] = cg[0] - rearview*cos(psi);
@@ -571,11 +572,11 @@ void CameraControl::Update(StateHistory state)
       //and ptp
       idx = ctype;
       for(ii = 0;ii<3;ii++)
-	{
-	  cg[ii] = state.cg.get(ii+1,idx+1);
-	  ptp[ii] = state.ptp.get(ii+1,idx+1);
-	  target[ii] = cg[ii];
-	}
+      {
+        cg[ii] = state.cg.get(ii+1,idx+1);
+        ptp[ii] = state.ptp.get(ii+1,idx+1);
+        target[ii] = cg[ii];
+      }
       double ctheta,stheta,spsi,cpsi;
       ctheta = cos(theta);
       stheta = sin(theta);
@@ -589,23 +590,20 @@ void CameraControl::Update(StateHistory state)
       psi = atan2(xcamera[1],xcamera[0]);
       ComputeUp();
     }
-  else if(ctype < 2*objects)
-    {
+    else if(ctype < 2*objects) {
       //in this case our position is zero but our target
       //is the cg of the aircraft
       idx = ctype - objects;
-      for(ii = 0;ii<3;ii++)
-	{
-	  target[ii] = state.cg.get(ii+1,idx+1);
-	  pos[ii] = 0;
-	}
+      for(ii = 0;ii<3;ii++) {
+        target[ii] = state.cg.get(ii+1,idx+1);
+        pos[ii] = 0;
+      }
       ComputeRange();
       theta = asin(-xcamera[2]);
       psi = atan2(xcamera[1],xcamera[0]);
       ComputeUp();
     }
 }
-
 
 //////////////////MAINWINDOW///////////////////////
 
