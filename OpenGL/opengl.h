@@ -126,10 +126,11 @@ class CameraControl
 {
 public:
   int objects,ctype;
+  double camera_zoffset;
   double rearview;
   double cg[3],ptp[3],freepos[3],freetarget[3],targetdistance;
   double pos[3],target[3],up[3],xcamera[3],psi,theta;
-  void Initialize(int,MATLAB,MATLAB,int);
+  void Initialize(int,MATLAB,MATLAB,int,double);
   void ComputeRange();
   void ComputeUp();
   void Update(StateHistory);

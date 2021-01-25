@@ -1,5 +1,6 @@
 0               !Save Each Frame to a File 1 = on,0 = off
 3  		     	!Number of objects in window 
+10				!Camera Offset Z axis
 Input_Files/objects/portalcube.obj 	!First Object file - No spaces allowed!!
 5.00000  	    !Scale Factor of Object
 1.000000		!Scale Factor of Position

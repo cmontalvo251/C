@@ -34,7 +34,8 @@ and off just like a trainer switch. I also created a mapping function to map the
 keys to standard receiver inputs
 
 1/25/2021 - Changed the default camera to follow the first object in the series which if
-you set it up correctly is the main object
+you set it up correctly is the main object. I also added a zaxis offset to the camera in
+render.txt file so now you can have the camera slightly above the ground
 
 */
 

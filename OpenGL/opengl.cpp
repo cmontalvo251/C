@@ -98,7 +98,9 @@ void OPENGL::loop(int argc,char** argv,int inFarplane,int inWidth,int inHeight,i
       if (state.ok)	 {
         printf("State Ok!! \n");
         //Initialize Camera
-        camera.Initialize(NumObjects,state.cg,state.ptp,defaultcamera);
+        getline(file,input);
+        double camera_offset_zaxis = atof(input.c_str());
+        camera.Initialize(NumObjects,state.cg,state.ptp,defaultcamera,camera_offset_zaxis);
         //Initialize Window
         Farplane = inFarplane;
         Height = inHeight;
@@ -380,8 +382,11 @@ double StateHistory::getTime()
 
 /////////////////CAMERA CONTROL////////////////
 
-void CameraControl::Initialize(int NumObjects,MATLAB state_cg,MATLAB state_ptp,int defaultcamera)
+void CameraControl::Initialize(int NumObjects,MATLAB state_cg,MATLAB state_ptp,int defaultcamera,double cameraoffset_zaxis)
 {
+  ///Set Z offset
+  camera_zoffset = cameraoffset_zaxis;
+
   int ii;
   objects = NumObjects;
   // if (defaultcamera > NumObjects) {
@@ -602,7 +607,11 @@ void CameraControl::Update(StateHistory state)
       theta = asin(-xcamera[2]);
       psi = atan2(xcamera[1],xcamera[0]);
       ComputeUp();
+
+      //Add Offset but only if it's an origina camera
+      pos[2]-=camera_zoffset;
     }
+  
 }
 
 //////////////////MAINWINDOW///////////////////////
