@@ -38,29 +38,42 @@ you set it up correctly is the main object. I also added a zaxis offset to the c
 render.txt file so now you can have the camera slightly above the ground. I also added a
 ground plane check. When you're below the ground and with a negative zdot you stop. It's
 not completely tested but at least it somewhat works for now. I would say the sim is ready
-to add the quadcopter obj and dynamic model.
+to add the quadcopter obj and dynamic model. 
 
 */
 
 /* //Revisions Needed 
 
-//SIMONLY DESKTOP - Working
-//SIL DESKTOP - Working
+/// Things you can do on desktop
 
-//SIMONLY RPI - Needs testing
-//SIL RPI - no need to test but what happens if you compile in this mode?
-//HIL DESKTOP and RPI - Need to add Serial debugging
-//AUTO DESKTOP - What happens if you compile in this mode?
-//AUTO RPI - Need to poll all the sensors
+1.) Need a CAD model of quadcopter
+2.) CAD Model of X8
+2.) Actuator dynamics
+3.) Sensor Noise
+4.) Quadcopter dynamics
+5.) Aircraft dynamics
+6.) X8 dynamics
+7.) Quadcopter autopilot
+8.) aircraft autopilot
+9.) X8 autopilot
 
-//Call the sensor block which polls fictitious sensors on desktop
-//Send state vector via serial if HIL
-//Read control vector via serial if HIL
+//// Things you have to do with an RPI
 
-Aero and Autopilot models needs
-Aircraft
-Quad
-X8
+2.) Run SIMONLY on RPI
+3.) Run SIL on RPI - This mode should probably throw an error in my opinion since you
+can't run opengl. 
+4.) Run HIL on Desktop and RPI - You need to write two instances of the same software.
+The RPI/HIL version will accept a polluted state vector from the computer and run that
+through the control algorithm and then pass back the control commands to the integrator.
+So serialListens and SerialResponds etc will need to be written to send data back and
+forth
+5.) AUTO - In this mode the sensors will be called in the loop and the commands will
+be compute using the autopilot. These commands will then be sent to the actuators.
+6.) RPI IMU
+7.) RPI Rcin needs to be overhauled
+8.) RPI Rcout needs to be overhauled
+9.) RPI GPS
+10.) RPI Barometer - This one bugs me the most
 
 */
 
