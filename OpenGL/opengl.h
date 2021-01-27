@@ -184,6 +184,7 @@ class OPENGL {
   int savepics,counter,itime;
   int ok;
   int Farplane;
+  int ready = 0;
   double simtime,initial;
   Image *framebuffer;
   //MainWindow window;

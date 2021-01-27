@@ -145,6 +145,7 @@ void OPENGL::loop(int argc,char** argv,int inFarplane,int inWidth,int inHeight,i
         //Setup Keyboard Control
         keyboard.Initialize();
         printf("Starting Visualizer \n");
+        ready = 1; //this tells everyone else that you're working
       	//Kick Off Program
 	      glutMainLoop(); 
       } else {

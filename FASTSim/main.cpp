@@ -40,16 +40,32 @@ ground plane check. When you're below the ground and with a negative zdot you st
 not completely tested but at least it somewhat works for now. I would say the sim is ready
 to add the quadcopter obj and dynamic model. 
 
+1/26/2021 - Added some comments to make sure I know what to do next. I made a CAD for a 
+quadcopter but it sucks. I downloaded a *.blend from the internet and tried to make an
+OBJ but it just looks terrible. I did learn alot though. What you need to do is add a 
+texture to the UV tab. Then select all the vertices in edit of your object and hit U 
+for unwrap. Once you do that you can export everything to an OBJ. If you did it right
+you will see v for vertices vn for normals vt for texture vertices and then f for face
+in the format f v/vt/vn. The quadcopter I did create was so freaking big that the 
+integrator would just kind of keep integrating in the background before you could
+see what was happening. So I created a wait loop in the main routine here to cross_sleep
+until the opengl routine was operational. My recommendation is to get a better CAD model
+by just building a CAD model yourself or getting a grad student to do it.
+
 */
 
 /* //Revisions Needed 
 
-/// Things you can do on desktop
+////Things to do before you move to FASTPilot
 
-1.) Need a CAD model of quadcopter
-2.) CAD Model of X8
 2.) Actuator dynamics
 3.) Sensor Noise
+
+/// Things you can do on desktop
+
+0.) Link code to FASTPilot
+1.) Need a CAD model of quadcopter
+2.) CAD Model of X8
 4.) Quadcopter dynamics
 5.) Aircraft dynamics
 6.) X8 dynamics
@@ -128,14 +144,6 @@ int main(int argc,char** argv) {
   int CTL_FLAG = simdata.get(7,1);
   //////////////////////////////////////////////////////////////////////////////
 
-  //////////////////Initialize timer if code running realtime////////////////////
-  #ifdef REALTIME
-  startTime = timer.getTimeSinceStart();
-  current_time = timer.getTimeSinceStart() - startTime;
-  PRINTRATE = 1.0;
-  #endif
-  ///////////////////////////////////////////////////////////////////////////////
-
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
   #ifdef RK4_H
   //First Initialize integrator and Dynamic Model
@@ -169,7 +177,10 @@ int main(int argc,char** argv) {
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
   boost::thread render(runRenderLoop,argc,argv);
-  cross_sleep(1); //Give the render a bit of time to start
+  //Wait for the opengl routine to actually start
+  while (glhandle_g.ready == 0) {
+    cross_sleep(1);
+  }
   #endif
   /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -212,6 +223,14 @@ void runMainLoop() {
   #ifdef DEBUG
   printf("Running MainLoop \n");
   #endif
+
+  //////////////////Initialize timer if code running realtime////////////////////
+  #ifdef REALTIME
+  startTime = timer.getTimeSinceStart();
+  current_time = timer.getTimeSinceStart() - startTime;
+  PRINTRATE = 1.0;
+  #endif
+  ///////////////////////////////////////////////////////////////////////////////
 
   //Kick off main while loop
   while (t < tfinal) {
