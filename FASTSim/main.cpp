@@ -52,6 +52,10 @@ see what was happening. So I created a wait loop in the main routine here to cro
 until the opengl routine was operational. My recommendation is to get a better CAD model
 by just building a CAD model yourself or getting a grad student to do it.
 
+1/27/2021 - Still kind of upset at how last night went I created a simple quadcopter.obj
+and threw it into FASTPilot. That's a private repo but the fact is you can make your own
+obj file provided you use the same format as the cube that's in this repo.
+
 */
 
 /* //Revisions Needed 
@@ -64,7 +68,6 @@ by just building a CAD model yourself or getting a grad student to do it.
 /// Things you can do on desktop
 
 0.) Link code to FASTPilot
-1.) Need a CAD model of quadcopter
 2.) CAD Model of X8
 4.) Quadcopter dynamics
 5.) Aircraft dynamics
