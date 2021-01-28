@@ -62,8 +62,18 @@ obj file provided you use the same format as the cube that's in this repo.
 
 ////Things to do before you move to FASTPilot
 
-2.) Actuator dynamics
-3.) Sensor Noise
+2.) Actuator dynamics and actuator errors - Not every motor is going to produce the exact
+same amount of thrust. Nor is deflecting 30 degrees on the elevator actually going to produce
+30 degrees. So add a noise output to the control command maybe. No don't do that. Add a noise
+value to the actuator itself. not sure how to do that yet with actuator dynamics but we will 
+get there.
+3.) Sensor Noise - My vote is for you to add this as an input in the input files deck. 
+Then if enabled you will create sensor noise using a sensor.err file. Then I suggest you
+make a err.out file that has t,polluted states so you can read this in and plot. You can
+do all of this using 
+4.) Add a control cycle - when the autopilot turns on and running in SIL or SIMONLY mode
+you need something that waits for the control routine to run. It can't just run every time
+step.
 
 /// Things you can do on desktop
 
