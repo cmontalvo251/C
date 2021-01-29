@@ -40,7 +40,9 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
+		#ifdef SIL 
 		printf("Auto ON \n");
+		#endif
 		//For this portal cube we want an altitude controller
 		double z = state.get(3,1);
 		double zdot = statedot.get(3,1);
@@ -50,8 +52,8 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double thrust_comm = kpz*(z-zcommand) + kdz*(zdot) + STICK_MIN;
 		ctlcomms.set(1,1,thrust_comm);
 		//We are then going to code a roll and pitch contoller
-		double roll = state.get(4,1);
-		double pitch = state.get(5,1); 
+		double roll = state.get(4,1)*PI/180.0;
+		double pitch = state.get(5,1)*PI/180.0;  //convert to radians
 		double p = state.get(10,1);
 		double q = state.get(11,1);
 		double kpE = -100;

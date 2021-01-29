@@ -4,4 +4,5 @@
 0.01  !Data logging rate // seconds
 1    !Gravity Model (0=off,1=flat earth 9.81 m/s^2)
 1	 !Aero Model (0=off,1=on)
-0	 !Control System (only used without PIC 0=off,1=on)
+1	 !Control System (only used without PIC 0=off,1=on)
+0	 !Sensor Errors (0=off,1=on)

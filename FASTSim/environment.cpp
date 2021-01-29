@@ -11,7 +11,6 @@ void environment::init(int G){
 
 void environment::gravitymodel() {
   FGRAVI.mult_eq(0); //zero out gravity
-
   if (GRAVITY_FLAG == 1) {
     //Flat Earth model
     FGRAVI.set(3,1,GEARTH);

@@ -33,18 +33,19 @@ class Dynamics {
   Rotation3 ine2bod321;
   environment env;
   aerodynamics aero;
-  controller ctl;
-  sensors err;
  public:
   //Public Functions and vars
   MATLAB cg,ptp;
   RCInput rcin;
+  controller ctl;
+  sensors err;
   int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL;
   void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
   void initExtModels(int G,int A,int C);
   void setMassProps(MATLAB massdata);
+  void initErrModel(MATLAB sensordata);
   void loop(double time);
   void printRC(int all);
   //Constructor

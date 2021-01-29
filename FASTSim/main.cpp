@@ -56,6 +56,11 @@ by just building a CAD model yourself or getting a grad student to do it.
 and threw it into FASTPilot. That's a private repo but the fact is you can make your own
 obj file provided you use the same format as the cube that's in this repo.
 
+1/28/2021 - Sensors errors have been added. It doesn't necessarily work and there's a ton
+of holes in the system but hey you can add sensor errors and sensor noise and you can plot
+the output of those sensors. Anyway the next thing to add in my opinion is the control
+cycle. That seems like an easy thing to add
+
 */
 
 /* //Revisions Needed 
@@ -67,13 +72,10 @@ same amount of thrust. Nor is deflecting 30 degrees on the elevator actually goi
 30 degrees. So add a noise output to the control command maybe. No don't do that. Add a noise
 value to the actuator itself. not sure how to do that yet with actuator dynamics but we will 
 get there.
-3.) Sensor Noise - My vote is for you to add this as an input in the input files deck. 
-Then if enabled you will create sensor noise using a sensor.err file. Then I suggest you
-make a err.out file that has t,polluted states so you can read this in and plot. You can
-do all of this using 
 4.) Add a control cycle - when the autopilot turns on and running in SIL or SIMONLY mode
 you need something that waits for the control routine to run. It can't just run every time
-step.
+step. My suggestion is to use the control flag. So set it to a double and whatever the value
+of the variable is the duty cycle for the controller
 
 /// Things you can do on desktop
 
@@ -103,6 +105,16 @@ be compute using the autopilot. These commands will then be sent to the actuator
 8.) RPI Rcout needs to be overhauled
 9.) RPI GPS
 10.) RPI Barometer - This one bugs me the most
+
+///Potential Issues in the future
+
+1.) We have an issue with which variables we log to the SD card.
+Right now the number of variables is set in the Dynamics.cpp setup routine
+but it seems more realistic to have the programmer decide which variables they want
+logged to the SD card. As such I wonder if in the init routine for the logger
+we compute which states we want logged. I think once we start porting this over
+to the Raspberry Pi and running in AUTO mode we will have to start doing a large amount
+of overhaul to get this to work.
 
 */
 
@@ -151,10 +163,13 @@ int main(int argc,char** argv) {
   tfinal = simdata.get(1,1);
   INTEGRATIONRATE = simdata.get(2,1);
   PRINTRATE = simdata.get(3,1); 
-  LOGRATE = simdata.get(4,1); //We need to do this no matter what because the LOGRATE is required all the time
+  LOGRATE = simdata.get(4,1); 
+  //These are extras that we only need if we are integrating the but it doesn't
+  //Require any computation time except on startup to read them 
   int GRAVITY_FLAG = simdata.get(5,1);
   int AERO_FLAG = simdata.get(6,1);
   int CTL_FLAG = simdata.get(7,1);
+  int ERROR_FLAG = simdata.get(8,1);
   //////////////////////////////////////////////////////////////////////////////
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
@@ -175,7 +190,7 @@ int main(int argc,char** argv) {
   #endif
   ////////////////////////////////////////////////////////////////////////////
 
-  /////////////////////////////MASS DATA, ENV MODEL, AERO MODEL, CTL MODEL///////////////////
+  /////////////////////////////MASS DATA, ENV MODEL, SENSOR MODEL, AERO MODEL, CTL MODEL///////////////////
   MATLAB massdata;
   ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
   if (!ok) { exit(1); } else {massdata.disp();}
@@ -183,6 +198,15 @@ int main(int argc,char** argv) {
   vehicle.setMassProps(massdata);
   //Initialize Environment, Aero and Control System
   vehicle.initExtModels(GRAVITY_FLAG,AERO_FLAG,CTL_FLAG);
+  #ifdef RK4_H
+  //Initialize the Error Model but only if we're running the integrator
+  if (ERROR_FLAG) {
+    MATLAB sensordata;
+    ok = logger.ImportFile("Input_Files/Sensor_Errors.txt",&sensordata,"sensordata",-99); //-99 for automatic length array
+    if (!ok) { exit(1); } else {sensordata.disp();}    
+    vehicle.initErrModel(sensordata);
+  }
+  #endif
   #ifdef DEBUG
   printf("Extra Models Initialized \n");
   #endif
@@ -303,7 +327,7 @@ void runMainLoop() {
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         printf("%lf ",integrator.State.get(i+1,1));
       }
-      vehicle.printRC(0); //the zero means just the sticks
+      //vehicle.printRC(0); //the zero means just the sticks
       printf("\n");
       PRINT+=PRINTRATE;
     }
@@ -313,12 +337,26 @@ void runMainLoop() {
     if (LOG<t) {
       logvars.set(1,1,t);
       int ctr = 2;
+      #ifdef RK4_H
+      //Integrator States
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         logvars.set(ctr,1,integrator.State.get(i+1,1));
         ctr++;
       }
+      #endif
+      //Error States
+      for (int i = 0;i<integrator.NUMSTATES-1;i++) {
+        logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
+        ctr++;
+      }      
+      //Receiver Commands
       for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
         logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
+        ctr++;
+      }
+      //Control Commands
+      for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
+        logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
         ctr++;
       }
       logger.println(logvars);

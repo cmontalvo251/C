@@ -39,16 +39,27 @@ time = data[:,0]
 #labels = ['x (m)','y (m)','z (m)','xdot (m/s)','ydot (m/s)','zdot (m/s)']
 #NUMSTATES = 6
 #For sixdof model
-labels = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)','Throttle (us)','Aileron (us)','Elevator (us)','Rudder (us)','Aux1','Aux2','Aux3','Aux4']
-NUMSTATES = 21
+state_vars = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)']
+sensor_vars = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (rad/s)','Sensor q (rad/s)','Sensor r (rad/s)']
+rcin_vars = ['Throttle (us)','Aileron (us)','Elevator (us)','Rudder (us)','Aux1','Aux2','Aux3','Aux4']
+ctl_vars = ['Throttle Command (us)','Aileron Command (us)','Elevator Command (us)','Rudder Command (us)','Aux1 Command (us)','Aux2 Command (us)','Aux3 Command (us)','Aux4 Command (us)']
 
-for x in range(0,NUMSTATES):
+NUMVARS = len(state_vars) + len(sensor_vars) + len(rcin_vars) + len(ctl_vars)
+
+labels = state_vars + sensor_vars + rcin_vars + ctl_vars
+
+###Print All Vars Raw
+for x in range(0,NUMVARS):
     plt.figure()
     plt.plot(time,data[:,x+1])
     plt.xlabel('Time (sec)')
     plt.ylabel(labels[x])
+    print(labels[x])
     plt.grid()
     pp.savefig()
+
+pp.close()
+sys.exit()
 
 #For sixdof models
 import sixdof as dof

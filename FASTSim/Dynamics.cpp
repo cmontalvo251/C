@@ -31,9 +31,9 @@ Dynamics::Dynamics() {
   rcin.initialize();
 
   //Number of states to log
-  //13 states + time + 8 channels or so on rcin
-  NUMLOGS = NUMSTATES + 1 + rcin.num_of_axis;
-
+  //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
+  // + ctlcommands (8 - control commands)
+  NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8;
 }
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
@@ -69,8 +69,7 @@ void Dynamics::initExtModels(int G,int A,int C) {
     var.set(1,1,A); //Sending Aerodynamics to this var 
     aero.setup(var);
   }
-  //Initialize the Gravity model no matter what. The type of model is handled
-  //inside this init routine
+  //Initialize the Gravity model no matter what. 
   env.init(G);
   //Initialize control system model
   CONTROLLER_FLAG_INITIAL = C; //The ctl.loop routine can change the controller flag
@@ -80,6 +79,10 @@ void Dynamics::initExtModels(int G,int A,int C) {
     var.set(1,1,C);
     ctl.setup(var);
   }
+}
+
+void Dynamics::initErrModel(MATLAB sensordata) {
+  err.initSensorErr(sensordata);
 }
 
 void Dynamics::setMassProps(MATLAB massdata) {
@@ -124,6 +127,7 @@ void Dynamics::loop(double t) {
   //////////////////////////////////////////////////////////////////
 
   ////////////////////Call the Control loop////////////////////////
+  ////////////////////Use the err state variables//////////////////
   ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
   /////////////////////////////////////////////////////////////////
 
