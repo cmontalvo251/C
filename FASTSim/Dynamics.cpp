@@ -32,8 +32,8 @@ Dynamics::Dynamics() {
 
   //Number of states to log
   //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
-  // + ctlcommands (8 - control commands)
-  NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8;
+  // + ctlcommands (8 - control commands) + 6 forces/moments
+  NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8 + 6;
 }
 
 void Dynamics::setRates(double RCRATE,double CTLRATE) {
@@ -66,14 +66,18 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   statedot.overwrite(statedot_in);
 }
 
-void Dynamics::initExtModels(int G,int A,int C) {
+void Dynamics::initAerodynamics(int A,double percent) {
   //If the AERO Model is on we initialize the aero model
-  MATLAB var;
-  var.zeros(1,1,"ext model vars");
   if (A) {
+    MATLAB var;
+    var.zeros(2,1,"aero vars");
     var.set(1,1,A); //Sending Aerodynamics to this var 
+    var.set(2,1,percent);
     aero.setup(var);
   }
+}
+
+void Dynamics::initExtModels(int G,int C) {
   //Initialize the Gravity model no matter what. 
   env.init(G);
   //Initialize control system model
@@ -81,6 +85,8 @@ void Dynamics::initExtModels(int G,int A,int C) {
   //in the ctl.loop so we need to save the initial control value in case we need
   //it for SIMONLY.
   if (C) {
+    MATLAB var;
+    var.zeros(1,1,"ctl vars");
     var.set(1,1,C);
     ctl.setup(var);
   }

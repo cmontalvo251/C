@@ -32,18 +32,19 @@ class Dynamics {
   double m,tlastRCread=-99,tlastCTL=-99,tRC,tCTL;
   Rotation3 ine2bod321;
   environment env;
-  aerodynamics aero;
  public:
   //Public Functions and vars
   MATLAB cg,ptp;
   RCInput rcin;
   controller ctl;
+  aerodynamics aero;
   sensors err;
   int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL;
   void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
-  void initExtModels(int G,int A,int C);
+  void initExtModels(int G,int C);
+  void initAerodynamics(int A,double);
   void setMassProps(MATLAB massdata);
   void initErrModel(MATLAB sensordata);
   void loop(double time);

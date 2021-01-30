@@ -19,8 +19,9 @@ aerodynamics::aerodynamics() {
 
 void aerodynamics::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
-	//Right now there are no standards for var but it is here in case we need it
 	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
+	ACTUATOR_ERROR_PERCENT = var.get(2,1); //this variable sets the amount of actuator error that you can use
+	//to add errors to your control surfaces or thrusters. This variable is set in Simulation_Flags.txt
 	#ifdef DEBUG
 	printf("Aerodynamics Initialized \n");
 	#endif
@@ -50,6 +51,12 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double Lthrust = (aileronUS - STICK_MID)/mid_slope*TORQUEMAX;
 		double Mthrust = (elevatorUS - STICK_MID)/mid_slope*TORQUEMAX;
 		double Nthrust = (rudderUS - STICK_MID)/mid_slope*TORQUEMAX;
+
+		////ADD Actuator errors
+		Zthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
+		Lthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
+		Mthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
+		Nthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
 
 		//Aero Parameters
 		double S = 0.1; //m^2

@@ -62,7 +62,15 @@ the output of those sensors. Anyway the next thing to add in my opinion is the c
 cycle. That seems like an easy thing to add
 
 1/29/2021 - Add polling rates for the Receiver and the control loop. I think that's every
-thing we need for polling rates. I would say the next thing to work on is actuator dynamics
+thing we need for polling rates. I would say the next thing to work on is actuator dynamics.
+For actuator dynamics I'm not entirely sure how I want to do this. So forces in this routine
+are all in the aerodynamics model. So I think we need to have an extra error value (in percent)
+in the simulation flags portion and then send it to the aero model. Let's try that. Oh ok wait 
+this is for actuator errors. Lol. Let's just do that anyway right now. Ok not entirely sure if it's
+exactly how I want it but actuator errors are in the sim now. It's in the aerodynamics model which I'm
+not too crazy about. I'd rather it be in maybe the dynamics class or something but I'm not sure what
+to do here. At least the hooks are in there properly. So the last thing I need to do is add the actuator
+dynamics. Can you tell I've been delaying the crap out of it?
 
 */
 
@@ -70,11 +78,7 @@ thing we need for polling rates. I would say the next thing to work on is actuat
 
 ////Things to do before you move to FASTPilot
 
-2.) Actuator dynamics and actuator errors - Not every motor is going to produce the exact
-same amount of thrust. Nor is deflecting 30 degrees on the elevator actually going to produce
-30 degrees. So add a noise output to the control command maybe. No don't do that. Add a noise
-value to the actuator itself. not sure how to do that yet with actuator dynamics but we will 
-get there.
+2.) Actuator dynamics 
 
 /// Things you can do on desktop
 
@@ -173,6 +177,7 @@ int main(int argc,char** argv) {
   int AERO_FLAG = simdata.get(8,1);
   int CTL_FLAG = simdata.get(9,1);
   int ERROR_FLAG = simdata.get(10,1);
+  int ACTUATOR_ERROR_PERCENTAGE = simdata.get(11,1);
   //////////////////////////////////////////////////////////////////////////////
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
@@ -200,7 +205,8 @@ int main(int argc,char** argv) {
   //Send Mass Data to Dynamic Model
   vehicle.setMassProps(massdata);
   //Initialize Environment, Aero and Control System
-  vehicle.initExtModels(GRAVITY_FLAG,AERO_FLAG,CTL_FLAG);
+  vehicle.initAerodynamics(AERO_FLAG,ACTUATOR_ERROR_PERCENTAGE);
+  vehicle.initExtModels(GRAVITY_FLAG,CTL_FLAG);
   #ifdef RK4_H
   //Initialize the Error Model but only if we're running the integrator
   if (ERROR_FLAG) {
@@ -360,6 +366,15 @@ void runMainLoop() {
       //Control Commands
       for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
         logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
+        ctr++;
+      }
+      //Forces and Moments
+      for (int i = 0;i<3;i++) {
+        logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
+        ctr++;
+      }
+      for (int i = 0;i<3;i++) {
+        logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
         ctr++;
       }
       logger.println(logvars);

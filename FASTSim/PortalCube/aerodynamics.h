@@ -20,6 +20,7 @@ class aerodynamics {
 	private:
 		//You can put any private functions or vars in here that you like but it 
 		//must adhere to the standards below
+		double ACTUATOR_ERROR_PERCENT;
 	public:
 		//This variable turns the aerodynamics model on and off and is set in 
 		//Input_Files/Simulation_Flags.txt
