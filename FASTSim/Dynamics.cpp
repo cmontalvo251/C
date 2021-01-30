@@ -36,6 +36,11 @@ Dynamics::Dynamics() {
   NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8;
 }
 
+void Dynamics::setRates(double RCRATE,double CTLRATE) {
+  tRC = RCRATE;
+  tCTL = CTLRATE;
+}
+
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   //First 3 states are inertial position
   cg.set(1,1,state.get(1,1));
@@ -98,7 +103,10 @@ void Dynamics::setMassProps(MATLAB massdata) {
 void Dynamics::loop(double t) {
   
   ////////////////////Poll External Inputs////////////////////////////
-  rcin.readRCstate();    
+  if (t > tlastRCread + tRC) {
+    rcin.readRCstate();    
+    tlastRCread = t;
+  }
   ////////////////////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////////////////////////
@@ -128,15 +136,18 @@ void Dynamics::loop(double t) {
 
   ////////////////////Call the Control loop////////////////////////
   ////////////////////Use the err state variables//////////////////
-  ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
-  /////////////////////////////////////////////////////////////////
+  if (t > tlastCTL + tCTL) {
+    tlastCTL = t;
+    ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
+    /////////////////////////////////////////////////////////////////
 
-  /////////////////////Saturation Block/////////////////////////////////
-  /*Need to call a saturation block to make sure we don't send a 
-  command that's too big. This needs to happen here in the dynamics
-  routine because the controller.cpp is written by someone else.
-  */
-  saturation_block();
+    /////////////////////Saturation Block/////////////////////////////////
+    /*Need to call a saturation block to make sure we don't send a 
+    command that's too big. This needs to happen here in the dynamics
+    routine because the controller.cpp is written by someone else.
+    */
+    saturation_block();
+  }
   /////////////////////////////////////////////////////////////////
 }
 

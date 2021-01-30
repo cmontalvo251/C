@@ -29,7 +29,7 @@ class Dynamics {
   //Private functions and vars
   MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
-  double m;
+  double m,tlastRCread=-99,tlastCTL=-99,tRC,tCTL;
   Rotation3 ine2bod321;
   environment env;
   aerodynamics aero;
@@ -48,6 +48,7 @@ class Dynamics {
   void initErrModel(MATLAB sensordata);
   void loop(double time);
   void printRC(int all);
+  void setRates(double,double);
   //Constructor
   Dynamics();
 };

@@ -61,6 +61,9 @@ of holes in the system but hey you can add sensor errors and sensor noise and yo
 the output of those sensors. Anyway the next thing to add in my opinion is the control
 cycle. That seems like an easy thing to add
 
+1/29/2021 - Add polling rates for the Receiver and the control loop. I think that's every
+thing we need for polling rates. I would say the next thing to work on is actuator dynamics
+
 */
 
 /* //Revisions Needed 
@@ -72,10 +75,6 @@ same amount of thrust. Nor is deflecting 30 degrees on the elevator actually goi
 30 degrees. So add a noise output to the control command maybe. No don't do that. Add a noise
 value to the actuator itself. not sure how to do that yet with actuator dynamics but we will 
 get there.
-4.) Add a control cycle - when the autopilot turns on and running in SIL or SIMONLY mode
-you need something that waits for the control routine to run. It can't just run every time
-step. My suggestion is to use the control flag. So set it to a double and whatever the value
-of the variable is the duty cycle for the controller
 
 /// Things you can do on desktop
 
@@ -161,15 +160,19 @@ int main(int argc,char** argv) {
   int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",-99);
   if (!ok) { exit(1); } else {simdata.disp();}
   tfinal = simdata.get(1,1);
+  ////////RATES////////////////////////////////////////////
   INTEGRATIONRATE = simdata.get(2,1);
   PRINTRATE = simdata.get(3,1); 
   LOGRATE = simdata.get(4,1); 
+  double RCRATE = simdata.get(5,1);
+  double CTLRATE = simdata.get(6,1);
+  vehicle.setRates(RCRATE,CTLRATE);
   //These are extras that we only need if we are integrating the but it doesn't
   //Require any computation time except on startup to read them 
-  int GRAVITY_FLAG = simdata.get(5,1);
-  int AERO_FLAG = simdata.get(6,1);
-  int CTL_FLAG = simdata.get(7,1);
-  int ERROR_FLAG = simdata.get(8,1);
+  int GRAVITY_FLAG = simdata.get(7,1);
+  int AERO_FLAG = simdata.get(8,1);
+  int CTL_FLAG = simdata.get(9,1);
+  int ERROR_FLAG = simdata.get(10,1);
   //////////////////////////////////////////////////////////////////////////////
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
