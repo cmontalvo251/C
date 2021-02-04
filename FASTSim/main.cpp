@@ -72,6 +72,9 @@ not too crazy about. I'd rather it be in maybe the dynamics class or something b
 to do here. At least the hooks are in there properly. So the last thing I need to do is add the actuator
 dynamics. Can you tell I've been delaying the crap out of it?
 
+2/4/2021 - Compiled SIMONLY on RPI. Only thing you need to do is get rid of OPENGL in the Makefile and the
+make_links script
+
 */
 
 /* //Revisions Needed 
@@ -93,7 +96,6 @@ dynamics. Can you tell I've been delaying the crap out of it?
 
 //// Things you have to do with an RPI
 
-2.) Run SIMONLY on RPI
 3.) Run SIL on RPI - This mode should probably throw an error in my opinion since you
 can't run opengl. 
 4.) Run HIL on Desktop and RPI - You need to write two instances of the same software.

@@ -19,18 +19,20 @@ FILES[0]=${GLOBAL_FILES}
 FILES[1]=${DATALOGGER_FILES}
 FILES[2]=${MATLAB_FILES}
 FILES[3]=${RK4_FILES}
-FILES[4]=${OPENGL_FILES}
-FILES[5]=${SIXDOF_FILES}
-FILES[6]=${RCINPUT_FILES}
-FILES[7]=${AERO_CTL_FILES}
-FILES[8]=${NAVIO_FILES}
+FILES[4]=${SIXDOF_FILES}
+FILES[5]=${RCINPUT_FILES}
+FILES[6]=${AERO_CTL_FILES}
+FILES[7]=${NAVIO_FILES}
+#FILES[8]=${OPENGL_FILES} ###On RPI comment this out
 
-#//In this variable below you need to change PortalCube to whichever vehicle 
-#you want to use
-FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ OpenGL/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/)
+#//In this variable below you need to change PortalCube to whichever vehicle you want to use
+#FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/ OpenGL/)
+##USe this one if you are on RPI
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/)
 
 ##First Remove Files
-for i in {0..8}
+#for i in {0..8}
+for i in {0..7} #for RPI
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES
@@ -40,7 +42,8 @@ do
 	done
 done
 
-for i in {0..8}
+#for i in {0..8}
+for i in {0..7} #for RPI
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES
