@@ -82,6 +82,9 @@ actuator_var_dot = time_constant*(actuator_command - actuator_var)
 So the question then is what is the actuator command???? Is this from the controller??
 On line 184 of Dynamics.cpp I send ctl.ctlcomms to the aero model. So what I need to do is 
 send the cltcomms to a first order filter and then send state.actuator_var to the aero model
+So I had the aerodynamics.h routine set the number of actuators rather then set it in the input files
+so all you need to do is create a public variable in aerodynamics.h and the have the dynamics routine 
+use that to create dynamics. Seems simple enough
 
 */
 

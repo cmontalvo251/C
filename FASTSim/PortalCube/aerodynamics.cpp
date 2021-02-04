@@ -22,6 +22,12 @@ void aerodynamics::setup(MATLAB var) {
 	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
 	ACTUATOR_ERROR_PERCENT = var.get(2,1); //this variable sets the amount of actuator error that you can use
 	//to add errors to your control surfaces or thrusters. This variable is set in Simulation_Flags.txt
+	ACTUATOR_ERROR.zeros(NUMACTUATORS,1,"Actuator errors");
+	for (int i = 0;i<NUMACTUATORS;i++) {
+		ACTUATOR_ERROR.set(i+1,1,(1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0));	
+	}
+	ACTUATOR_ERROR.disp();
+	//PAUSE();
 	#ifdef DEBUG
 	printf("Aerodynamics Initialized \n");
 	#endif
@@ -53,10 +59,10 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double Nthrust = (rudderUS - STICK_MID)/mid_slope*TORQUEMAX;
 
 		////ADD Actuator errors
-		Zthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
-		Lthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
-		Mthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
-		Nthrust *= (1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0);
+		Zthrust *= ACTUATOR_ERROR.get(1,1);
+		Lthrust *= ACTUATOR_ERROR.get(2,1);
+		Mthrust *= ACTUATOR_ERROR.get(3,1);
+		Nthrust *= ACTUATOR_ERROR.get(4,1);
 
 		//Aero Parameters
 		double S = 0.1; //m^2
