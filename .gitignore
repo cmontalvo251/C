@@ -3,6 +3,7 @@
 *.lib
 *.blend*
 FASTSim/aerodynamics.*
+FASTSim/sensors.*
 FASTSim/controller.*
 FASTSim/mathp.*
 FASTSim/RCInput.*
