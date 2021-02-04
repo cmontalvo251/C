@@ -73,7 +73,15 @@ to do here. At least the hooks are in there properly. So the last thing I need t
 dynamics. Can you tell I've been delaying the crap out of it?
 
 2/4/2021 - Compiled SIMONLY on RPI. Only thing you need to do is get rid of OPENGL in the Makefile and the
-make_links script
+make_links script. 
+
+My plan for actuator dynamics is this - In some input file you need to tell the dynamics routine the number
+of actuators and the time constant of each one. Then it will run through a for loop and integrate those dynamics
+The first order filter equation is as follows
+actuator_var_dot = time_constant*(actuator_command - actuator_var)
+So the question then is what is the actuator command???? Is this from the controller??
+On line 184 of Dynamics.cpp I send ctl.ctlcomms to the aero model. So what I need to do is 
+send the cltcomms to a first order filter and then send state.actuator_var to the aero model
 
 */
 
@@ -82,6 +90,8 @@ make_links script
 ////Things to do before you move to FASTPilot
 
 2.) Actuator dynamics 
+3.) Add separate input file folders and have argv grab the root directory of your input files 
+including the objs and stuff
 
 /// Things you can do on desktop
 

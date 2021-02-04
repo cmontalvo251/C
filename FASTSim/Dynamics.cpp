@@ -180,7 +180,15 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
+  //Integrate Actuator Dynamics
+  // input will be ctlcomms and the output will be actuator_state
+  // Add to an input file the number of actuators and the time_constant of each
+  //for (int i = 0;i<NUM_ACTUATORS;i++) {
+  //actuator_var_dot = time_constant*(actuator_command - actuator_var)
+  //}
+
   //Aerodynamic Model
+  //Send the aero model the actuator_state instead of the ctlcomms
   aero.ForceMoment(t,State,k,ctl.ctlcomms);
 
   //Gravity Model
