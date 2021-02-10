@@ -86,6 +86,9 @@ So I had the aerodynamics.h routine set the number of actuators rather then set 
 so all you need to do is create a public variable in aerodynamics.h and the have the dynamics routine 
 use that to create dynamics. Seems simple enough
 
+2/9/2021 - When I compiled SIMONLY on the RPI it turns out that I didn't have the -DRPI directive in place. 
+So I had to fix a few things. It is working now which is nice.
+
 */
 
 /* //Revisions Needed 
@@ -316,9 +319,9 @@ void runMainLoop() {
     ///////////////////////////////////////////////////////////////////
 
     //////////////////////Run the Main Vehicle Loop////////////////////
-    //This polls the RC inputs and the controller but only if we're HIL and DESKTOP
-    //are not defined. Instead we need to send the state vector to the external hardware
-    #if not defined (HIL) && (DESKTOP)
+    //This polls the RC inputs and the controller. This will always run
+    //when we're on the RPI but only in SIMONLY and SIL on the desktop
+    #if defined (SIMONLY) || (SIL) || (RPI)
     vehicle.loop(t);
     #endif
     ///////////////////////////////////////////////////////////////////

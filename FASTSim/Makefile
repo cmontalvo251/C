@@ -7,12 +7,12 @@ CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
 EXETYPE=-DSIMONLY #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
-HARDWARE=-DDESKTOP #-DRPI -DARDUINO
+HARDWARE=-DRPI #-DDESKTOP #-DRPI -DARDUINO
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
 #No RENDER IF RPI
-RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
-THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We aren't using this anymore so yea #sudo apt-get install libboost-all-dev
+RENDER=#-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
 #Flags
 
