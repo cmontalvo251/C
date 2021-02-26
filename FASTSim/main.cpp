@@ -93,6 +93,8 @@ So I had to fix a few things. It is working now which is nice.
 and make sure the mapping is set up correctly. Then change the stick min and max values in RCINput.h and then add a -D
 to the makefile for this controller
 
+Also tried to import a UAM cad modle but it has wayyyy too many vertices and no texture for mapping
+
 */
 
 /* //Revisions Needed 
