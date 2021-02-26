@@ -112,6 +112,21 @@ int RCInput::invert(int val) {
 }
 
 void RCInput::mapjoy2rx() {
+  //First we're just going to copy everything over to make sure everything copies over
+  for (int i = 0;i<num_of_axis;i++) {
+    rxcomm[i] = joycomm[i];
+  }
+
+  //The code below will then run depending on what controller you've selected in the makefile
+
+  //First extract the relavent commands from the receiver.
+  //double throttle = rxcomms[0];
+  //double aileron = rxcomms[1];
+  //double elevator = rxcomms[2];
+  //double rudder = rxcomms[3];
+  //double autopilot = rxcomms[4];
+
+  #ifdef XBOX
   //So the problem is that my Xbox controller is not mapped properly. Here
   //is the mapping
   //Using Microsoft X-Box 360 pad 
@@ -131,6 +146,25 @@ void RCInput::mapjoy2rx() {
   rxcomm[5] = joycomm[5];
   rxcomm[6] = joycomm[7];
   rxcomm[7] = joycomm[6];
+  #endif
+
+  #ifdef RCTECH
+  //Using RCTECH Controller
+  //Throttle = 2 (inv)
+  //Rudder = 5
+  //Aileron =  0
+  //Elevator = 1
+  //arm switch = 3
+  //aux 0 = 4
+  rxcomm[0] = invert(joycomm[2]);
+  rxcomm[1] = joycomm[0];
+  rxcomm[2] = joycomm[1];
+  rxcomm[3] = joycomm[5];
+  rxcomm[4] = joycomm[3];
+  rxcomm[5] = joycomm[4];
+  //rxcomm[6] = joycomm[6];
+  //rxcomm[7] = joycomm[7];
+  #endif
 }
 
 void RCInput::printRCstate(int all) {

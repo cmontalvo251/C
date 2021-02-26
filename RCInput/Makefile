@@ -6,6 +6,7 @@ BOOST_DIRS = #-lpthread -lboost_system -lboost_thread -lboost_date_time
 OPENGL_DIRS = #-lGL -lGLU -lglut
 INCLUDES=-I../../
 SOURCES=main.cpp RCInput.cpp
+DFLAGS=-DJOYSTICK -DRCTECH
 #This means all the objects are the sources except replace .cpp with .o
 OBJECTS = $(SOURCES:.cpp=.o) 
 EXECUTABLE=Run.exe
