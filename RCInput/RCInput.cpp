@@ -158,7 +158,7 @@ void RCInput::mapjoy2rx() {
   //aux 0 = 4
   rxcomm[0] = invert(joycomm[2]);
   rxcomm[1] = joycomm[0];
-  rxcomm[2] = joycomm[1];
+  rxcomm[2] = invert(joycomm[1]);
   rxcomm[3] = joycomm[5];
   rxcomm[4] = joycomm[3];
   rxcomm[5] = joycomm[4];

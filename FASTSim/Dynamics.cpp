@@ -110,7 +110,8 @@ void Dynamics::loop(double t) {
   
   ////////////////////Poll External Inputs////////////////////////////
   if (t > tlastRCread + tRC) {
-    rcin.readRCstate();    
+    rcin.readRCstate();
+    //rcin.printRCstate(0);    
     tlastRCread = t;
   }
   ////////////////////////////////////////////////////////////////////
