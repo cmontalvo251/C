@@ -86,6 +86,10 @@ So I had the aerodynamics.h routine set the number of actuators rather then set 
 so all you need to do is create a public variable in aerodynamics.h and the have the dynamics routine 
 use that to create dynamics. Seems simple enough
 
+2/26/2021 - Added RCTECH USB contorller in the lab to FASTsim. To get this to work you need to run RCInput by iself
+and make sure the mapping is set up correctly. Then change the stick min and max values in RCINput.h and then add a -D
+to the makefile for this controller
+
 */
 
 /* //Revisions Needed 
