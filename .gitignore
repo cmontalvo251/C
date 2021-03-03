@@ -1,4 +1,5 @@
 *.out
+*.a
 *.OUT
 *.lib
 *.blend*
