@@ -13,7 +13,7 @@ OPENGL_FILES='opengl.cpp opengl.h'
 SIXDOF_FILES='Rotation3.cpp Rotation3.h'
 RCINPUT_FILES='RCInput.cpp RCInput.h'
 AERO_CTL_FILES='aerodynamics.cpp aerodynamics.h controller.cpp controller.h'
-NAVIO_FILES='sensors.cpp sensors.h'
+SENSOR_FILES='sensors.cpp sensors.h'
 declare -A FILES
 FILES[0]=${GLOBAL_FILES}
 FILES[1]=${DATALOGGER_FILES}
@@ -22,13 +22,13 @@ FILES[3]=${RK4_FILES}
 FILES[4]=${SIXDOF_FILES}
 FILES[5]=${RCINPUT_FILES}
 FILES[6]=${AERO_CTL_FILES}
-FILES[7]=${NAVIO_FILES}
+FILES[7]=${SENSOR_FILES}
 #FILES[8]=${OPENGL_FILES} ###On RPI comment this out
 
 #//In this variable below you need to change PortalCube to whichever vehicle you want to use
 #FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/ OpenGL/)
 ##USe this one if you are on RPI
-FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Navio/)
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Sensors/)
 
 ##First Remove Files
 #for i in {0..8}
