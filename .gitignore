@@ -29,5 +29,4 @@ Test_Scripts/Serial_C++_Test/Serial.*
 *.pdf
 *.exe
 *.dll
-FASTSim/UAM/
-FASTSim/Quadcopter/
+FASTSim/Extra_Models/

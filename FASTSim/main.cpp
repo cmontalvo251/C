@@ -97,7 +97,8 @@ Also tried to import a UAM cad modle but it has wayyyy too many vertices and no 
 
 4/1/2021 - Been busy. Started writing a README to get up and running because it's been a while. I also started
 doing this revision "Add separate input file folders and have argv grab the root directory of your input files 
-including the objs and stuff". 
+including the objs and stuff". So I finished the README and I got the input files to work properly which is nice.
+Collin also sent me an X8 model. The textures are super messed up but hey it's a start
 
 */
 
@@ -106,13 +107,10 @@ including the objs and stuff".
 ////Things to do before you move to FASTPilot
 
 2.) Actuator dynamics 
-3.) Add separate input file folders and have argv grab the root directory of your input files 
-including the objs and stuff
 
 /// Things you can do on desktop
 
 0.) Link code to FASTPilot
-2.) CAD Model of X8
 4.) Quadcopter dynamics
 5.) Aircraft dynamics
 6.) X8 dynamics
