@@ -1,12 +1,12 @@
 0               !Save Each Frame to a File 1 = on,0 = off
 3  		     	!Number of objects in window 
 10				!Camera Offset Z axis
-Input_Files/objects/portalcube.obj 	!First Object file - No spaces allowed!!
+PortalCube/objects/portalcube.obj 	!First Object file - No spaces allowed!!
 5.0000  	    !Scale Factor of Object
 1.000000		!Scale Factor of Position
-Input_Files/objects/sky/skydome.obj 	!Second Object file - This is the skydome
+static_objects/sky/skydome.obj 	!Second Object file - This is the skydome
 100.000000  	        !Scale Factor of Object
 1.000000  	        !Scale Factor of Position
-Input_Files/objects/ground/ground.obj !Third Object File - This is the ground plane
+static_objects/ground/ground.obj !Third Object File - This is the ground plane
 2000.000000			!Scale factor of object
 1.000000			!Scale factor of position

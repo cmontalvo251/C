@@ -1,0 +1,80 @@
+README
+
+The way this software works is by importing numerous other libraries from this C++ repo. Here are the steps
+to get this up and running
+
+1.) First you need to open make_links and change the vehicle to whatever vehicle dynamics you want to import
+The default is FASTSim/PortalCube/src. You can change the FASTSim/PortalCube to whatever you want but you
+need to follow a specific structure for othe folder. 
+
+src has the following files
+controller.cpp
+controller.h
+aerodynamics.cpp
+aerodynamics.h
+
+Those 4 files are heavily commented and you can open them up to see how to create your own dynamics
+
+Input_Files contains all of the input files required for the simulation. Again portalcube has example input
+files and they are pretty self explanatory
+
+Finally the objects folder has all of the files necessary to render an object in openGL. In this case you need an obj file and a mtl file along with a texture file. 
+
+It's possible to made a CAD for an object in blender and save it as a *.blend. What you then need to do is add a texture to the UV tab. Then select all the vertices in edit mode of your object and hit U for unwrap. Once you do that you can export everything to an OBJ. If you did it right you can open the obj file in plain text and you will see v for vertices vn for normals vt for texture vertices and then f for face in the format f v/vt/vn.
+
+2.) Once you have a good idea of what files you need to run the simulation you can then run the make_links 
+script. Again the default is to just link all of the PortalCube files
+
+$ ./make_links
+
+You'll know the script ran properly if you type ls -la and see files that are blue indicating a properly link. Anything in red means there is a broken link somewhere.
+
+3.) Now it's time to open the Makefile and set the proper directives.
+
+The main directives are 
+
+EXETYPE
+HARDWARE
+CONTROLLER
+RENDER
+
+EXETYPE right now can be set to SIMONLY which simulates as fast as possible or SIL which simulates in real time and also starts the openGL routine if you're compiling on a desktop
+computer with openGL support.
+
+HARDWARE can be set to Desktop or RPI for now. Desktop assumes you have a linux machine with a gui interface and opengl support.
+
+CONTROLLER currently has an RCTECH model and an XBOX controller model to accept input. Look at RCInput/RCinput.cpp to see the RCInput::mapjoy2rx() function which maps the USB controller commands to standard RC input commands. You can add your own controller to this section if you like. and add your own directive. If you add a controller send the changes and I'll add it in to the master branch. You can do the same for other dynamic models as well.
+
+RENDER needs to be commented out if using an RPI since it typically does not have openGL support. At least Emlid Raspbian with command line does not. If running on the desktop you will have to turn that on.
+
+4.) With the Makefile set you can compile with the following command
+
+$ make
+
+This will create an executable called FASTSim.exe
+
+5.) When running the code you must give the simulation the file path to your set of input files. The default is to run the PortalCube input files. In this case you would run
+
+$ ./FASTSim.exe PortalCube/
+
+If you mess up and just run
+
+$ ./FASTSim.exe 
+
+it will default to the portal cube
+
+6.) The FASTSim.exe will create a log file in logs/ You can run 
+
+$ ./clean_logs
+
+to clean all of the logs in that directory if it starts to get bloated.
+
+7.) The python script process_logs.py will plot the 0.txt log file. You can edit the code
+to log the data from a different log file but be careful with the script because if you run process logs without any arguments it will delete the entire log folder first. Perhaps this is a bad coding idea but it's what I have right now.
+
+$ ./process_logs.py 
+
+If you run the script just like that you will hopefully be greeted with a ton of plots. I don't really want to go over the nomenclature of a 6DOF vehicle but just understand that the dynamics routine uses a standard aerospace convention of a 6DOF vehicle using quaternions for the attitude states.
+
+8.) If you recompile the code in SIL mode you will hopefully be greeted with an openGL
+screen. First make sure you run a make rebuild to recompile everything. Second if you get a location of file error open your Render.txt file and make sure the file path is set correctly. 

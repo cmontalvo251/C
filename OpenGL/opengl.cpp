@@ -63,10 +63,10 @@ OPENGL::OPENGL() {
   counter = 0;
 }
 
-void OPENGL::loop(int argc,char** argv,int inFarplane,int inWidth,int inHeight,int defaultcamera) {
+void OPENGL::loop(int argc,char** argv,char fileroot[],int inFarplane,int inWidth,int inHeight,int defaultcamera) {
   bool Full;
   int NumObjects,ii;
-  char objectfile[256];
+  char objectfile[256]={NULL};
   double scalefactor;
   char err[256];
   int filefound = 0;
@@ -74,12 +74,16 @@ void OPENGL::loop(int argc,char** argv,int inFarplane,int inWidth,int inHeight,i
   //Initialize itime which governs when to print to std out
   itime = 0;
   printf("Initializeing OpenGL Rendering Environment\n");
-  sprintf(objectfile,"Input_Files/Render.txt");
+  if (fileroot != NULL) {
+    strcat(objectfile,fileroot);
+  }
+  strcat(objectfile,"Input_Files/Render.txt");
   file.open(objectfile);
   if (!file.is_open()) {
     	sprintf(err,"Error Opening File = %s \n",objectfile);
       error(err);
     } else {
+      printf("Opened Render.txt File = %s \n",objectfile);
       string input;
       getline(file,input);
       savepics = atoi(input.c_str());

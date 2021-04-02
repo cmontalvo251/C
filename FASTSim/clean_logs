@@ -1,3 +1,5 @@
 #!/bin/bash
 
+echo 'About to delete all text files in logs/'
 rm logs/*.txt
+echo 'Files deleted. Hope there was not anything important in there'

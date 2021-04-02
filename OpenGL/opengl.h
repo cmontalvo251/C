@@ -195,7 +195,7 @@ class OPENGL {
   //GLDraw draw;
   KeyboardControl keyboard;
   //OpenGL Methods
-  void loop(int argc,char** argv,int,int,int,int);
+  void loop(int argc,char** argv,char*,int,int,int,int);
   //GLDraw Methods
   //void drawInitialize();
   //Main Window Methods

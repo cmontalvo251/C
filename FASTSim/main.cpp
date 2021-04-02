@@ -95,6 +95,10 @@ to the makefile for this controller
 
 Also tried to import a UAM cad modle but it has wayyyy too many vertices and no texture for mapping
 
+4/1/2021 - Been busy. Started writing a README to get up and running because it's been a while. I also started
+doing this revision "Add separate input file folders and have argv grab the root directory of your input files 
+including the objs and stuff". 
+
 */
 
 /* //Revisions Needed 
@@ -175,8 +179,29 @@ Dynamics vehicle;
 Datalogger logger;
 MATLAB logvars;
 
+///Global Variable for Fileroot? Can I do this safely?
+char fileroot[256];
+
+void get_fileroot(int argc,char** argv,char fileroot[]) {
+  printf("Number of Input Arguments = %d \n",argc);
+  if (argc == 1) {
+    //This means there are no input arguments and we must default to PortalCube
+    sprintf(fileroot,"%s","PortalCube/");
+    printf("%s \n","No Input Arguments given....defaulting to:");
+  } else {
+    //this means some input arguments were provided
+    sprintf(fileroot,"%s",argv[1]);
+    printf("%s \n","Input argument given:");
+  }
+  printf("%s \n",fileroot);
+}
+
 //////Main/////////////
 int main(int argc,char** argv) {
+  //////////////Grab Input Arguments//////////////////////////////////////////
+  get_fileroot(argc,argv,fileroot);
+  //////////////////////////////////////////////////////////
+
   //////////////////////////Initialize Datalogger//////////////////////////////
   logger.findfile("logs/");
   logger.open();
@@ -185,7 +210,10 @@ int main(int argc,char** argv) {
 
   //////////////////////Import Simulation Flags//////////////////////////////////
   MATLAB simdata;
-  int ok = logger.ImportFile("Input_Files/Simulation_Flags.txt",&simdata,"simdata",-99);
+  char simfile[256]={NULL};
+  strcat(simfile,fileroot);
+  strcat(simfile,"Input_Files/Simulation_Flags.txt");
+  int ok = logger.ImportFile(simfile,&simdata,"simdata",-99);
   if (!ok) { exit(1); } else {simdata.disp();}
   tfinal = simdata.get(1,1);
   ////////RATES////////////////////////////////////////////
@@ -210,7 +238,10 @@ int main(int argc,char** argv) {
   integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
   //Import Initial Conditions, mass properties
   MATLAB icdata;
-  ok = logger.ImportFile("Input_Files/Initial_Conditions.txt",&icdata,"icdata",vehicle.NUMSTATES);
+  char initfile[256]={NULL};
+  strcat(initfile,fileroot);
+  strcat(initfile,"Input_Files/Initial_Conditions.txt");
+  ok = logger.ImportFile(initfile,&icdata,"icdata",vehicle.NUMSTATES);
   if (!ok) { exit(1); } else {icdata.disp();}
   //Set ICs in integrator 
   integrator.set_ICs(icdata);
@@ -224,7 +255,10 @@ int main(int argc,char** argv) {
 
   /////////////////////////////MASS DATA, ENV MODEL, SENSOR MODEL, AERO MODEL, CTL MODEL///////////////////
   MATLAB massdata;
-  ok = logger.ImportFile("Input_Files/MassProperties.txt",&massdata,"massdata",4);
+  char massfile[256]={NULL};
+  strcat(massfile,fileroot);
+  strcat(massfile,"Input_Files/MassProperties.txt");
+  ok = logger.ImportFile(massfile,&massdata,"massdata",4);
   if (!ok) { exit(1); } else {massdata.disp();}
   //Send Mass Data to Dynamic Model
   vehicle.setMassProps(massdata);
@@ -235,7 +269,10 @@ int main(int argc,char** argv) {
   //Initialize the Error Model but only if we're running the integrator
   if (ERROR_FLAG) {
     MATLAB sensordata;
-    ok = logger.ImportFile("Input_Files/Sensor_Errors.txt",&sensordata,"sensordata",-99); //-99 for automatic length array
+    char sensorfile[256]={NULL};
+    strcat(sensorfile,fileroot);
+    strcat(sensorfile,"Input_Files/Sensor_Errors.txt");
+    ok = logger.ImportFile(sensorfile,&sensordata,"sensordata",-99); //-99 for automatic length array
     if (!ok) { exit(1); } else {sensordata.disp();}    
     vehicle.initErrModel(sensordata);
   }
@@ -283,7 +320,7 @@ void runRenderLoop(int argc,char** argv) {
   //so a 0 will follow the first object
   //if there are 3 objects (cube, sky, ground) then defcam = 3 would
   //be an origin camera following the cube
-  glhandle_g.loop(argc,argv,Farplane,width,height,defaultcamera);
+  glhandle_g.loop(argc,argv,fileroot,Farplane,width,height,defaultcamera);
 }
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -7,9 +7,8 @@ import numpy as np
 try:
     from pdf import *
 except:
-    print('You need pdf from Python.git')
+    print('You need pdf from Python.git This is on my Github just git clone that repo and put pdf.py in this root or add to pythonpath')
     sys.exit()
-
 
 if len(sys.argv) > 1:
     print(sys.argv)

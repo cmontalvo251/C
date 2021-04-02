@@ -26,9 +26,9 @@ FILES[7]=${SENSOR_FILES}
 FILES[8]=${OPENGL_FILES} ###On RPI comment this out
 
 #//In this variable below you need to change PortalCube to whichever vehicle you want to use
-FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Sensors/ OpenGL/)
+FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/src/ Sensors/ OpenGL/)
 ##USe this one if you are on RPI
-#FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/ Sensors/)
+#FILES_SUB_DIR=(/ Datalogger/ MATLAB/ RK4/ 6DOF/ RCInput/ FASTSim/PortalCube/src/ Sensors/)
 
 ##First Remove Files
 for i in {0..8}
@@ -42,8 +42,8 @@ do
 	done
 done
 
-#for i in {0..8}
-for i in {0..7} #for RPI
+for i in {0..8}
+#for i in {0..7} #for RPI
 do
 	IFILES=${FILES[$i]}
 	for VARIABLE in $IFILES

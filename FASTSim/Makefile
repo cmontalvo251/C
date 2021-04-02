@@ -6,13 +6,13 @@ COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
-EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
-HARDWARE=-DRPI #-DDESKTOP #-DRPI -DARDUINO
-CONTROLLER=-DRCTECH #-DXBOX
+EXETYPE=-DSIL #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
+HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
+CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
 #No RENDER IF RPI
-RENDER=#-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
 #Flags
