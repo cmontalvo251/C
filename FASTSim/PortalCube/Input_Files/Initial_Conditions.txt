@@ -8,9 +8,9 @@
 0.0	!Initial Xbody Velocity (m/s)
 0.0	!Initial Ybody Velocity (m/s)
 -2000.0	!Initial Zbody Velocity (m/s)
-0.0	!Initial Roll Rate (rad/s)
+1.0	!Initial Roll Rate (rad/s)
 1.0	!Initial Pitch Rate (rad/s)
-0.0	!Initial Yaw Rate (rad/s)
+-1.0	!Initial Yaw Rate (rad/s)
 
 0.0	!Initial X Position (m) ////Point Mass in Space
 0.0	!Initial Y Position (m)

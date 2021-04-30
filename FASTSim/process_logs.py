@@ -40,7 +40,7 @@ time = data[:,0]
 #For sixdof model
 state_vars = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)']
 sensor_vars = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (rad/s)','Sensor q (rad/s)','Sensor r (rad/s)']
-rcin_vars = ['Throttle (us)','Aileron (us)','Elevator (us)','Rudder (us)','Aux1','Aux2','Aux3','Aux4']
+rcin_vars = ['Throttle RX (us)','Aileron RX (us)','Elevator RX (us)','Rudder RX (us)','Aux1 RX','Aux2 RX','Aux3 RX','Aux4 RX']
 ctl_vars = ['Throttle Command (us)','Aileron Command (us)','Elevator Command (us)','Rudder Command (us)','Aux1 Command (us)','Aux2 Command (us)','Aux3 Command (us)','Aux4 Command (us)']
 force_moment_vars = ['X (N)','Y (N)','Z (N)','L (N-m)','M (N-m)','N (N-m)']
 

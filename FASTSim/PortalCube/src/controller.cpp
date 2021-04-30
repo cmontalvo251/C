@@ -54,16 +54,22 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		//We are then going to code a roll and pitch contoller
 		double roll = state.get(4,1)*PI/180.0;
 		double pitch = state.get(5,1)*PI/180.0;  //convert to radians
+		double yaw = state.get(6,1)*PI/180.0;
 		double p = state.get(10,1);
 		double q = state.get(11,1);
+		double r = state.get(12,1)*PI/180.0;
 		double kpE = -100;
 		double kdE = -1000;
 		double rollcommand = 0;
 		double pitchcommand = 0;
+		double yawcommand = 0;
 		double roll_comm = kpE*(roll-rollcommand) + kdE*p + STICK_MID;
 		double pitch_comm = kpE*(pitch-pitchcommand) + kdE*q + STICK_MID;
+		double yaw_comm = kpE*(yaw-yawcommand) + kdE*r + STICK_MID;
 		ctlcomms.set(2,1,roll_comm);
 		//printf("Aileron = %lf \n",ctlcomms.get(2,1));
 		ctlcomms.set(3,1,pitch_comm);
+		ctlcomms.set(4,1,yaw_comm);
+
 	}
 }

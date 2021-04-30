@@ -100,6 +100,12 @@ doing this revision "Add separate input file folders and have argv grab the root
 including the objs and stuff". So I finished the README and I got the input files to work properly which is nice.
 Collin also sent me an X8 model. The textures are super messed up but hey it's a start
 
+4/30/2021 - Long time no see. I am here fixing the plotting routine because for some reason the commands
+from the controller are printing correctly but the actual values are not. Currently investigating the issue here. 
+Ok false alarm. Turns out those values were actually from the RX which are always empty anyway in SIMONLY mode.
+
+Ok so it's time to continue working on Actuator dynamics
+
 */
 
 /* //Revisions Needed 
