@@ -104,7 +104,25 @@ Collin also sent me an X8 model. The textures are super messed up but hey it's a
 from the controller are printing correctly but the actual values are not. Currently investigating the issue here. 
 Ok false alarm. Turns out those values were actually from the RX which are always empty anyway in SIMONLY mode.
 
-Ok so it's time to continue working on Actuator dynamics
+Ok so it's time to continue working on Actuator dynamics. So I looked at what I did and I don't like it.
+In my opinion the user should only be in charge of the following things. 
+
+actuator values -> Forces produced by those values
+
+So what we need to do is the following. 
+
+1.) Integrate the state vector to produce State.
+2.) Send STate to the sensor routine and receive the polluted state
+3.) Send pollutted state to controller built by the user to produce ctlcomms
+4.) Send ctlcomms to actuator dynamics to produce actuators values
+5.) Pollute actuator values with ACTUATOR ERRORS by some percentage
+6.) Send actuator values to aerodynamics routine written by user to produce Forces and moments
+
+Ok let's get started. 
+
+1.) Integrate state vector to produce state. That's done in the integrator.state
+line of code so we're done there.
+2.) Send State to the sensor routine to receive polluted state. 
 
 */
 
