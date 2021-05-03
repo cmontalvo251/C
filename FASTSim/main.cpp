@@ -122,7 +122,9 @@ Ok let's get started.
 
 1.) Integrate state vector to produce state. That's done in the integrator.state
 line of code so we're done there.
-2.) Send State to the sensor routine to receive polluted state. 
+2.) Send State to the sensor routine to receive polluted state. I think this is maybe 
+in the vehicle.loop routine but I'm not sure. Grading now so will have to check
+later
 
 */
 
