@@ -28,7 +28,8 @@ class TIMER {
   struct timespec ts;
  public:
   double getTimeElapsed(); //give time elapsed from subsequent function calls in seconds
-  double getTimeSinceStart(); //give time elapsed from subsequent function calls in seconds
+  double getTimeSinceStart(); //gives time from when the start_sec_ was created.
+  void resetStartTime(); //use this function to reset the start timer
 
   //Constructor
   TIMER();

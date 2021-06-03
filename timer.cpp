@@ -34,6 +34,10 @@ void cross_sleep(double length) {
 
 TIMER::TIMER() {
   //Initialize timer
+  resetStartTime();
+}
+
+void TIMER::resetStartTime() {
   getCurrentTime();
   start_sec_ = getSeconds();
 }
