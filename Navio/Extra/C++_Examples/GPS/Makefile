@@ -1,10 +1,10 @@
 CXX ?=g++
 CFLAGS=-c -Wall
-NAVIO = ../../Navio
-INCLUDES = -I ../../Navio
+NAVIO=../../../
+INCLUDES = -I${NAVIO}
 
 all:
-	$(MAKE) -C ../../Navio all
+	$(MAKE) -C ${NAVIO} all
 	$(CXX) -std=c++11 $(INCLUDES) gps.cpp -L$(NAVIO) -lnavio -o gps
 	rm -rf *.o
 

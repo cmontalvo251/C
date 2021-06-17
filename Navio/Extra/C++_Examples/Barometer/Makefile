@@ -1,9 +1,9 @@
 CXX ?= g++
-NAVIO = ../../Navio
-INCLUDES = -I ../../Navio
+NAVIO =../../../
+INCLUDES = -I${NAVIO}
 
 all:
-	$(MAKE) -C ../../Navio all
+	$(MAKE) -C ${NAVIO} all
 	$(CXX) $(INCLUDES) Barometer.cpp -L$(NAVIO) -lnavio -o Barometer
 
 clean:

@@ -478,7 +478,7 @@ void imuLoop(AHRS* ahrs, int idx)
   if(dtsumm > 0.05)
     {
       // Console output
-      //printf("ROLL: %+05.2f PITCH: %+05.2f YAW: %+05.2f PERIOD %.4fs RATE %dHz %d \n", roll, pitch, yaw * -1, dt, int(1/dt),idx);
+      printf("ROLL: %+05.2f PITCH: %+05.2f YAW: %+05.2f PERIOD %.4fs RATE %dHz %d ", roll, pitch, yaw * -1, dt, int(1/dt),idx);
       printf("RATES = ROLL: %+05.2f PITCH: %+05.2f YAW: %+05.2f PERIOD %.4fs RATE %dHz %d \n", roll_rate, pitch_rate, yaw_rate * -1, dt, int(1/dt),idx);
 
       // Network output
