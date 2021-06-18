@@ -2,7 +2,11 @@
 #include "BaroTemp.h"
 
 BaroTemp::BaroTemp() {
+  #ifndef DESKTOP
   barometer.initialize();
+  #else
+  printf("Running Fictitious Barometer on Desktop \n");
+  #endif
 }
 
 void BaroTemp::poll(double currentTime) {

@@ -2,6 +2,7 @@
 #include <math.h>
 
 GPS::GPS() {
+  #ifndef DESKTOP
   if(sensor.testConnection()){
     printf("Ublox test OK\n");
     if(!sensor.configureSolutionRate(1000)){
@@ -10,6 +11,9 @@ GPS::GPS() {
   } else {
     printf("GPS Test failed \n");
   }
+  #else
+  printf("Using Fictitious GPS Block For Simulation \n");
+  #endif
   dist_vec.zeros(NGPS,1,"dist_vec");
   time_vec.zeros(NGPS,1,"time_vec");
 }
