@@ -11,7 +11,9 @@
 class GPS {
  public:
   std::vector<double> pos_data,nav_data;
-  double latitude,longitude,altitude,X,Y,xprev,yprev,X_origin,Y_origin;
+  //X AND Y are Hardcoded to be zero initially and the origin point
+  //is roughly set to Mobile
+  double latitude,longitude,altitude,X=0,Y=0,Z=0,xprev,yprev,zprev,X_origin=30.69,Y_origin=-88.17;
   Ublox sensor;
   int ok;
   int end_pt = NGPS;
@@ -25,6 +27,8 @@ class GPS {
   int status();
   void computeSpeed(double);
   void ConvertGPS2XY();
+  void ConvertXYZ2LLH();
+  void setXYZ(double,double,double);
 };
 
 #endif

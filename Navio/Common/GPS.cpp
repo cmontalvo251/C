@@ -18,9 +18,28 @@ GPS::GPS() {
   time_vec.zeros(NGPS,1,"time_vec");
 }
 
+void GPS::ConvertXYZ2LLH() {
+  latitude = X/GPSVAL + X_origin;
+  longitude = Y/(GPSVAL*cos(X_origin*PI/180.0)) + Y_origin;
+  altitude = -Z;  
+}
+
 void GPS::poll(float currentTime,int FILEOPEN) {
   lastTime = currentTime;
+  #ifndef DESKTOP
   sensor.decodeSingleMessage(Ublox::NAV_POSLLH, pos_data);
+  #else
+  //USE SOFTWARE TO CREATE GPS COORDINATES
+  //Assume that X,Y,Z coordinates are already set by some external function
+  ConvertXYZ2LLH();
+  //Then populate pos_data so that the routine below still works
+  pos_data.resize(5,1);
+  pos_data[0] = 0.0; //not really sure what this is
+  pos_data[1] = longitude*10000000.0;
+  pos_data[2] = latitude*10000000.0;
+  pos_data[3] = altitude*1000.0;
+  pos_data[4] = 0.0; //not sure what this is either
+  #endif
   if (pos_data.size() > 4) {
     latitude = pos_data[2]/10000000.0; //lon - Maxwell says it may be lon lat
     longitude = pos_data[1]/10000000.0; //lat - It really is lon lat
@@ -43,6 +62,12 @@ void GPS::poll(float currentTime,int FILEOPEN) {
   //time_vec.disp();
     
 }	  
+
+void GPS::setXYZ(double Xin,double Yin,double Zin) {
+  X = Xin;
+  Y = Yin;
+  Z = Zin;
+}
 
 int GPS::status() {
   #ifdef PRINTSEVERYWHERE
@@ -72,6 +97,11 @@ void GPS::ConvertGPS2XY(){
     X = xprev;
   } else {
     X = (latitude - X_origin)*GPSVAL;
+  }
+  if (altitude == -99) {
+    Z = zprev;
+  } else {
+    Z = -altitude;
   }
 }
 
@@ -117,5 +147,6 @@ void GPS::computeSpeed(double current_time) {
   //UPDATE PREVIOUS VALUES
   xprev = X;
   yprev = Y;
+  zprev = Z;
 }
 
