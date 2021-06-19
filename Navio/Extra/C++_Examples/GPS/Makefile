@@ -10,3 +10,5 @@ all:
 
 clean:
 	rm -rf *.o gps
+	rm ../../../Common/*.o
+	rm ../../../Navio2/*.o
