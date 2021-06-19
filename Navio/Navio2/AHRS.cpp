@@ -195,7 +195,7 @@ void AHRS::setGyroOffset(float offx,float offy,float offz)
   gyroOffset[2] = offz;
 }
 
-void AHRS::getEuler(float *roll,float *pitch,float *yaw)
+void AHRS::getEuler(double *roll,double *pitch,double *yaw)
 {
   *roll = atan2(2*(q0*q1+q2*q3), 1-2*(q1*q1+q2*q2)) * 180.0/M_PI;
   *pitch = asin(2*(q0*q2-q3*q1)) * 180.0/M_PI;

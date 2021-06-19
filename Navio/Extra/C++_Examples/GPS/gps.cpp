@@ -24,16 +24,20 @@ int main(int argc, char *argv[]){
 
     if (check_apm()) {
         return 1;
+    } else {
+      printf("APM Not Running \n");
     }
 
     // This vector is used to store location data, decoded from ubx messages.
     // After you decode at least one message successfully, the information is stored in vector
     // in a way described in function decodeMessage(vector<double>& data) of class UBXParser(see ublox.h)
 
+    printf("Creating pos_data \n");
     std::vector<double> pos_data;
 
 
     // create ublox class instance
+    printf("Creating GPS instance \n");
     Ublox gps;
 
     // Here we test connection with the receiver. Function testConnection() waits for a ubx protocol message and checks it.
@@ -44,7 +48,9 @@ int main(int argc, char *argv[]){
         if (!gps.configureSolutionRate(1000))
         {
             printf("Setting new rate: FAILED\n");
-        }
+        } else {
+	  printf("Configure Solution Rate OK \n");
+	}
 
         // gps.decodeMessages();
         // You can use this function to decode all messages, incoming from the GPS receiver. The function starts an infinite loop.
@@ -56,6 +62,7 @@ int main(int argc, char *argv[]){
         // this function waits for a message of a specified type and gets you just the information you need
         // In this example we decode NAV_STATUS and NAV-POSLLH messages, adding new types, however is quite easy
 
+	printf("Running While True Loop \n");
         while (true)
         {
 

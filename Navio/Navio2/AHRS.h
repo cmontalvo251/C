@@ -28,7 +28,7 @@ class AHRS {
   void update(float ax,float ay,float az,float gx, float gy, float gz,float mx,float my,float mz,float elapsedTime);
   void updateNOMAG(float ax,float ay,float az,float gx,float gy,float gz,float elapsedTime);
   void setGyroOffset(float offx,float offy,float offz);
-  void getEuler(float*,float*,float*);
+  void getEuler(double*,double*,double*);
   float invSqrt(float x);
   float getW();
   float getX();
