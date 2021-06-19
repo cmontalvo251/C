@@ -40,6 +40,7 @@ TIMER::TIMER() {
 void TIMER::resetStartTime() {
   getCurrentTime();
   start_sec_ = getSeconds();
+  prevTime_ = 0.0;
 }
 
 double TIMER::getSeconds() {
@@ -79,4 +80,15 @@ double TIMER::getTimeSinceStart() {
   getCurrentTime();
   end_sec = getSeconds();
   return (end_sec-start_sec_);
+}
+
+void TIMER::updateTime() {
+  //Get Current Time
+  getCurrentTime();
+  //Compute Current Time in Seconds
+  currentTime = getSeconds()-start_sec_;
+  //Compute Elapsed Time 
+  elapsedTime = currentTime - prevTime_;
+  //Reset prevTime
+  prevTime_ = currentTime;
 }

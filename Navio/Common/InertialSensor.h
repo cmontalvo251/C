@@ -14,9 +14,9 @@ public:
 
 protected:
     float temperature;
-    float _ax, _ay, _az;
-    float _gx, _gy, _gz;
-    float _mx, _my, _mz;
+    float _ax=0.0, _ay=0.0, _az=0.0;
+    float _gx=0.0, _gy=0.0, _gz=0.0;
+    float _mx=0.0, _my=0.0, _mz=0.0;
 };
 
 #endif //_INERTIAL_SENSOR_H

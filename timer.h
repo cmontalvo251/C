@@ -19,7 +19,7 @@ void error(char *);
 
 class TIMER {
  private:
-  double start_sec_;
+  double start_sec_,prevTime_;
   time_t rawtime_;
   clock_t t_;
   void getCurrentTime();
@@ -27,10 +27,11 @@ class TIMER {
   struct tm* ptm_;
   struct timespec ts;
  public:
+  double currentTime,elapsedTime;
   double getTimeElapsed(); //give time elapsed from subsequent function calls in seconds
   double getTimeSinceStart(); //gives time from when the start_sec_ was created.
   void resetStartTime(); //use this function to reset the start timer
-
+  void updateTime();
   //Constructor
   TIMER();
 
