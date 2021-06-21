@@ -7,13 +7,13 @@
 class ADC_FAST
 {
 	private:
-		ADC_Navio2 converter;
-		int channel_count;
+		ADC_Navio2 converter;		
 	public:
 		//Constructor
 		ADC_FAST(); 
 		void get_results();
 		void print_results();
+		int channel_count;
 		MATLAB results;
 };
 
