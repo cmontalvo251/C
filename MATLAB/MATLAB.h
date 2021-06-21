@@ -13,7 +13,6 @@
 #include <string.h>
 #include "mathp.h"
 #include <fstream>
-#include <string.h>
 #include "nrutils.h"
 #define NRANSI
 #define NR_END 1
