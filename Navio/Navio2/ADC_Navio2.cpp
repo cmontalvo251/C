@@ -11,7 +11,6 @@
 
 ADC_Navio2::ADC_Navio2()
 {
-
 }
 
 ADC_Navio2::~ADC_Navio2()
@@ -42,11 +41,16 @@ int ADC_Navio2::read(int ch)
 	}
     char buffer[10];
 
+    #ifndef DESKTOP
+    //Only actually read the buffer if we're running on hardware
     if (::pread(channels[ch], buffer, ARRAY_SIZE(buffer), 0) < 0) {
         perror("pread");
     }
-
     return atoi(buffer);
+    #else
+    //Otherwise we just set all the values to -99 for now
+    return -99;
+    #endif
 }
 
 int ADC_Navio2::open_channel(int channel)

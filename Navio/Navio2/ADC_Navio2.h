@@ -11,10 +11,8 @@ public:
     int read(int ch) override;
     ADC_Navio2();
     ~ADC_Navio2();
-
 private:
     int open_channel(int ch);
-
     static const size_t CHANNEL_COUNT = 6;
-    int channels[CHANNEL_COUNT];
+    int channels[CHANNEL_COUNT]={-1};
 };
