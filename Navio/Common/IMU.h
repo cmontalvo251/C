@@ -1,9 +1,13 @@
 #ifndef IMU_H
 #define IMU_H
 
+#ifdef ARDUINO
+#include "MPU9250.h"
+#else
 #include <Common/MPU9250.h>
 #include <Navio2/AHRS.h>
 #include <mathp.h>
+#endif
 
 class IMU {
  public:
