@@ -2,7 +2,6 @@
 #define DYNAMICS_H
 
 #include "MATLAB.h";
-#include "environment.h";
 #include "Rotation3.h"
 //No matter what we need a way to receive commands from the PIC
 //The rcin class can handle anything we throw at it. 
@@ -23,6 +22,16 @@ Even in HIL they will call fictitious sensor blocks.
 Only in AUTO will we call the onboard sensors
 */
 #include "sensors.h"
+
+class environment {
+ private:
+  int GRAVITY_FLAG;
+ public:
+   MATLAB FGRAVI;
+   void init(int G);
+   void gravitymodel();
+   environment(); //constructor   
+};
 
 class Dynamics {
  private:

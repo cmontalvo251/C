@@ -2,13 +2,6 @@
 
 0.) Finish the actuator dynamics BS that you've been working on above
 
-1.) Then I started working on FASTLogger and FASTduino and I realized that
-the Navio block has a lot of use ful code for all types of hardware. As such
-I suggest the following. This will break everything!!!!!!
-
-a.) First, destroy all the links in FASTsim and use appropriate -L and -I
-in the Makefile so you just need to change one line of code.
-
 b.) cp the current Navio folder to a Navio_Archive folder and delete all
 custom made routines that way it is preserved as is and is never touched.
 
