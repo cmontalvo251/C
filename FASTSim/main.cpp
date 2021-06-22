@@ -2,7 +2,6 @@
 /////Initial edited by Carlos Montalvo
 
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
-
 #include "main.h"
 
 //define time parameters 

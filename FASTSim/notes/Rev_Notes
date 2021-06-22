@@ -128,3 +128,10 @@ a README file.
 
 Just FYI. I was working on FASTLogger and the IMU, ADC, GPS and BARO
 all work now. Yay.
+
+Ok first things first. Time to break the code for FASTSim.
+
+Alright I got rid of make_links and added all the appropriate -I's in the makefile. It looks a lot better now.
+
+Next is to move the Navio folder over to a Navio Archive folder. To do that
+I need to ssh into the Navio in my home.
