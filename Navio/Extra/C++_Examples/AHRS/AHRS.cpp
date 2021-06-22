@@ -53,9 +53,9 @@ void AHRS::update(float dt)
   float halfex, halfey, halfez;
   float qa, qb, qc;
 
-  double ax, ay, az;
-  double gx, gy, gz;
-  double mx, my, mz;
+  float ax, ay, az;
+  float gx, gy, gz;
+  float mx, my, mz;
 
   sensor->update();
   sensor->read_accelerometer(&ax, &ay, &az);
@@ -156,7 +156,7 @@ void AHRS::update(float dt)
   q3 *= recipNorm;
 }
 
-void AHRS::read_gyroscope(double* gx,double* gy,double* gz) {
+void AHRS::read_gyroscope(float* gx,float* gy,float* gz) {
   sensor->read_gyroscope(gx, gy, gz);
 }
 
@@ -167,8 +167,8 @@ void AHRS::updateIMU(float dt)
   float halfex, halfey, halfez;
   float qa, qb, qc;
 
-  double ax, ay, az;
-  double gx, gy, gz;
+  float ax, ay, az;
+  float gx, gy, gz;
 
   // Accel + gyro.
   sensor->update();
@@ -253,7 +253,7 @@ void AHRS::setGyroOffset()
   //---------------------- Calculate the offset -----------------------------
 
   float offset[3] = {0.0, 0.0, 0.0};
-  double gx, gy, gz;
+  float gx, gy, gz;
 
   //----------------------- MPU initialization ------------------------------
 
@@ -427,7 +427,7 @@ void imuLoop(AHRS* ahrs, int idx)
   // Orientation data
 
   float roll, pitch, yaw;
-  double gx,gy,gz;
+  float gx,gy,gz;
 
   struct timeval tv;
   float dt;
@@ -502,7 +502,7 @@ int main(int argc, char *argv[])
   //if (sensor_name.empty())
   //return EXIT_FAILURE;
 
-  auto imu = get_inertial_sensor("lsm");
+  auto imu = get_inertial_sensor("mpu");
   //auto imu2 = get_inertial_sensor("lsm");
 
   if (!imu) {

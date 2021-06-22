@@ -30,7 +30,7 @@ public:
     void updateIMU(float dt);
     void setGyroOffset();
     void getEuler(float* roll, float* pitch, float* yaw);
-    void read_gyroscope(double* gx,double* gy,double* gz);
+    void read_gyroscope(float* gx,float* gy,float* gz);
 
     float invSqrt(float x);
     float getW();

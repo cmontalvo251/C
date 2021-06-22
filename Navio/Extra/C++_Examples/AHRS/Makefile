@@ -8,3 +8,5 @@ all:
 
 clean:
 	rm -f AHRS
+	rm ../../../Common/*.o
+	rm ../../../Navio2/*.o

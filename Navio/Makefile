@@ -1,7 +1,7 @@
 CXX = g++
 CFLAGS = -std=c++11 -Wno-psabi -w -c -I .
-LIB=-L../ -L../Mathp/
-INCLUDE=-I../ -I../Mathp/
+LIB=-L../ -L../Mathp/ -L../MATLAB/
+INCLUDE=-I../ -I../Mathp/ -I../MATLAB/
 SRC=$(wildcard */*.cpp)
 OBJECTS = $(SRC:.cpp=.o)
 

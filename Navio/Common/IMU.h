@@ -16,9 +16,9 @@ class IMU {
   AHRS ahrs;
   IMU();
   double TEMP_SCALE = 1.0;
-  double ax=0, ay=0, az=0;
-  double gx=0, gy=0, gz=0;
-  double mx=0, my=0, mz=0;
+  float ax=0, ay=0, az=0;
+  float gx=0, gy=0, gz=0;
+  float mx=0, my=0, mz=0;
   double temperature=25.0; //Hardcoded again
   double roll=0.0,pitch=0.0,yaw=0.0;
   double gx_filtered=0, gy_filtered=0, gz_filtered=0;
