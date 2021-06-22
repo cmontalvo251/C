@@ -2,30 +2,37 @@
 
 ///Constructor
 IMU::IMU() {
-  imuSetup();
 }
 
-void IMU::imuSetup(){
+void IMU::init(int sensor_type){
   #ifndef DESKTOP
-  printf("Selected: MPU9250\n");
-  mpu = new MPU9250();
+  if (sensor_type == 0) {
+    printf("Selected: MPU9250\n");
+    mpulsm = new MPU9250();
+    TEMP_SCALE = 1.0;
+  }
+  if (sensor_type == 1) {
+    printf("Selected: LSM9DS1\n");
+    mpulsm = new LSM9DS1();
+    TEMP_SCALE = 10.0;
+  }
 
-  if (!mpu->probe()) {
+  if (!mpulsm->probe()) {
     printf("Sensor not enabled. Exiting prematurely \n");
     return;
   } else {
     printf("Sensor enabled properly \n");
     printf("Running initialization procedure.....\n");
   }
-  mpu->initialize();
+  mpulsm->initialize();
   printf("Beginning Gyro calibration...\n");
   offset[0] = 0;
   offset[1] = 0;
   offset[2] = 0;
   for(int i = 0; i<100; i++)
     {
-      mpu->update();
-      mpu->read_gyroscope(&gx, &gy, &gz);
+      mpulsm->update();
+      mpulsm->read_gyroscope(&gx, &gy, &gz);
       gx *= 180 / PI;
       gy *= 180 / PI;
       gz *= 180 / PI;
@@ -59,10 +66,10 @@ void IMU::setTemperature(double tempin) {
 
 void IMU::loop(double elapsedTime,double s){
   #ifndef DESKTOP
-  mpu->update();
-  mpu->read_accelerometer(&ax, &ay, &az);
-  mpu->read_gyroscope(&gx, &gy, &gz);
-  temperature = mpu->read_temperature();
+  mpulsm->update();
+  mpulsm->read_accelerometer(&ax, &ay, &az);
+  mpulsm->read_gyroscope(&gx, &gy, &gz);
+  temperature = mpulsm->read_temperature()/TEMP_SCALE;
 
   //ahrs.update(ax,ay,az,gx,gy,gz,mx,my,mz,elapsedTime);
   ahrs.updateNOMAG(ax,ay,az,gx,gy,gz,elapsedTime);
