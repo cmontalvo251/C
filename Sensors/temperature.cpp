@@ -5,7 +5,7 @@
 #define NUM_CHARS 14
 #else
 #define NUM_LINES 1
-#define NUM_CHARS 1
+#define NUM_CHARS 5
 #endif
 
 ///Constructor
@@ -17,9 +17,10 @@ void temperature::get() {
 	#ifdef DESKTOP
 	system("rm file");
 	system("sensors -u > file");
-	//system("cat file");
     #else
+	//printf("Running RPI Temp Command \n");
 	system("/opt/vc/bin/vcgencmd measure_temp > file");
+	//system("cat file");
 	#endif
 
 	//Read file to get contents
@@ -31,6 +32,7 @@ void temperature::get() {
 			getline(datafile,input);
 		}
 		input.erase(0,NUM_CHARS);
+		//printf("INPUT STRING = \n");
 		//printf("%s , %lf \n",input.c_str(),atof(input.c_str()));
 		temp = atof(input.c_str());
 	} else {

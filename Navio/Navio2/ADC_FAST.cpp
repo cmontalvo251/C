@@ -18,7 +18,7 @@ ADC_FAST::ADC_FAST() {
 void ADC_FAST::get_results() {
 	for (int i = 0; i < channel_count; i++)
         {
-            results.set(i+1,1,converter.read(i));
+            results.set(i+1,1,converter.read(i)/1000.0);
         }
 }
 

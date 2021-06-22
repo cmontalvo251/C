@@ -11,9 +11,11 @@ void IMU::imuSetup(){
   mpu = new MPU9250();
 
   if (!mpu->probe()) {
-    printf("Sensor not enabled\n");
+    printf("Sensor not enabled. Exiting prematurely \n");
+    return;
   } else {
     printf("Sensor enabled properly \n");
+    printf("Running initialization procedure.....\n");
   }
   mpu->initialize();
   printf("Beginning Gyro calibration...\n");
