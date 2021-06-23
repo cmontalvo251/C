@@ -149,3 +149,6 @@ Now both FASTLogger and FASTSim work with the new folder structure.
 
 Problem is that the -L and -I's are insane and I think it's time to
 make those a bit cleaner so we need to do yet another overhaul.....
+
+I did one more overhaul where I used the <> instead of the "" so the -I and -L are cleaner
+
