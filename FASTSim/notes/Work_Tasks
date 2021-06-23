@@ -2,30 +2,7 @@
 
 0.) Finish the actuator dynamics BS that you've been working on above
 
-b.) cp the current Navio folder to a Navio_Archive folder and delete all
-custom made routines that way it is preserved as is and is never touched.
-
-c.) Test all C++_Examples by moving C++_Examples to its own folder out of 
-Extra and then delete Extra. Again this folder must be standalone. No MATLAB.h
-no nothing.
-
-d.) Take All of the Navio blocks and place them into appropriate folders in
-C++. You'll notice that FASTSim uses RCInput from C.git on my Github but 
-FASTPilot et al uses RCInput from Navio2. This means there's a duplicate and
-this is very bad. So first organize all of the routines even if they don't
-compile
-
-e.) With everything organized go back and make sure that FASTLogger compiles
-That's priority number 1. On DESKTOP and RPI
-
-f.) Once you've got that working you can head over to FASTSim and make sure 
-FASTSim recompiles again. It probably got royally destroyed.
-
 g.) Edit the Sensor routine to use the newly formed folders from d.
-
-Once this is done you should have a working version of FASTLogger and FASTSim 
-that appropriately calls functions that are organized in folders that don't
-have Navio in them. 
 
 2.) From here I'd like to start editing the sensor routines to include Arduino
 hooks. The sensor.h file should work at the moment on both desktop and Rpi so

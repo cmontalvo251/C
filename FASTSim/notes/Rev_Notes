@@ -135,3 +135,12 @@ Alright I got rid of make_links and added all the appropriate -I's in the makefi
 
 Next is to move the Navio folder over to a Navio Archive folder. To do that
 I need to ssh into the Navio in my home.
+
+Ok I cp'ed the current Navio folder to a NavioOG folder and deleted all
+custom made routines that way it is preserved as is and is never touched. I pushed that to the master
+
+I then tested all the C++_Examples but I made its own folder called Examples. If you open up NavioOG you'll see how much nicer it looks
+
+Then I took alll of the Navio blocks and placed them into appropriate folders in C.git. You'll notice that FASTSim uses RCInput from C.git on my Github but FASTPilot et al uses RCInput from Navio2. This means there's a duplicate and this is very bad. So I organized all of the routines even if they don't compile. There is no Navio folder now. All of the modules are within other folders. There is a NavioOG folder that has all of the original routines to make sure you can go back and test worst case
+
+With everything royally messed up I made sure FASTSim and FASTLogger compile on both laptop and desktop
