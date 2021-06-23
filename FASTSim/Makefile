@@ -32,14 +32,14 @@ MODELPATH=PortalCube/src
 CC=g++
 EXECUTABLE=FASTSim.exe
 CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCInput/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
+CPPSOURCES=$(wildcard *.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
 COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
-INCLUDE=-I../MATLAB/ -I../Mathp/ -I../6DOF/ -I../RCInput/ -I${MODELPATH} -I../Timer/ -I../Sensors/ -I../Datalogger/ -I../RK4/
+INCLUDE=-I../MATLAB/ -I../Mathp/ -I../6DOF/ -I../RCIO/ -I${MODELPATH} -I../Timer/ -I../Sensors/ -I../Datalogger/ -I../RK4/
 #No RENDER IF RPI
 RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
