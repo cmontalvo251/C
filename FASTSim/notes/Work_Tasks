@@ -1,5 +1,7 @@
 //WORK TASKS
 
+-1.) Do one more overhaul where you use the <> instead of the "" so the -I and -L are cleaner
+
 0.) Finish the actuator dynamics BS that you've been working on above
 
 g.) Edit the Sensor routine to use the newly formed folders from d.

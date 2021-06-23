@@ -144,3 +144,8 @@ I then tested all the C++_Examples but I made its own folder called Examples. If
 Then I took alll of the Navio blocks and placed them into appropriate folders in C.git. You'll notice that FASTSim uses RCInput from C.git on my Github but FASTPilot et al uses RCInput from Navio2. This means there's a duplicate and this is very bad. So I organized all of the routines even if they don't compile. There is no Navio folder now. All of the modules are within other folders. There is a NavioOG folder that has all of the original routines to make sure you can go back and test worst case
 
 With everything royally messed up I made sure FASTSim and FASTLogger compile on both laptop and desktop
+
+Now both FASTLogger and FASTSim work with the new folder structure.
+
+Problem is that the -L and -I's are insane and I think it's time to
+make those a bit cleaner so we need to do yet another overhaul.....
