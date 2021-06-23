@@ -1,23 +1,12 @@
-CC=g++
-EXECUTABLE=FASTSim.exe
-CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp)
-COBJECTS=$(CSOURCES:.c=.o)
-CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
-OBJECTS=$(COBJECTS) $(CPPOBJECTS)
-COMPILE=-c -w -O3
 EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
-FLAGS=-DDEBUG
-LIB=-L/usr/local/lib
-#No RENDER IF RPI
-RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
-THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
+MODELPATH=PortalCube/src
 
 #Flags
 
-#VEHICLE TYPE IS SELECTED IN THE MAKE LINKS FILE
+#MODELTYPE
+#This needs to point to a source folder with aerodynamics.* and controller.*
 
 ##EXETYPE
 #SIMONLY - this as fast as possible to generate plots
@@ -40,15 +29,42 @@ THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using t
 ##SENSOR TYPES - SENSORBLOCK, IMURPI
 ##OTHER - REALTIME (for HIL)
 
+CC=g++
+EXECUTABLE=FASTSim.exe
+CSOURCES=$(wildcard *.c)
+CPPSOURCES=$(wildcard *.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
+COBJECTS=$(CSOURCES:.c=.o)
+CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
+OBJECTS=$(COBJECTS) $(CPPOBJECTS)
+COMPILE=-c -w -O3
+FLAGS=-DDEBUG
+LIB=-L/usr/local/lib
+INCLUDE=-I../MATLAB/ -I../Mathp/ -I../6DOF/ -I../RCIO/ -I${MODELPATH} -I../Timer/ -I../Sensors/ -I../Datalogger/ -I../RK4/
+#No RENDER IF RPI
+RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
+
+
 all: $(CSOURCES) $(CPPSOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LIB) $(RENDER) $(THREAD)
+	$(CC) $(OBJECTS) -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 .c.o:
-	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 .cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 clean:
+	echo ' ' > logs/d.txt
 	rm -rf $(EXECUTABLE) *.o
+	rm logs/*.txt
+	rm ../MATLAB/*.o
+	rm ../Datalogger/*.o
+	rm ../Mathp/*.o
+	rm ../6DOF/*.o
+	rm ../RCInput/*.o
+	rm ${MODELPATH}/*.o
+	rm ../Timer/*.o
+	rm ../Sensors/*.o
+	rm ../RK4/*.o
 rebuild:
 	make clean
 	make

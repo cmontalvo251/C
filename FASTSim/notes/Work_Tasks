@@ -1,0 +1,84 @@
+//WORK TASKS
+
+0.) Finish the actuator dynamics BS that you've been working on above
+
+g.) Edit the Sensor routine to use the newly formed folders from d.
+
+2.) From here I'd like to start editing the sensor routines to include Arduino
+hooks. The sensor.h file should work at the moment on both desktop and Rpi so
+it's time to get it to work on Arduino hooks 
+
+3.) I then would like you to make an INO routine that logs all sensor data 
+IMU, MPL, GPS (I think those are all the sensors). I'd like there to be a
+SIMONLY version of this as well where the computer just fakes the sensors. 
+Might need to call this DESKTOP since that's what all the hooks are
+
+Using this log routine I want you to log like an hour of data to disk just
+using Serial.print and then save it for later processing of noise and what
+not
+
+4.) Once the Arduino hooks are in I would like one more Arduino Routine
+that reads the RCInput and then feeds them (pass through) to RCOutput. This
+will require you to use the RCInput and RCOutput routines which hopefully
+got combined between Navio and Arduino at which point you'll also need hooks
+in there for the JOYSTICK as well. 
+
+Using this routine log back in to betaflight and make sure you have 
+everything set up properly for the on board Flight controller. 
+
+You should also be able to fly the drone at this point
+
+5.) Since you just edited the RCInput and RCOutput routine go back and make
+sure that SIMONLY, SIL and Rpi hooks are working. In order to get the RPi
+hooks working you're going to have to compile this routine in AUTO mode
+on the RPI. You'll also need to hook up the receiver and some servos to make 
+sure you're getting the output you think you're supposed to get. 
+
+Again remember that the autopilot (non-PID) is the only thing that's 
+going to go on Gitlab so for now you can make a pass through just like
+above and make sure the receiver is sending appropriate signals to the servos
+
+6.) At this point you can start analyzing the data you obtained in 3. See
+if you can get bias, std dev, noise, etc and then add that to the Sensors
+routine when you're using DESKTOP and POLLUTED sensor mode.
+
+7.) Quadcopter dynamics - It's then time to add the quadcopter dynamics.
+I think this is a misnomer because the dynamics are already there. I 
+think this means aerodynamics. Quadcopter aerodynamics. Remember
+that microsec pulse is the input to this routine.
+
+8.) Using a scale and the pass through Arduino routine get the thrust of
+the motor as a function of microsend pulse and add that to the aerodynamics
+routine.
+
+9.) Quadcopter autopilot - Then write a simple PID loop. 
+
+===================================================================
+10.) When you get to here take a look at the text below and see where 
+you need to go.
+
+0.) Link code to FASTPilot
+5.) Aircraft dynamics
+6.) X8 dynamics
+8.) aircraft autopilot
+9.) X8 autopilot
+
+3.) Run SIL on RPI - This mode should probably throw an error in my opinion since you
+can't run opengl. 
+4.) Run HIL on Desktop and RPI - You need to write two instances of the same software.
+The RPI/HIL version will accept a polluted state vector from the computer and run that
+through the control algorithm and then pass back the control commands to the integrator.
+So serialListens and SerialResponds etc will need to be written to send data back and
+forth
+5.) AUTO - In this mode the sensors will be called in the loop and the commands will
+be compute using the autopilot. These commands will then be sent to the actuators.
+
+///Potential Issues in the future
+
+1.) We have an issue with which variables we log to the SD card.
+Right now the number of variables is set in the Dynamics.cpp setup routine
+but it seems more realistic to have the programmer decide which variables they want
+logged to the SD card. As such I wonder if in the init routine for the logger
+we compute which states we want logged. I think once we start porting this over
+to the Raspberry Pi and running in AUTO mode we will have to start doing a large amount
+of overhaul to get this to work.
