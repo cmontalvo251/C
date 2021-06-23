@@ -1,9 +1,9 @@
 #ifndef GPS_H
 #define GPS_H
 
-#include "Ublox.h"
-#include "mathp.h"
-#include "MATLAB.h"
+#include <GPS/Ublox.h>
+#include <Mathp/mathp.h>
+#include <MATLAB/MATLAB.h>
 
 #define GPSPERIOD 0.5
 #define NGPS 25

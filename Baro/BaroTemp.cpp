@@ -55,10 +55,10 @@ void BaroTemp::ConvertPressure2Altitude() {
   pressure0 = 1010; //Going to have to Hardcode this.
   double pascals = pressure/0.01;
   altitude = (1.0-pow((pascals/101325.0),1.0/5.25588))/(2.2557*pow(10,-5.0));
-  //printf("Pressure = %lf ",pressure);
-  //printf("Pressure = %lf ",pressure0);
+  //printf("\n Pressure = %lf ",pressure);
+  //printf("Pressure0 = %lf ",pressure0);
   //printf("Altitude = %lf ",altitude);
-  //printf("Pascals = %lf ",pascals);
+  //printf("Pascals = %lf \n",pascals);
   Z = -altitude;
 }
 

@@ -1,9 +1,9 @@
 #ifndef ROTATION3_H
 #define ROTATION3_H
 
-#include "MATLAB.h"
+#include <MATLAB/MATLAB.h>
 #include <math.h>
-#include "mathp.h"
+#include <Mathp/mathp.h>
 
 using namespace std;
 

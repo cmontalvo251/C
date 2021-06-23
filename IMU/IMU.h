@@ -4,10 +4,10 @@
 #ifdef ARDUINO
 #include "MPU9250.h"
 #else
-#include "MPU9250.h"
-#include "LSM9DS1.h"
-#include "AHRS.h"
-#include "mathp.h"
+#include <IMU/MPU9250.h>
+#include <IMU/LSM9DS1.h>
+#include <IMU/AHRS.h>
+#include <Mathp/mathp.h>
 #endif
 
 class IMU {

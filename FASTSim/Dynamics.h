@@ -1,13 +1,13 @@
 #ifndef DYNAMICS_H
 #define DYNAMICS_H
 
-#include "MATLAB.h";
-#include "Rotation3.h"
+#include <MATLAB/MATLAB.h>
+#include <6DOF/Rotation3.h>
 //No matter what we need a way to receive commands from the PIC
 //The rcin class can handle anything we throw at it. 
 //Joystick commands or even a receiver on the raspberry pi or an Arduino
 //If running in SIMONLY the rcin class just acts as a place holder for variables
-#include "RCInput.h" 
+#include <RCIO/RCInput.h>
 
 //These two includes are craft dependent.
 //There is an open source portal cube example. The aircraft and 
@@ -15,13 +15,12 @@
 #include "aerodynamics.h" 
 #include "controller.h"
 
-
 /*This sensor block does alot of different things. If we're running
 SIMONLY or SIL these will call ficitious sensor blocks.
 Even in HIL they will call fictitious sensor blocks. 
 Only in AUTO will we call the onboard sensors
 */
-#include "sensors.h"
+#include <Sensors/sensors.h>
 
 class environment {
  private:

@@ -5,7 +5,7 @@
 
 //This routine requires a dynamic model. You can see an example in FASTSim/Dynamics.*
 
-#include "MATLAB.h";
+#include <MATLAB/MATLAB.h>
 
 class RK4 {
  private:

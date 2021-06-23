@@ -1,7 +1,7 @@
 #ifndef DATALOGGER_H //HEADER GUARD - It makes sure that you only import this header file once
 #define DATALOGGER_H
 
-#include "MATLAB.h"
+#include <MATLAB/MATLAB.h>
 #include <iostream>
 
 class Datalogger {

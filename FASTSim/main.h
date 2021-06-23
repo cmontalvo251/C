@@ -1,11 +1,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "Datalogger.h" //Always need a data logger
+#include <Datalogger/Datalogger.h> //Always need a data logger
 #include "Dynamics.h"; //Always need vehicle dynamics
 //Always need timer for the pause function and the error function. 
 //May not need to create a TIMER class but still need the built-in functions
-#include "timer.h" 
+#include <Timer/timer.h>
 #include <iostream>
 #include <stdlib.h>
 
@@ -14,14 +14,14 @@
 #if defined (SIL) || (HIL)
 #if defined (DESKTOP)
 //If we are rendering use the preferred rendering environment
-#include "opengl.h"
+#include <OpenGL/opengl.h>
 #endif
 #endif
 
 #if defined (SIL) || (SIMONLY) || (HIL)
 //If you're simulating the vehicle you have to have an RK4 Engine
 //that integrates the equations of motion
-#include "RK4.h"
+#include <RK4/RK4.h>
 #endif
 
 //If we are running SIL/HIL we are simulating the flight control board

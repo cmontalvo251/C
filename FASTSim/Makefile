@@ -39,7 +39,7 @@ OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
-INCLUDE=-I../MATLAB/ -I../Mathp/ -I../6DOF/ -I../RCIO/ -I${MODELPATH} -I../Timer/ -I../Sensors/ -I../Datalogger/ -I../RK4/
+INCLUDE=-I${MODELPATH} -I../
 #No RENDER IF RPI
 RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
@@ -60,7 +60,7 @@ clean:
 	rm ../Datalogger/*.o
 	rm ../Mathp/*.o
 	rm ../6DOF/*.o
-	rm ../RCInput/*.o
+	rm ../RCIO/*.o
 	rm ${MODELPATH}/*.o
 	rm ../Timer/*.o
 	rm ../Sensors/*.o

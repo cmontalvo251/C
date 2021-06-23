@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "mathp.h"
+#include <Mathp/mathp.h>
 #include <fstream>
 #include "nrutils.h"
 #define NRANSI

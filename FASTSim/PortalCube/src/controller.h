@@ -4,8 +4,8 @@
 //This is another class that is craft dependent as as such
 //must adhere to specific standards
 
-#include "MATLAB.h" 
-#include "RCInput.h" //this is for STICK values
+#include <MATLAB/MATLAB.h>
+#include <RCIO/RCInput.h> //this is for STICK values
 
 class controller {
 private:

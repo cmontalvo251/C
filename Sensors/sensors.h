@@ -1,8 +1,8 @@
 #ifndef SENSORS_H
 #define SENSORS_H
 
-#include "MATLAB.h"
-#include "Rotation3.h"
+#include <MATLAB/MATLAB.h>
+#include <6DOF/Rotation3.h>
 
 class sensors {
 private:
