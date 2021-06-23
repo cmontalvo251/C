@@ -13,8 +13,8 @@ twitter.com/emlidtech || www.emlid.com || info@emlid.com
 #include <cmath>
 #include <stdio.h>
 #include <memory>
-#include <Common/InertialSensor.h>
-#include <mathp.h>
+#include "InertialSensor.h"
+#include "mathp.h"
 
 class AHRS {
  private:

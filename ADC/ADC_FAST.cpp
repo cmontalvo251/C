@@ -1,5 +1,4 @@
-#include <Navio2/ADC_FAST.h>
-
+#include "ADC_FAST.h"
 
 ADC_FAST::ADC_FAST() {
 	printf("Initializing ADC \n");	

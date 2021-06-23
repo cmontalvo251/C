@@ -1,8 +1,8 @@
 #ifndef BAROTEMP_H
 #define BAROTEMP_H
 
-#include <Common/MS5611.h>
-#include <Common/Util.h>
+#include "MS5611.h"
+#include "Util.h"
 #include <unistd.h>
 #include <stdio.h>
 

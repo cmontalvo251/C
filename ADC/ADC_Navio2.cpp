@@ -5,7 +5,7 @@
 #include <err.h>
 
 #include "ADC_Navio2.h"
-#include <Common/Util.h>
+#include "Util.h"
 
 #define ADC_SYSFS_PATH "/sys/kernel/rcio/adc"
 

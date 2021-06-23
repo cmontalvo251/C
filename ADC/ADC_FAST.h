@@ -1,7 +1,7 @@
 #ifndef ADC_FAST_H
 #define ADC_FAST_H
 
-#include <Navio2/ADC_Navio2.h>
+#include "ADC_Navio2.h"
 #include "MATLAB.h"
 
 class ADC_FAST

@@ -6,8 +6,8 @@
 #define _LSM9DS1_H
 
 #include <stdint.h>
-#include <Common/SPIdev.h>
-#include <Common/InertialSensor.h>
+#include "SPIdev.h"
+#include "InertialSensor.h"
 
 class LSM9DS1 : public InertialSensor
 {
