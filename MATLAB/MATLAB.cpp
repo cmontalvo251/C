@@ -223,13 +223,13 @@ void MATLAB::dlmread(char* filename,MATLAB* data,char* name) {
 
 void MATLAB::vecfprintf(FILE* outfile) {
   for (int idx = 0;idx<row_;idx++) {
-    fprintf(outfile,"%lf ",get(idx+1,1));
+    fprintf(outfile,"%lf,",get(idx+1,1));
   }
 }
 
 void MATLAB::vecfprintfln(FILE* outfile) {
   for (int idx = 0;idx<row_;idx++) {
-    fprintf(outfile,"%lf ",get(idx+1,1));
+    fprintf(outfile,"%lf,",get(idx+1,1));
   }
   fprintf(outfile,"\n");
 }
