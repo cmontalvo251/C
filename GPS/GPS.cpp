@@ -52,11 +52,12 @@ void GPS::poll(float currentTime,int FILEOPEN) {
       X_origin = latitude;
       Y_origin = longitude;
     }
-  } else {
-    latitude = -99;
-    longitude = -99;
-    altitude = -99;
   }
+  //else {
+  //latitude = -99;
+  //longitude = -99;
+  //altitude = -99;
+  //}
   //printf("%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf \n",latitude,longitude,X_origin,Y_origin,X,Y,xprev,yprev,dist,speed);
   //dist_vec.disp();
   //time_vec.disp();
