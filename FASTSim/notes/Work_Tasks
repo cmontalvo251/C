@@ -2,7 +2,11 @@
 
 0.) Finish the actuator dynamics BS that you've been working on above
 
-g.) Edit the Sensor routine to use the newly formed folders from d.
+g.) Edit the Sensor routine to use the newly formed folders from d. Think a bit more 
+on how you want to have this sensor block. I'm assuming you'll just be importing 
+all the sensors? Pitot, IMU, GPS, etc??? What if those sensors are not connected?
+Is there a way for the controller to ignore erroneous data? Or maybe just turn them
+on and off in the controller?
 
 2.) From here I'd like to start editing the sensor routines to include Arduino
 hooks. The sensor.h file should work at the moment on both desktop and Rpi so
