@@ -1,23 +1,20 @@
-#include <cstdio>
-#include <unistd.h>
-#include <fcntl.h>
-#include <cstdlib>
-#include <err.h>
+#include "ADC.h"
 
-#include <ADC/ADC_Navio2.h>
-#include <Util/Util.h>
-
-#define ADC_SYSFS_PATH "/sys/kernel/rcio/adc"
-
-ADC_Navio2::ADC_Navio2()
-{
+ADC::ADC() {
+	printf("Initializing ADC \n");	
+	#ifndef DESKTOP
+	initialize();
+	#else
+	//On Desktop we don't need to initialize the channels
+	printf("Using DESKTOP configuration so no initialization required \n");
+	#endif
+	channel_count = get_channel_count();
+	printf("ADC Channel Count = %d \n",channel_count);
+	//Now we create a MATLAB vector
+	results.zeros(channel_count,1,"ADC Results");
 }
 
-ADC_Navio2::~ADC_Navio2()
-{
-}
-
-void ADC_Navio2::initialize()
+void ADC::initialize()
 {
     for (size_t i = 0; i < ARRAY_SIZE(channels); i++) {
         channels[i] = open_channel(i);
@@ -27,12 +24,12 @@ void ADC_Navio2::initialize()
     }
 }
 
-int ADC_Navio2::get_channel_count(void)
+int ADC::get_channel_count(void)
 {
     return CHANNEL_COUNT;
 }
 
-int ADC_Navio2::read(int ch)
+int ADC::read(int ch)
 {
     if (ch > ARRAY_SIZE(channels) )
 	{
@@ -53,7 +50,7 @@ int ADC_Navio2::read(int ch)
     #endif
 }
 
-int ADC_Navio2::open_channel(int channel)
+int ADC::open_channel(int channel)
 {
     char *channel_path;
     if (asprintf(&channel_path, "%s/ch%d", ADC_SYSFS_PATH, channel) == -1) {
@@ -65,5 +62,19 @@ int ADC_Navio2::open_channel(int channel)
     free(channel_path);
 
     return fd;
+}
+
+void ADC::get_results() {
+	for (int i = 0; i < channel_count; i++)
+        {
+            results.set(i+1,1,read(i)/1000.0);
+        }
+}
+
+void ADC::print_results() {
+	printf(" ADC = ");
+	for (int i = 0;i < channel_count;i++) {
+		printf("%lf ",results.get(i+1,1));
+	}
 }
 
