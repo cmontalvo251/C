@@ -8,7 +8,7 @@ void Telemetry::InitSerialPort(void)
   #ifdef __WIN32__
     char *port = "\\\\.\\COM12";
   #endif
-  #if defined __linux__ || __APPLE__
+  #if defined __linux__ || __APPLE__ || RPI
     char *port = "/dev/ttyUSB0";
   #endif
   SerialInit(port,BaudRate);
@@ -19,16 +19,15 @@ void Telemetry::InitSerialPort(void)
 void Telemetry::SerialInit(char *ComPortName, int BaudRate) 
 {
   #ifdef RPI
+  printf("Opening Com Port on Raspberry Pi \n");
   if(wiringPiSetup() == -1) {
       fprintf(stdout, "Unable to start wiringPi: %s\n", strerror (errno));
-      return 1;
     }
   hComm = serialOpen(ComPortName,BaudRate);
   if (hComm < 0) {
       fprintf(stderr, "Unable to open serial device: %s\n", strerror (errno));
-      return 1;
     }
-  return hComm;
+  return;
   #endif
   
   //On linux you need to open the tty port
@@ -80,8 +79,8 @@ char Telemetry::SerialGetc()
   char rxchar;
 
   #ifdef RPI
-  if (serialDataAvail(*hComm)) {
-      rxchar = serialGetchar(*hComm);
+  if (serialDataAvail(hComm)) {
+      rxchar = serialGetchar(hComm);
       //fflush(stdout);
     }
   return rxchar;
@@ -113,7 +112,7 @@ char Telemetry::SerialGetc()
 void Telemetry::SerialPutc(char txchar)
 {
   #ifdef RPI
-  serialPutchar(*hComm,txchar);
+  serialPutchar(hComm,txchar);
   fflush(stdout);
   return;
   #endif
@@ -163,7 +162,7 @@ void Telemetry::SerialSendArray(float number_array[],int num,int echo) {
     if (echo) {
       printf("Sending = %lf %d \n",number_array[i],int_var);
     }
-    sprintf(outline,"H:%08x ",int_var);
+    sprintf(outline,"%d:%08x ",i,int_var);
     if (echo) {
       printf("Hex = %s \n",outline);
     }
@@ -335,9 +334,9 @@ int Telemetry::SerialListen(int echo) {
   
   ///////////////THIS WORKS DO NOT TOUCH (RPI ONLY)
   /* char dat;
-  if(serialDataAvail(*hComm))
+  if(serialDataAvail(hComm))
     {
-      dat = serialGetchar(*hComm);
+      dat = serialGetchar(hComm);
       printf("char = %c int(char) = %d \n", dat,int(dat));
     }
     return 0;*/

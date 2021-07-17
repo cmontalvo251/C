@@ -4,8 +4,8 @@ CPPSOURCES=$(wildcard *.cpp ../../Serial/Telemetry.cpp)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(CPPOBJECTS)
 COMPILE=-c -w -O3
-DIRECTIVES=
-LIB=-L/usr/local/lib
+DIRECTIVES=-DRPI ##You need this to make sure the computer uses RPI
+LIB=-L/usr/local/lib -lwiringPi #You need -lwiringPi for serial stuff
 INCLUDE=-I../../
 
 all: $(CPPSOURCES) $(EXECUTABLE)
