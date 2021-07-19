@@ -162,7 +162,7 @@ void Telemetry::SerialSendArray(float number_array[],int num,int echo) {
     if (echo) {
       printf("Sending = %lf %d \n",number_array[i],int_var);
     }
-    sprintf(outline,"%d:%08x ",i,int_var);
+    sprintf(outline,"%d:%08x",i,int_var);
     if (echo) {
       printf("Hex = %s \n",outline);
     }
