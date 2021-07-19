@@ -35,6 +35,8 @@ class Telemetry {
     private:
     	int hComm;
 	public:
+		float lastTime = 0.0;
+		float period = 1.0; //Default is second
 		///THE FORMAT FOR SAYING HELLO AND RESPONDING AS WELL AS PUTTING 
 		//AN ARRAY AND READING AN ARRAY REALLY NEEDS TO BE THE SAME
 		//THERE IS NO REASON REALLY TO HAVE THEM BE DIFFERENT.
