@@ -156,6 +156,12 @@ void Dynamics::loop(double t) {
     saturation_block();
   }
   /////////////////////////////////////////////////////////////////
+
+  //////Send CtlComms to ESCs if running on Hardware///////////////
+  /////This only runs in AUTO mode
+  #ifdef AUTO
+  rcout.ESCcommands(ctlcomms);
+  #endif
 }
 
 void Dynamics::saturation_block() {

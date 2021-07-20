@@ -4,7 +4,6 @@
 #include "controller.h"
 
 controller::controller() {
-	NUMSIGNALS = 8;
 	ctlcomms.zeros(NUMSIGNALS,1,"PWM Control Signals"); //The standards must be TAERA1A2A3A4
 };
 

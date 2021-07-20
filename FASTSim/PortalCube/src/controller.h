@@ -17,7 +17,7 @@ public:
 	//state is a standard 12x1 vector
 	//statedot is a standard 12x1 vector of derivatives
 	//rxcomms is a TAERA1A2 of PWM signals from a receiver
-	int CONTROLLER_FLAG = 0,NUMSIGNALS;
+	int CONTROLLER_FLAG = 0,NUMSIGNALS=8; //Default is 4 but can be changed elsewhere
 	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);
 	void setup(MATLAB var); //var is open ended right now
 	controller(); //constructor
