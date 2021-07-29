@@ -223,14 +223,17 @@ void MATLAB::dlmread(char* filename,MATLAB* data,char* name) {
 
 void MATLAB::vecfprintf(FILE* outfile) {
   for (int idx = 0;idx<row_;idx++) {
-    fprintf(outfile,"%lf,",get(idx+1,1));
+    fprintf(outfile,"%lf",get(idx+1,1));
+    if (idx<row_-1) {
+      fprintf(outfile,"%s",",");
+    }
   }
 }
 
 void MATLAB::vecfprintfln(FILE* outfile) {
-  for (int idx = 0;idx<row_;idx++) {
-    fprintf(outfile,"%lf,",get(idx+1,1));
-  }
+  //Print the contents like normal
+  vecfprintf(outfile);
+  //only different is we print a newline at the end
   fprintf(outfile,"\n");
 }
 

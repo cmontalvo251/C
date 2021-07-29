@@ -32,7 +32,7 @@ MODELPATH=PortalCube/src
 CC=g++
 EXECUTABLE=FASTSim.exe
 CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
+CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
 COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
