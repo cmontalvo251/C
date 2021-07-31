@@ -2,6 +2,8 @@ EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO
 HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 MODELPATH=PortalCube/src
+#Location of HIL.git
+HPATH=/home/carlos/Documents/Git_Repos/Github/HIL
 
 #Flags
 
@@ -32,14 +34,14 @@ MODELPATH=PortalCube/src
 CC=g++
 EXECUTABLE=FASTSim.exe
 CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ../RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
+CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ${HPATH}/RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
 COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
 COMPILE=-c -w -O3
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
-INCLUDE=-I${MODELPATH} -I../
+INCLUDE=-I${MODELPATH} -I../ -I${HPATH}
 #No RENDER IF RPI
 RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
@@ -60,7 +62,7 @@ clean:
 	rm ../Datalogger/*.o
 	rm ../Mathp/*.o
 	rm ../6DOF/*.o
-	rm ../RCIO/*.o
+	rm ${HPATH}/RCIO/*.o
 	rm ${MODELPATH}/*.o
 	rm ../Timer/*.o
 	rm ../Sensors/*.o
