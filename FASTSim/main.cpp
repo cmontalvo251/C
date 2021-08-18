@@ -267,7 +267,7 @@ void runMainLoop() {
         ctr++;
       }
       #endif
-      //Error States
+      //Error States (Sensor Measurements)
       for (int i = 0;i<integrator.NUMSTATES-1;i++) {
         logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
         ctr++;
@@ -282,6 +282,7 @@ void runMainLoop() {
         logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
         ctr++;
       }
+      #ifdef RK4_H
       //Forces and Moments
       for (int i = 0;i<3;i++) {
         logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
@@ -291,6 +292,7 @@ void runMainLoop() {
         logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
         ctr++;
       }
+      #endif
       logger.println(logvars);
       LOG+=LOGRATE;
     }

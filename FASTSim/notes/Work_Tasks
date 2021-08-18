@@ -1,98 +1,244 @@
-//WORK TASKS
+                                     WORK TASKS:
 
-=========================SIMPILOT WORK TASKS===========================
+SIMPILOT:
 
-Try and finish these before Friday of this week
+ ☐ Add navio receiver rcin protocols to current RCInput.h/.cpp and test with receiver in the Lab
 
-1.) Add navio receiver rcin protocols to current RCInput.h/.cpp and test with receiver in the Lab
+ ☐ Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. You'll probably have to create some test scripts
 
-2.) Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. 
-You'll probably have to create some test scripts
+ ☐ Since you just edited the RCInput and RCOutput routine go back and make sure that SIMONLY, SIL and Rpi hooks are working. In order to get the RPi hooks working you're going to have to compile this routine in AUTO mode on the RPI. You'll also need to hook up the receiver and some servos to make sure you're getting the output you think you're supposed to get. You might need to use an o-scope
 
-3.) Since you just edited the RCInput and RCOutput routine go back and make
-sure that SIMONLY, SIL and Rpi hooks are working. In order to get the RPi
-hooks working you're going to have to compile this routine in AUTO mode
-on the RPI. You'll also need to hook up the receiver and some servos to make 
-sure you're getting the output you think you're supposed to get. 
+ ☐ Quadcopter autopilot - write a simple PID loop. This can be open source since it won't work in flight. This will require creating a folder like Portalcube. For now leave the aerodynamics blank and just sent zeros since we're just interested in the controller. Howeve make sure that the aerodynamics.cpp/.h are at least there.
 
-4.) Quadcopter autopilot - write a simple PID loop. 
+ ☐ Test this on FASTIris and Bumblebee in the lab and video tape it to post on youtube
 
-5.) Test this on PiQuad and Bumblebee in the lab and video tape it to post on youtube
+ ☐ Do the same for Meta 1 and 2 and the Batwing
 
-========================FASTPILOT WORK TASKS====================
+ANTX:
 
-Work on these while you're in St. Augustine
+ ☐ Make sure that the Batwing is working properly in Demo mode
+ 
+ ☐ Make sure telemetry is working properly using Processing
+ 
+ ☐ Upgrade Processing Software with whatever signals are being sent from Drone - Current iteration of software is in Processing.git/Serial/ReceiveHexDump.pde Original software used during NOAA campaign is in GROUND_STATION also in Serial folder. Be sure to check Archive folder. I'd like the ground station software to be versatile enough that it can handle any number of sensors from telemetry you just simply need to specify what sensors are being read in and in what order
+ 
+ ☐ Market our entire setup as an independent contractor if needed
 
-1.) Finish the actuator dynamics
+FASTSim:
 
-2.) Quadcopter aerodynamics. Remember that microsec pulse is the input to this routine (ctlcomms)
+ ☐ Finish the actuator dynamics. There are alot of subtasks for this one
+   ☐ Integrate the state vector to produce State.
+   ☐ Send STate to the sensor routine and receive the polluted state
+   ☐ Send pollutted state to controller built by the user to produce ctlcomms
+   ☐ Send ctlcomms to actuator dynamics to produce actuators values
+   ☐ Pollute actuator values with ACTUATOR ERRORS by some percentage
+   ☐ Send actuator values to aerodynamics routine written by user to produce Forces and moments
 
-========================WOODEN DRONE WORK TASKS=================================
+ ☐ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available
 
-1.) From here I'd like to start editing the sensor routines to include Arduino
-hooks. The sensor.h file should work at the moment on both desktop and Rpi so
-it's time to get it to work on Arduino hooks. Edit the Sensor routine to use the newly formed folders. Think a bit more on how you want to have this sensor block. I'm assuming you'll just be importing 
-all the sensors? Pitot, IMU, GPS, etc??? What if those sensors are not connected?
-Is there a way for the controller to ignore erroneous data? Or maybe just turn them
-on and off in the controller?
+ ☐ Complete aerodynamics fo X8
 
-2.) I then would like you to make an INO routine that logs all sensor data 
-IMU, MPL, GPS (I think those are all the sensors). I'd like there to be a
-SIMONLY version of this as well where the computer just fakes the sensors. 
-Might need to call this DESKTOP since that's what all the hooks are
+ ☐ Complete aerodynamics for Aircraft
 
-3.) Using this log routine I want you to log like an hour of data to disk just
-using Serial.print and then save it for later processing of noise and what
-not
+ ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
 
-4.) Once the Arduino hooks are in I would like one more Arduino Routine
-that reads the RCInput and then feeds them (pass through) to RCOutput. This
-will require you to use the RCInput and RCOutput routines which hopefully
-got combined between Navio and Arduino at which point you'll also need hooks
-in there for the JOYSTICK as well. 
+WOODEN DRONE:
 
-5.) Using this routine log back in to betaflight and make sure you have 
-everything set up properly for the on board Flight controller. Again remember that the autopilot (non-PID) is the only thing that's going to go on Gitlab so for now you can make a pass through just like
-above and make sure the receiver is sending appropriate signals to the servos
+ ☐ From here I'd like to start editing the sensor routines to include Arduino hooks. The sensor.h file should work at the moment on both desktop and Rpi so it's time to get it to work on Arduino hooks. Edit the Sensor routine to use the newly formed folders. Think a bit more on how you want to have this sensor block. I'm assuming you'll just be importing all the sensors? Pitot, IMU, GPS, etc??? What if those sensors are not connected? Is there a way for the controller to ignore erroneous data? Or maybe just turn them on and off in the controller?
 
-6.) You should also be able to fly the drone at this point
+ ☐ I then would like you to make an INO routine that logs all sensor data IMU, MPL, GPS (I think those are all the sensors). I'd like there to be a SIMONLY version of this as well where the computer just fakes the sensors. Might need to call this DESKTOP since that's what all the hooks are. Make all of the sensor specific items happen inside the sensor class. In order for this to work, the datlogger routine is going to need to get updated to work for an SD breakout board. Using this log routine I want you to log like an hour of data to disk and then save it for later processing of noise and bias. This routine needs to be general enough to work on Navio as well. 
+  ☐ Add code for MPL115
+  ☐ Add BNO055 to Arduino and read/send those signals
+  ☐ Datalogger routine will need to be augmented to hangle RPi, DESKTOP and ARDUINO
+ 
+ ☐ Start analyzing the data you obtained in from the hour of logging. See if you can get bias, std dev, noise, etc and then add that to the Sensors routine when you're using DESKTOP and POLLUTED sensor mode.
 
-7.) At this point you can start analyzing the data you obtained in 3. See
-if you can get bias, std dev, noise, etc and then add that to the Sensors
-routine when you're using DESKTOP and POLLUTED sensor mode.
+ ☐ Once the Arduino hooks are in I would like one more Arduino Routine that reads the RCInput and then feeds them (pass through) to RCOutput. This will require you to use the RCInput and RCOutput routines which hopefully got combined between Navio and Arduino at which point you'll also need hooks in there for the JOYSTICK as well. Again these need to be general enough that just changing the Makefile will compile the routine onto different architectures
 
-8.) Using a scale and the pass through Arduino routine get the thrust of
-the motor as a function of microsend pulse and add that to the aerodynamics
-routine for the quadcopter
+ ☐ Using this routine log back in to betaflight and make sure you have everything set up properly for the on board Flight controller. Again remember that the autopilot (non-PID) is the only thing that's going to go on Gitlab so for now you can make a pass through just like above and make sure the receiver is sending appropriate signals to the servos
 
-===================================================================
+ ☐ You should also be able to fly the drone at this point. So it would be good to go ahead and fly the drone - REV 1, 2, and 5
 
-When you get to here take a look at the text below and see where 
-you need to go.
+ ☐ Add telemetry when in AUTO mode on Arduino. Use Serial class and add Arduino Hooks. Note that Telemetry will default to sending different signals when in HIL mode
+ 
+ ☐ Plot data from this flight test - GPS, IMU, etc - REV 7
 
-0.) Link code to FASTPilot
-5.) Aircraft dynamics
-6.) X8 dynamics
-8.) aircraft autopilot
-9.) X8 autopilot
+ ☐ Using a scale and the pass through Arduino routine get the thrust of the motor as a function of microsend pulse and add that to the aerodynamics routine for the quadcopter. While you're doing this experiment figure out how long it takes to go from full throttle on your control stick to full throttle on the drone. That is the amount of delay we need to introduce into our actuators.
 
-3.) Run SIL on RPI - This mode should probably throw an error in my opinion since you
-can't run opengl. 
-4.) Run HIL on Desktop and RPI - You need to write two instances of the same software.
-The RPI/HIL version will accept a polluted state vector from the computer and run that
-through the control algorithm and then pass back the control commands to the integrator.
-So serialListens and SerialResponds etc will need to be written to send data back and
-forth
-5.) AUTO - In this mode the sensors will be called in the loop and the commands will
-be compute using the autopilot. These commands will then be sent to the actuators.
-6.) How do you feel about updating OpenGL rendering environment to Unreal engine or something like Godot or even Unity???
+HIL:
 
-///Potential Issues in the future
+  ☐ Create a script that sends data back and forth
+  
+  ☐ Add hooks to FASTSim that compile DESKTOP + HIL and RPI/Arduino HIL that sends sensor data and control commands back and forth. The RPI/HIL version will accept a polluted state vector from the computer and run that through the control algorithm and then pass back the control commands to the integrator. So serialListens and SerialResponds etc will need to be written to send data back and forth
 
-1.) We have an issue with which variables we log to the SD card.
-Right now the number of variables is set in the Dynamics.cpp setup routine
-but it seems more realistic to have the programmer decide which variables they want
-logged to the SD card. As such I wonder if in the init routine for the logger
-we compute which states we want logged. I think once we start porting this over
-to the Raspberry Pi and running in AUTO mode we will have to start doing a large amount
-of overhaul to get this to work.
+FASTPILOT:
+
+ ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git
+
+COMPLEX AUTOPILOT LOOP:
+
+  Innerloop:
+    Inputs: Roll, pitch, yaw commands
+    Outputs: ctlcomms - us signals to RCIO class
+  Outerloop:
+    Inputs: waypoint commands (x,y,altitude)
+    Outputs: roll pitch and yaw commands
+
+  ☐ Create a logical architecture that works for all vehicles in the structure the looks like the form above
+    ☐ GraveDigger - The Remote control car in the lab
+    ☐ FASTIris
+    ☐ Bumblebee
+    ☐ Meta 1 and 2
+    ☐ Batwing
+    
+  ☐ Test autopilot control laws in SIMONLY mode
+    ☐ Program heading angle estimation
+    ☐ Program Station keeping controller and see if drone can maintain a certain space
+    ☐ Program waypoint controller and see if drone can point to a waypoint by just commanding heading
+    ☐ See if drone can fly to a waypoint
+
+  ☐ Test autopilot control laws in SIMONLY mode with Sensor errors
+
+  ☐ Test autopilot control laws in SIL mode
+
+  ☐ Test autopilot control laws in SIL mode with Sensor errors
+
+  ☐ Test autopilot controls laws in HIL mode
+
+  ☐ Test autopilot controls laws in HIL mode with SEs
+
+  ☐ Test autopilot on real systems - RCIO needs to be able to handle where to send ESC signals depending on #define in Makefile
+    ☐ GraveDigger - The Remote control car in the lab
+    ☐ Wooden Drone - Can focus on outerloop control laws
+      ☐ Attempt to code altitude hold for drone using deltaP and Az - REV 6
+      ☐ Station keeping
+      ☐ Point to a desired attitude
+      ☐ Waypoint controller
+    ☐ FASTIris
+    ☐ Bumblebee
+    ☐ Meta 1 and 2
+    ☐ Batwing
+    ☐ BDE
+
+  ☐ When debugging the waypoint and heading controller it would be good to set up
+
+  ☐ some telemetry debugging scripts to make things are working right 
+
+SPEEDING UP FASTSim ON PI:
+
+  ☐ We can try systemd which is apparently what Arducopter uses
+  ☐ Another option is we write our own embedded software for the Pi
+  ☐ We can also upgrade from the Pi3 to the Pi4 with lots of RAM
+
+BDE DJI Flights:
+
+  ☐ Training wheels - PVC Booms with tennis balls strapped to bottom of frame to prevent roll over. Test roll over by physically trying to roll over drone.
+
+  ☐ Double check motor numbers and write motor numbers on the motors themselves just like the arrows. Ensure that motor, prop and motor number matches bumblebee (look in addMotor routine to see the direction)
+
+  ☐ Use SIMPilot on BDE with Rpi+Navio and test ESC Motor direction
+
+  ☐ Calibrate each ESC
+
+  ☐ Test one motor at a time by hardcoding one motor. Go 0 to full throttle on each motor and ensure that structure tilts to imply that thrust is being produced. Ensure that 0 is 992 microseconds and full throttle is 2016.
+
+  ☐ Ensure that 992 microsecond signal to all motors produces 0 thrust
+
+  ☐ Ensure that 2016 microsecond signal to all motors produces 8004g thrust per motor
+
+  ☐ Get thrust of each motor
+
+  ☐ Once motor/prop/number are all correct I want all ESCs soldered. I also want screw on wire harnesses as well
+
+  ☐ Better battery mounting harnesses. My idea is just balsa glue to the frame with square rod supports on the back to prevent rotation of battery.
+
+  ☐ Use the DJI flight controller on FASTIris
+
+  ☐ Use the DJI flight controller on BDE
+
+BDE FASTSim:
+    
+  ☐ Download data from BDE and plot data to investigate some common issues. Did the front motors spin up when the drone tilted forward? Did the IMU accurately measure the forward tilt?
+
+  ☐ Run a test on motor delay (how long does it take to go from 0 to full throttle?)
+
+  ☐ Set inertias Ixx and Iyy to 6.5 slug-ft^2 based on m/6*a^2 calculation
+
+  ☐ Set inertia to 6.5 slug-ft^2 and mass = 50/32.2 slugs.
+
+  ☐ Place inertia and motor specs placed into simulation
+
+  ☐ Write aerodynamics and controller.cpp innerloop files for X8
+
+  ☐ Add noise to IMU sensor that is similar to noise experienced by RPi
+
+  ☐ Add motor delay to simulation
+
+  ☐ Reset gains to (ki=0,kd=1.0,kp=max torque) and set theta and roll initial to 3 degrees. 
+
+  ☐ Simulate climbing 1 foot and see if roll and pitch and yaw are stable
+
+  ☐ Tune gains to have no overshoot and 1 second time response if possible
+
+  ☐ Tune gains with only 4 motors to see if it’s drastically different. If so, retune.
+
+  ☐ Perform a robustness trade study and see how much variation in inertia the control system can handle. 
+
+  ☐ Perform another robustness trade study on motor effectiveness by adding in 10% variation in motor thrust
+
+  ☐ Run BDE FASTSim in SIL mode
+
+  ☐ Run BDE FASTSim in HIL mode
+
+BDE FASTPilot:
+
+  ☐ Mount telemetry hardware to drone behind flight controller for debugging in the field
+
+  ☐ Ensure that telemetry is working so that you can debug in the field
+
+  ☐ Reset gains (ki = 0,kd = 1.0,kp = figure out maximum torque capable by motors for +- 50 degrees. When pilot commands full stick right I want full roll torque)
+
+  ☐ After run one hub at a time and ensure that rolling and pitching control stick causes that hub to move as intended.
+
+  ☐ Create a more rigorous preflight check by allowing the PIC to spin one motor at a time and an IMU and RX check
+
+  ☐ Once all previous changes are completed, fly behind Shelby Hall with 4 motors and props to reduce risk of prop damage
+
+  ☐ Adopt a policy of “no go” if ANY off nominal conditions present. If odd pitch oscillations are seen the call needs to be made to stop. Come up with other failure modes. Someone needs to call the shots and abort the mission. What sorts of things do we abort on?
+
+  ☐ Perform ground rolls with roll and pitch control to ensure control is adequate. Could have someone sit underneath drone inside roll cage and "tilt the can"
+
+  ☐ Attempt to fly with 4 motors a foot or two off the ground
+
+  ☐ Attempt to fly with 8 motors a foot or two off the ground 
+
+  ☐ If first flight is still is not 90% of the way there you may need to mount BDE to a rotational platform and tune one axis at a time or email Travis Fields or anyone else with large drone flight test experience.
+
+  ☐ If first flight test is 90% of the way there determined by the PIC the next flight test must be performed at irvington
+
+  ☐ Fly at irvington and perform any last minute tweaks to software
+
+RENDERING:
+
+  ☐ Create CAD for all vehicles you are using
+    ☐ Car
+    ☐ Plane
+    ☐ Quad
+    ☐ X8
+
+  ☐ How do you feel about updating OpenGL rendering environment to Unreal engine or something like Godot or even Unity???
+
+REACH:
+
+Getting the reach to work on custom software would be nice. William did a bunch of work to get it to work on the quad but we've never put it on our own software.
+
+MAVLINK:
+
+Hi Carlos,
+
+Thanks for the email.  I’ve created a git repo (https://github.com/AndersonRayner/arduino_mavlink ) that has some examples of how I’ve been including mavlink in my projects.  It’s all designed to be used in Arduino (as I’m typically coding micro-controllers) but the way the code works will be the same for you guys (as essentially it is all C/C++ in the end).
+Basically, you just need to include the headers (available from https://github.com/mavlink/c_library_v2, included as a submodule in my stuff) then use the included functions to pack/unpack the messages.  You can then connect to the Serial stream using Mission Planner (my preferred GCS, Windows only, https://ardupilot.org/planner/) or qgroundcontrol (cross-platform, http://qgroundcontrol.com/) and use that as your ground control station interface.
+You can also use mavlink to send and receive parameters (such as controller gains etc.) which I used on a previous project with great success.  The code for that is also in the git repo under mavlink/src/mavlink_parameters.cpp and mavlink/src/parameters.h.  Mission Planner and QGC both have interfaces for modifying these in real-time.
+Most of this work was guided by this blog post (https://discuss.ardupilot.org/t/mavlink-and-arduino-step-by-step/25566) so I suggest at least a quick read of that will help the students out in understanding how everything fits together.  The parameter stuff was an internal development which I hope to get written up properly one day and into a blog post to more-widely share the technique.
+Hopefully that all helps and let me know if you have any other questions.  Good luck!
+matt
