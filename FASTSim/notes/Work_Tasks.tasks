@@ -30,7 +30,7 @@ FASTSim:
 
   ☐ The sensor errors are no longer working. why? that needs to be fixed
 
-  ☐ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why?
+  ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? @done (21-08-20 11:36) DONE
 
  ☐ Finish the actuator dynamics. There are alot of subtasks for this one
    ☐ Integrate the state vector to produce State.
