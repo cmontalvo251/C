@@ -210,8 +210,8 @@ class OPENGL {
 
 //Create OPENGL variable but make it extern so it isn't created more than once */
 extern OPENGL glhandle_g;
-extern mutex statemutex;
-extern mutex timemutex;
+extern boost::mutex statemutex;
+extern boost::mutex timemutex;
 //Create OPENGL static member functions
 void DrawGLScene();
 void ResizeGLScene(int,int);

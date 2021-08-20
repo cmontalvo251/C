@@ -39,12 +39,13 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
+using namespace boost;
+
 //This creates a variable called glhandle_g (_g for global)
 OPENGL glhandle_g;
-mutex statemutex; //this is so we can access the glhandle_g.state variables externally and internally
-mutex timemutex;
-
-using namespace std;
+boost::mutex statemutex; //this is so we can access the glhandle_g.state variables externally and internally
+boost::mutex timemutex;
 
 /////////Define Letters/////
 /////Numbers and Special characters///
