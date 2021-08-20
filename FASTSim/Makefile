@@ -1,4 +1,4 @@
-EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
+EXETYPE=-DSIL #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 MODELPATH=PortalCube/src
@@ -34,7 +34,7 @@ HPATH=/home/carlos/Git_Repos/Github/HIL
 CC=g++
 EXECUTABLE=FASTSim.exe
 CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ${HPATH}/RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp)
+CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ${HPATH}/RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp ../OpenGL/opengl.cpp)
 COBJECTS=$(CSOURCES:.c=.o)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(COBJECTS) $(CPPOBJECTS)
@@ -78,6 +78,8 @@ clean:
 	rm ../Sensors/*.o
 	echo ' ' > ../RK4/d.o
 	rm ../RK4/*.o
+	echo ' ' > ../OpenGL/d.o
+	rm ../OpenGL/*.o
 rebuild:
 	make clean
 	make

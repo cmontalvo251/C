@@ -30,6 +30,8 @@
 using namespace boost;
 
 #include <MATLAB/MATLAB.h> 
+#include <Timer/timer.h>
+#include <Mathp/mathp.h>
 
 #define MAX_TEXTURE 40
 

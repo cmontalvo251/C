@@ -36,10 +36,8 @@
 #include <unistd.h>
 #include <time.h>
 #include "opengl.h"
-#include "mathp.h"
 #include <iostream>
 #include <fstream>
-#include "timer.h"
 
 //This creates a variable called glhandle_g (_g for global)
 OPENGL glhandle_g;
