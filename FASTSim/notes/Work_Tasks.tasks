@@ -26,6 +26,12 @@ ANTX:
 
 FASTSim:
 
+  ☐ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot
+
+  ☐ The sensor errors are no longer working. why? that needs to be fixed
+
+  ☐ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why?
+
  ☐ Finish the actuator dynamics. There are alot of subtasks for this one
    ☐ Integrate the state vector to produce State.
    ☐ Send STate to the sensor routine and receive the polluted state

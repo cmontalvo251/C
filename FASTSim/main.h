@@ -1,6 +1,9 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+using namespace std;
+//using namespace boost;
+
 #include <Datalogger/Datalogger.h> //Always need a data logger
 #include "Dynamics.h"; //Always need vehicle dynamics
 //Always need timer for the pause function and the error function. 

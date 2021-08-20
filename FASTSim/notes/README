@@ -1,11 +1,24 @@
 README
 
-The way this software works is by importing numerous other libraries from this C++ repo. Here are the steps
-to get this up and running
+DON'T OPEN THE ARCHIVE FOLDER UNLESS YOU KNOW WHAT YOU'RE DOING
 
-1.) First you need to open make_links and change the vehicle to whatever vehicle dynamics you want to import
-The default is FASTSim/PortalCube/src. You can change the FASTSim/PortalCube to whatever you want but you
-need to follow a specific structure for othe folder. 
+0.) I'm assuming you mkdir C directory and then either git cloned
+$ git clone 'https://www.github.com/cmontalvo251/C.git'
+
+or if you have an SSH key you can run the standard
+
+$ git init
+$ git remote add origin 'git@github.com:cmontalvo251/C.git'
+$ git pull origin master
+
+-.) This is optional but if you're reading this README on Sublime you probably want to get the Tasks app. So first install package control. Then install package and install Plain tasks. Then open the Work_Tasks and you can see all the work tasks. In the bottom right open the extension and select Tasks. If you want to change the theme go to preferences, package settings and edit the theme.
+
+1.) There are supplemental routines in HIL.git so do another git clone or git pull with SSH-key for HIL.git
+
+2.) Let's talk a bit about the folder structure for FASTsim. FASTsim works with multiple vehicles where the 6DOF dynamics are the same but certain files are different. 
+
+The default is FASTSim/PortalCube/src. You can change the FASTSim/PortalCube to whatever you want in the Makefile but you
+need to follow a specific structure for other vehicles. 
 
 src has the following files
 controller.cpp
@@ -13,7 +26,7 @@ controller.h
 aerodynamics.cpp
 aerodynamics.h
 
-Those 4 files are heavily commented and you can open them up to see how to create your own dynamics
+Those 4 files are heavily commented and you can open them up to see how to create your own controller and aerodynamics
 
 Input_Files contains all of the input files required for the simulation. Again portalcube has example input
 files and they are pretty self explanatory
@@ -24,13 +37,6 @@ It's possible to made a CAD for an object in blender and save it as a *.blend. W
 
 You might need to open up the mtl file and make sure the path to the texture is correct.
 
-2.) Once you have a good idea of what files you need to run the simulation you can then run the make_links 
-script. Again the default is to just link all of the PortalCube files
-
-$ ./make_links
-
-You'll know the script ran properly if you type ls -la and see files that are blue indicating a properly link. Anything in red means there is a broken link somewhere.
-
 3.) Now it's time to open the Makefile and set the proper directives.
 
 The main directives are 
@@ -39,15 +45,9 @@ EXETYPE
 HARDWARE
 CONTROLLER
 RENDER
+HPATH
 
-EXETYPE right now can be set to SIMONLY which simulates as fast as possible or SIL which simulates in real time and also starts the openGL routine if you're compiling on a desktop
-computer with openGL support.
-
-HARDWARE can be set to Desktop or RPI for now. Desktop assumes you have a linux machine with a gui interface and opengl support.
-
-CONTROLLER currently has an RCTECH model and an XBOX controller model to accept input. Look at RCInput/RCinput.cpp to see the RCInput::mapjoy2rx() function which maps the USB controller commands to standard RC input commands. You can add your own controller to this section if you like. and add your own directive. If you add a controller send the changes and I'll add it in to the master branch. You can do the same for other dynamic models as well.
-
-RENDER needs to be commented out if using an RPI since it typically does not have openGL support. At least Emlid Raspbian with command line does not. If running on the desktop you will have to turn that on.
+The explanation of these directives are in the Makefile
 
 4.) With the Makefile set you can compile with the following command
 
@@ -71,12 +71,10 @@ $ ./clean_logs
 
 to clean all of the logs in that directory if it starts to get bloated.
 
-7.) The python script process_logs.py will plot the 0.txt log file. You can edit the code
-to log the data from a different log file but be careful with the script because if you run process logs without any arguments it will delete the entire log folder first. Perhaps this is a bad coding idea but it's what I have right now.
+7.) The python script process_logs.py will plot the 0.txt log file. You can edit the code to log the data from a different log file but be careful with the script because if you run process logs without any arguments it will delete the entire log folder first. Perhaps this is a bad coding idea but it's what I have right now.
 
 $ ./process_logs.py 
 
 If you run the script just like that you will hopefully be greeted with a ton of plots. I don't really want to go over the nomenclature of a 6DOF vehicle but just understand that the dynamics routine uses a standard aerospace convention of a 6DOF vehicle using quaternions for the attitude states.
 
-8.) If you recompile the code in SIL mode you will hopefully be greeted with an openGL
-screen. First make sure you run a make rebuild to recompile everything. Second if you get a location of file error open your Render.txt file and make sure the file path is set correctly. 
+8.) If you recompile the code in SIL mode you will hopefully be greeted with an openGL screen. First make sure you run a make rebuild to recompile everything. Second if you get a location of file error open your Render.txt file and make sure the file path is set correctly. 

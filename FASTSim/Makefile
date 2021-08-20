@@ -3,7 +3,7 @@ HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 MODELPATH=PortalCube/src
 #Location of HIL.git
-HPATH=/home/carlos/Documents/Git_Repos/Github/HIL
+HPATH=/home/carlos/Git_Repos/Github/HIL
 
 #Flags
 
@@ -56,16 +56,27 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 clean:
 	echo ' ' > logs/d.txt
-	rm -rf $(EXECUTABLE) *.o
 	rm logs/*.txt
+	echo ' ' > d.exe
+	echo ' ' > d.o
+	rm -rf $(EXECUTABLE) *.o
+	echo ' ' > ../MATLAB/d.o
 	rm ../MATLAB/*.o
+	echo ' ' > ../Datalogger/d.o
 	rm ../Datalogger/*.o
+	echo ' ' > ../Mathp/d.o
 	rm ../Mathp/*.o
+	echo ' ' > ../6DOF/d.o
 	rm ../6DOF/*.o
+	echo ' ' > ${HPATH}/RCIO/d.o
 	rm ${HPATH}/RCIO/*.o
+	echo ' ' > ${MODELPATH}/d.o
 	rm ${MODELPATH}/*.o
+	echo ' ' > ../Timer/d.o
 	rm ../Timer/*.o
+	echo ' ' > ../Sensors/d.o
 	rm ../Sensors/*.o
+	echo ' ' > ../RK4/d.o
 	rm ../RK4/*.o
 rebuild:
 	make clean

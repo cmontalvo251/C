@@ -29,7 +29,7 @@
 #include <boost/thread.hpp> 
 using namespace boost;
 
-#include "MATLAB.h" //Included in BlackBox/C++ directory
+#include <MATLAB/MATLAB.h> 
 
 #define MAX_TEXTURE 40
 

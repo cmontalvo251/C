@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import matplotlib.pyplot as plt
 import sys
@@ -25,7 +25,7 @@ if SIMULATE == 1:
     os.system('./FASTSim.exe')
 
 #Read Log File
-data = np.loadtxt('logs/0.txt')
+data = np.loadtxt('logs/0.txt',delimiter=',')
 print(np.shape(data))
 
 ##Create PDF Handle
