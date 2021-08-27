@@ -48,6 +48,17 @@ FASTSim:
 
  ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
 
+BattleBot:
+  This does not include any hardware testing on the actual tank in the lab 
+
+  ☐ Create a CAD for the vehicle
+
+  ☐ Ground Contact Model
+
+  ☐ Create aerodynamics (friction model) - I think the vehicle is so slow it doesn't matter so we can just send zeros
+
+  ☐ Create a controller to feed transmitter commands to 2 wheels with differential
+
 WOODEN DRONE:
 
  ☐ From here I'd like to start editing the sensor routines to include Arduino hooks. The sensor.h file should work at the moment on both desktop and Rpi so it's time to get it to work on Arduino hooks. Edit the Sensor routine to use the newly formed folders. Think a bit more on how you want to have this sensor block. I'm assuming you'll just be importing all the sensors? Pitot, IMU, GPS, etc??? What if those sensors are not connected? Is there a way for the controller to ignore erroneous data? Or maybe just turn them on and off in the controller?

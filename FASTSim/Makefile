@@ -3,7 +3,8 @@ HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 MODELPATH=PortalCube/src
 #Location of HIL.git
-HPATH=/home/carlos/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Git_Repos/Github/HIL
+HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 
 #Flags
 
