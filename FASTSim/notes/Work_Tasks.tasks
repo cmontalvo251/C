@@ -26,7 +26,7 @@ ANTX:
 
 FASTSim:
 
-  ☐ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot
+  ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot @done (21-08-27 12:16)
 
   ☐ The sensor errors are no longer working. why? that needs to be fixed
 
