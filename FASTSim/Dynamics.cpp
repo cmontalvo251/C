@@ -42,15 +42,21 @@ void Dynamics::setRates(double RCRATE,double CTLRATE) {
 }
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
-  //First 3 states are inertial position
+  //next 4 states are the quaternions
+  q0123.set(1,1,state_in.get(4,1));
+  q0123.set(2,1,state_in.get(5,1));
+  q0123.set(3,1,state_in.get(6,1));
+  q0123.set(4,1,state_in.get(7,1));
+  double norm = q0123.norm();
+  q0123.mult_eq(1/norm);
+  state_in.vecset(4,7,q0123,1);
+  //Also set the entire state vector
+  state.overwrite(state_in);
+  statedot.overwrite(statedot_in);
+  ///First 3 states are inertial position
   cg.set(1,1,state.get(1,1));
   cg.set(2,1,state.get(2,1));
   cg.set(3,1,state.get(3,1));
-  //next 4 states are the quaternions
-  q0123.set(1,1,state.get(4,1));
-  q0123.set(2,1,state.get(5,1));
-  q0123.set(3,1,state.get(6,1));
-  q0123.set(4,1,state.get(7,1));
   //We need to convert the quaternions to ptp
   ptp.quat2euler(q0123);
   //next 3 states are the xbody velocities
@@ -61,9 +67,6 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   pqr.set(1,1,state.get(11,1));
   pqr.set(2,1,state.get(12,1));
   pqr.set(3,1,state.get(13,1));
-  //Also set the entire state vector
-  state.overwrite(state_in);
-  statedot.overwrite(statedot_in);
 }
 
 void Dynamics::initAerodynamics(int A,double percent) {
@@ -135,6 +138,7 @@ void Dynamics::loop(double t) {
   #ifdef AUTO
   err.readSensors(); //this calls onboard sensors on the Navio
   #else
+  //state.disp();
   err.readSensors(state,statedot); //this simulates sensors
   #endif
   ///////////////////////////////////////////////////////////////////

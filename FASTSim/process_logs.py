@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import numpy as np
-sys.path.append('/home/azuregypsy13/Documents/GIT/CMontalvo251/Python/pdf')
+sys.path.append('/home/mjcobar13/Documents/GIT/CMontalvo251/Python/pdf')
 print(sys.path)
 try:
     from pdf import *

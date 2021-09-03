@@ -34,9 +34,14 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	//eventually we will add sensor errors but for now we just need to convert the 
 	//quaternions to ptp
 	//vecset(int in_start,int in_end,MATLAB A,int A_start)
+  //printf("QUATS NO ERRORS \n");
+  //q0123.disp();
 	q0123.vecset(1,4,state,4);
 	ine2bod321.L321(q0123,1);
 	ine2bod321.getptp(ptp);
+	//printf("PTP NO ERRORS \n");
+	//ptp.disp();
+
 
 	//Oh and PTP needs to be in degrees
 	ptp.mult_eq(180.0/PI);
@@ -52,6 +57,9 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	xyzdot.vecset(1,3,statedot,1);
 	uvwdot.vecset(1,3,statedot,8);
 	pqrdot.vecset(1,3,statedot,11);
+
+	//printf("PTP BEFORE ERRORS \n");
+	//ptp.disp();
 
 	//if the flag is set in Simulation_Flags.txt
 	if (ADD_ERRORS == 1) {
@@ -75,6 +83,9 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 		}
 	}
 
+	//printf("PTP AFTER ERRORS \n");
+	//ptp.disp();
+
 	//Copy everything over
 	errstate.vecset(1,3,xyz,1);
 	errstate.vecset(4,6,ptp,1);
@@ -84,6 +95,12 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	errstatedot.vecset(4,6,ptpdot,1);
 	errstatedot.vecset(7,9,uvwdot,1);
 	errstatedot.vecset(10,12,pqrdot,1);
+	
+	//state.disp();
+	//statedot.disp();
+	//errstate.disp();
+	//errstatedot.disp();
+	//PAUSE();
 
 }
 
