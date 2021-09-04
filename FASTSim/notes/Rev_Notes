@@ -1,3 +1,9 @@
+==============================9/3/2021===================================
+
+With the help of Maxwell I was able to fix the sensor errors issue.
+Turns out it was massive issue that required fixing in MATLAB.cpp (quat2euler)
+and in Dynamics.cpp to normalize the quaternions
+
 ==============================8/27/2021=================================
 
 Added a quadcopter model to the simulation using a camo texture. Nothing fancy
