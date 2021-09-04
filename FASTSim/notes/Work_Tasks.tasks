@@ -26,6 +26,7 @@ ANTX:
 
 FASTSim:
 
+
   ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot @done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
 
   ☐ The sensor errors are no longer working. why? that needs to be fixed
@@ -47,6 +48,17 @@ FASTSim:
  ☐ Complete aerodynamics for Aircraft
 
  ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
+
+BattleBot:
+  This does not include any hardware testing on the actual tank in the lab 
+
+  ☐ Create a CAD for the vehicle
+
+  ☐ Ground Contact Model
+
+  ☐ Create aerodynamics (friction model) - I think the vehicle is so slow it doesn't matter so we can just send zeros
+
+  ☐ Create a controller to feed transmitter commands to 2 wheels with differential
 
 WOODEN DRONE:
 

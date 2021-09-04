@@ -1,3 +1,11 @@
+==============================8/27/2021=================================
+
+Added a quadcopter model to the simulation using a camo texture. Nothing fancy
+
+Copied the portalcube aerodynamics file and controller file over to the quadcopter
+
+still need to edit it to be accurate to a quad but at least it's in there
+
 ==============================8/17/2021=================================
 
 Cleaned up and overhauled these rev_notes and the work_tasks.
