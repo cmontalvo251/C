@@ -18,7 +18,7 @@ class RK4 {
   //public vars and functions
   void init(int NUMSTATES,double dt);
   void set_ICs(MATLAB x0);
-  void integrate(int i); 
+  void integrate(int i);
   //Contructor
   RK4();
 

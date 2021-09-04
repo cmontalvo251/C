@@ -233,8 +233,11 @@ void runMainLoop() {
     }
     //Integrate time
     t += INTEGRATIONRATE;
-    //Set State of Vehicle for use elsewhere
-    vehicle.setState(integrator.State,integrator.k);
+    //Set State of Vehicle rather than the integrator
+    //The integrator is dumb and does not know what the states are
+    //It just takes z(i+1) = z(i) + k*dt
+    //where k = zdot(i)
+    vehicle.setState(integrator.State,integrator.k); //When this is commented out, we get numbers and bad graphs, but I dont think this is where the issue occurs since this just saves the states...
     #endif
     ////////////////////////////////////////////
 
@@ -246,6 +249,7 @@ void runMainLoop() {
 
     /////////////////Print to STDOUT////////////////
     if (PRINT<t) {
+      //printf("FUCK! ");
       printf("%lf ",t);
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         printf("%lf ",integrator.State.get(i+1,1));
@@ -253,6 +257,7 @@ void runMainLoop() {
       //vehicle.printRC(0); //the zero means just the sticks
       printf("\n");
       PRINT+=PRINTRATE;
+      //PAUSE();
     }
     /////////////////////////////////////////////////
 

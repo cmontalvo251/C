@@ -71,4 +71,5 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		ctlcomms.set(4,1,yaw_comm);
 
 	}
+	//ctlcomms.disp();
 }

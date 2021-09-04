@@ -3,6 +3,7 @@
 
 #include <MATLAB/MATLAB.h>
 #include <6DOF/Rotation3.h>
+#include <Timer/timer.h>
 
 class sensors {
 private:

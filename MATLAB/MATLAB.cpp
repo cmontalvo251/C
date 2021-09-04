@@ -318,9 +318,20 @@ void MATLAB::quat2euler(MATLAB q0123) {
   double q1 = q0123.get(2,1);
   double q2 = q0123.get(3,1);
   double q3 = q0123.get(4,1);
+  double norm = sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);
+  //printf("NORM = %lf \n",norm);
+  //q0123.disp();
   set(1,1,atan2(2*(q0*q1 + q2*q3),1-2*(q1*q1 + q2*q2)));
-  set(2,1,asin(2*(q0*q2-q3*q1)));
+  double val = 2*(q0*q2-q3*q1);
+  if (abs(val) > 1.0) {
+    set(2,1,0);
+    printf("INVALID QUATERNION CONVERSION CHECK QUAT2EULER in MATLAB.cpp \n");
+    exit(1);
+  } else {
+   set(2,1,asin(val));
+  }
   set(3,1,atan2(2*(q0*q3 + q1*q2),1-2*(q2*q2 + q3*q3)));
+  //disp();
 }
 
 void MATLAB::euler2quat(MATLAB ptp) {
