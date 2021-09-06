@@ -81,20 +81,51 @@ int main(int argc,char** argv) {
   int AERO_FLAG = simdata.get(8,1);
   int CTL_FLAG = simdata.get(9,1);
   int ERROR_FLAG = simdata.get(10,1);
-  int ACTUATOR_ERROR_PERCENTAGE = simdata.get(11,1);
+  int ACTUATOR_FLAG = simdata.get(11,1);
   //////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////Initialize RC INPUT/////////////////////
+  vehicle.initRC();
+  
+  ////////////////////Initialize Controller///////////////////
+  vehicle.initController(CTL_FLAG);
+
+  #ifdef RK4_H
+  /////////////////////////Import Actuator Parameters////////////////////////////
+  if (ACTUATOR_FLAG == 1) {
+    MATLAB actuatordata;
+    char actuatorfile[256]={NULL};
+    strcat(actuatorfile,fileroot);
+    strcat(actuatorfile,"Input_Files/Actuators.txt");
+    ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
+    if (!ok) {exit(1);} else {actuator.disp();}
+    vehicle.initActuators(actuatordata);
+  } else {
+    //If actuators are off we still need a pass through
+    vehicle.initActuators(vehicle.ctl.NUMSIGNALS);
+  }
+  #endif
+
+  ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
+  //Number of states to log
+  vehicle.NUMLOGS = 1; //Always log time
+  //If RK4 is on we log....
+  #ifdef RK4_H
+  //All the states
+  vehicle.NUMLOGS+=vehicle.NUMSTATES;
+  vehicle.NUMLOGS+=6; //Forces and moments
+  #endif 
+  //No matter what we log the sensor measurements
+  vehicle.NUMLOGS+=vehicle.NUMSTATES;
+  //We also log all of the receiver signals
+  vechicle.NUMLOGS+=vehicle.rcin.num_of_axis;
+  //We also log the control signals
+  vehicle.NUMLOGS+=vehicle.ctl.NUMSIGNALS;
+  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
+  ///////////////////////////////////////////////////////
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
   #ifdef RK4_H
-  /////////////////////////Import Actuator Parameters////////////////////////////
-  MATLAB actuatordata;
-  char actuatorfile[256]={NULL};
-  strcat(actuatorfile,fileroot);
-  strcat(actuatorfile,"Input_Files/Actuators.txt");
-  ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
-  if (!ok) {exit(1);} else {actuator.disp();}
-  vehicle.initActuators(actuatordata);
-
   //First Initialize integrator and Dynamic Model
   integrator.init(vehicle.NUMSTATES+vehicle.NUMACTUATORS,INTEGRATIONRATE);
   //Import Initial Conditions, mass properties
@@ -125,12 +156,6 @@ int main(int argc,char** argv) {
   vehicle.setMassProps(massdata);
   /////////////////////////////////////////////////////////////
 
-  /////////////////////Initialize RC INPUT/////////////////////
-  vehicle.initRC();
-  
-  ////////////////////Initialize Controller///////////////////
-  vehicle.initController(CTL_FLAG);
-
   //////Initialize Environment and Aerodynamics but again only if RK4//////////
   #ifdef RK4_H
   vehicle.initAerodynamics(AERO_FLAG,ACTUATOR_ERROR_PERCENTAGE);
@@ -151,14 +176,6 @@ int main(int argc,char** argv) {
   printf("Extra Models Initialized \n");
   #endif
   ////////////////////////////////////////////////////
-
-  ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
-  //Number of states to log
-  //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
-  // + ctlcommands (8 - control commands) + 6 forces/moments
-  // ctlcommands are doubled because of actuator states
-  //NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8*2 + 6;
-  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log"); //All states + time
   
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H

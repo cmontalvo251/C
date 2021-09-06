@@ -59,6 +59,9 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   pqr.set(1,1,state.get(11,1));
   pqr.set(2,1,state.get(12,1));
   pqr.set(3,1,state.get(13,1));
+  //The next N states are the actuators
+  actuatorState.vecset(1,NUMACTUATORS,state,14);
+  actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
 }
 
 void Dynamics::initAerodynamics(int A,double percent) {
@@ -72,20 +75,39 @@ void Dynamics::initAerodynamics(int A,double percent) {
   }
 }
 
+//?overloaded function to give us default actuators
+void Dynamics::initActuators(int NUMSIGNALS) {
+  //Initialize to default of whatever the same number of control signals
+  actuatorError.zeros(NUMSIGNALS,1,"actuator_error");
+}
+
 void Dynamics::initActuators(MATLAB actuatordata) {
-  NUMACTUATORS = actuatordata.get(1,1);
+  //this variable sets the amount of actuator error that is included in the sim
+  ACTUATOR_ERROR_PERCENT = var.get(1,1); 
+  //Number of Actuators
+  NUMACTUATORS = actuatordata.get(2,1);
   if (NUMACTUATORS > 0){
     if (NUMACTUATORS > ctl.NUMSIGNALS) {
       printf("Number of Actuators is larger than Control Signals \n");
       exit(1);      
     }
+    ///Initialize some vectors
     actuatorTimeConstants.zeros(NUMACTUATORS,1,"actuatorTimeConstants");
     actuatorState.zeros(NUMACTUATORS,1,"actuatorState");
     actuatorStatedot.zeros(NUMACTUATORS,1,"actuatorStatedot");
-    for (i = 0;i<NUMACTUATORS;i++) {
-      actuatorTimeConstants.set(i+1,1,actuatordata.get(i+2,1));
-    }
+    actuatorICs.zeros(NUMACTUATORS,1,"actuatorICs");
+    /////Get Time Constants
+    actuatorTimeConstants.vecset(1,NUMACTUATORS,actuatordata,3);
     actuatorTimeConstants.disp();
+    //Get initial conditions    
+    actuatorICs.vecset(1,NUMACTUATORS,actuatordata,3+NUMACTUATORS);
+    actuatorICs.disp();
+    //to add errors to your control surfaces or thrusters. This variable is set in Simulation_Flags.txt
+    actuatorError.zeros(NUMACTUATORS,1,"Actuator errors");
+    actuatorErrorPercentage.zeros(NUMACTUATORS,1,"Actuator Percent Errors");
+    for (int i = 0;i<NUMACTUATORS;i++) {
+      actuatorErrorPercentage.set(i+1,1,(1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0)); 
+    }
     PAUSE();
   }
 }
@@ -202,17 +224,28 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   //Dynamics boils down to F=ma and M=Ia so we need a force a moment model
 
-  ////////////////FORCE AND MOMENT MODEL///////////////////////
-
-  //Integrate Actuator Dynamics
-  //input will be ctlcomms and the output will be actuator_state
-  for (int i = 0;i<NUM_ACTUATORS;i++) {
-    actuatorStatedot.set(i+1,1,time_constant*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+  //?Actuator Error Model
+  if (NUMACTUATORS > 0) {
+    ///Get the error actuator state
+    for (int i = 0;i<NUMACTUATORS;i++) {  
+      val = actuatorState.get(i+1,1)*actuatorErrorPercentage.get(i+1,1);
+      actuatorError.set(i+1,1,val);  
+    }
+    //Integrate Actuator Dynamics
+   //input will be ctlcomms and the output will be actuator_state
+    for (int i = 0;i<NUM_ACTUATORS;i++) {
+      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+    }
+  } else {
+    //Otherwise just pass through the ctlcomms
+    actuatorError.overwrite(ctl.ctlcomms);
   }
+  
+  ////////////////FORCE AND MOMENT MODEL///////////////////////
 
   //Aerodynamic Model
   //Send the aero model the actuator_state instead of the ctlcomms
-  aero.ForceMoment(t,State,k,ctl.ctlcomms);
+  aero.ForceMoment(t,State,k,actuatorError);
 
   //Gravity Model
   env.gravitymodel();
