@@ -112,11 +112,11 @@ int main(int argc,char** argv) {
   //If RK4 is on we log....
   #ifdef RK4_H
   //All the states
-  vehicle.NUMLOGS+=vehicle.NUMSTATES;
+  vehicle.NUMLOGS+=(vehicle.NUMSTATES+vehicle.NUMACTUATORS);
   vehicle.NUMLOGS+=6; //Forces and moments
   #endif 
   //No matter what we log the sensor measurements
-  vehicle.NUMLOGS+=vehicle.NUMSTATES;
+  vehicle.NUMLOGS+=(vehicle.NUMSTATES+vehicle.NUMACTUATORS);
   //We also log all of the receiver signals
   vechicle.NUMLOGS+=vehicle.rcin.num_of_axis;
   //We also log the control signals
