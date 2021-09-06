@@ -26,16 +26,8 @@ Dynamics::Dynamics() {
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
   state.zeros(13,1,"Vehicle state vector");
   statedot.zeros(13,1,"Vehicle statedot vector");
-
-  //Run the initialize routine for RCInput so we can compute the number of logvars;
-  rcin.initialize();
-
-  //Number of states to log
-  //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
-  // + ctlcommands (8 - control commands) + 6 forces/moments
-  NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8 + 6;
 }
-
+  
 void Dynamics::setRates(double RCRATE,double CTLRATE) {
   tRC = RCRATE;
   tCTL = CTLRATE;
@@ -80,9 +72,30 @@ void Dynamics::initAerodynamics(int A,double percent) {
   }
 }
 
-void Dynamics::initExtModels(int G,int C) {
+void Dynamics::initActuators(MATLAB actuatordata) {
+  NUMACTUATORS = actuatordata.get(1,1);
+  if (NUMACTUATORS > 0){
+    if (NUMACTUATORS > ctl.NUMSIGNALS) {
+      printf("Number of Actuators is larger than Control Signals \n");
+      exit(1);      
+    }
+    actuatorTimeConstants.zeros(NUMACTUATORS,1,"actuatorTimeConstants");
+    actuatorState.zeros(NUMACTUATORS,1,"actuatorState");
+    actuatorStatedot.zeros(NUMACTUATORS,1,"actuatorStatedot");
+    for (i = 0;i<NUMACTUATORS;i++) {
+      actuatorTimeConstants.set(i+1,1,actuatordata.get(i+2,1));
+    }
+    actuatorTimeConstants.disp();
+    PAUSE();
+  }
+}
+
+void Dynamics::initExtModels(int G) {
   //Initialize the Gravity model no matter what. 
   env.init(G);
+}
+
+void Dynamics::initController(int C){
   //Initialize control system model
   CONTROLLER_FLAG_INITIAL = C; //The ctl.loop routine can change the controller flag
   //in the ctl.loop so we need to save the initial control value in case we need
@@ -192,11 +205,10 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
   //Integrate Actuator Dynamics
-  // input will be ctlcomms and the output will be actuator_state
-  // Add to an input file the number of actuators and the time_constant of each
-  //for (int i = 0;i<NUM_ACTUATORS;i++) {
-  //actuator_var_dot = time_constant*(actuator_command - actuator_var)
-  //}
+  //input will be ctlcomms and the output will be actuator_state
+  for (int i = 0;i<NUM_ACTUATORS;i++) {
+    actuatorStatedot.set(i+1,1,time_constant*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+  }
 
   //Aerodynamic Model
   //Send the aero model the actuator_state instead of the ctlcomms

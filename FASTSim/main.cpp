@@ -58,7 +58,6 @@ int main(int argc,char** argv) {
   //////////////////////////Initialize Datalogger//////////////////////////////
   logger.findfile("logs/");
   logger.open();
-  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log"); //All states + time
   //////////////////////////////////////////////////////////////////////////////
 
   //////////////////////Import Simulation Flags//////////////////////////////////
@@ -87,8 +86,17 @@ int main(int argc,char** argv) {
 
   /////////////////Initialize RK4 if simulating Dynamics///////////////////
   #ifdef RK4_H
+  /////////////////////////Import Actuator Parameters////////////////////////////
+  MATLAB actuatordata;
+  char actuatorfile[256]={NULL};
+  strcat(actuatorfile,fileroot);
+  strcat(actuatorfile,"Input_Files/Actuators.txt");
+  ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
+  if (!ok) {exit(1);} else {actuator.disp();}
+  vehicle.initActuators(actuatordata);
+
   //First Initialize integrator and Dynamic Model
-  integrator.init(vehicle.NUMSTATES,INTEGRATIONRATE);
+  integrator.init(vehicle.NUMSTATES+vehicle.NUMACTUATORS,INTEGRATIONRATE);
   //Import Initial Conditions, mass properties
   MATLAB icdata;
   char initfile[256]={NULL};
@@ -98,7 +106,7 @@ int main(int argc,char** argv) {
   if (!ok) { exit(1); } else {icdata.disp();}
   //Set ICs in integrator 
   integrator.set_ICs(icdata);
-  //Set State of Vehicle for use elsewhere
+  //Set State of Vehicle since the integrator doesn't assume a 6DOF model
   vehicle.setState(integrator.State,integrator.k);
   #ifdef DEBUG
   printf("Integrator Initialized\n");
@@ -106,7 +114,7 @@ int main(int argc,char** argv) {
   #endif
   ////////////////////////////////////////////////////////////////////////////
 
-  /////////////////////////////MASS DATA, ENV MODEL, SENSOR MODEL, AERO MODEL, CTL MODEL///////////////////
+  /////////////////////////////MASS DATA///////////////////
   MATLAB massdata;
   char massfile[256]={NULL};
   strcat(massfile,fileroot);
@@ -115,10 +123,18 @@ int main(int argc,char** argv) {
   if (!ok) { exit(1); } else {massdata.disp();}
   //Send Mass Data to Dynamic Model
   vehicle.setMassProps(massdata);
-  //Initialize Environment, Aero and Control System
-  vehicle.initAerodynamics(AERO_FLAG,ACTUATOR_ERROR_PERCENTAGE);
-  vehicle.initExtModels(GRAVITY_FLAG,CTL_FLAG);
+  /////////////////////////////////////////////////////////////
+
+  /////////////////////Initialize RC INPUT/////////////////////
+  vehicle.initRC();
+  
+  ////////////////////Initialize Controller///////////////////
+  vehicle.initController(CTL_FLAG);
+
+  //////Initialize Environment and Aerodynamics but again only if RK4//////////
   #ifdef RK4_H
+  vehicle.initAerodynamics(AERO_FLAG,ACTUATOR_ERROR_PERCENTAGE);
+  vehicle.initExtModels(GRAVITY_FLAG);
   //Initialize the Error Model but only if we're running the integrator
   if (ERROR_FLAG) {
     MATLAB sensordata;
@@ -130,9 +146,19 @@ int main(int argc,char** argv) {
     vehicle.initErrModel(sensordata);
   }
   #endif
+  ////////////////////////////////////////////////////
   #ifdef DEBUG
   printf("Extra Models Initialized \n");
   #endif
+  ////////////////////////////////////////////////////
+
+  ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
+  //Number of states to log
+  //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
+  // + ctlcommands (8 - control commands) + 6 forces/moments
+  // ctlcommands are doubled because of actuator states
+  //NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8*2 + 6;
+  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log"); //All states + time
   
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
@@ -237,7 +263,9 @@ void runMainLoop() {
     //The integrator is dumb and does not know what the states are
     //It just takes z(i+1) = z(i) + k*dt
     //where k = zdot(i)
-    vehicle.setState(integrator.State,integrator.k); //When this is commented out, we get numbers and bad graphs, but I dont think this is where the issue occurs since this just saves the states...
+    //This routine below takes the integrator states and puts them into
+    //more standard 6DOF nomenclature
+    vehicle.setState(integrator.State,integrator.k); 
     #endif
     ////////////////////////////////////////////
 
@@ -249,7 +277,6 @@ void runMainLoop() {
 
     /////////////////Print to STDOUT////////////////
     if (PRINT<t) {
-      //printf("FUCK! ");
       printf("%lf ",t);
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         printf("%lf ",integrator.State.get(i+1,1));
@@ -266,29 +293,29 @@ void runMainLoop() {
       logvars.set(1,1,t);
       int ctr = 2;
       #ifdef RK4_H
-      //Integrator States
+      //Integrator States - only if RK4
       for (int i = 0;i<integrator.NUMSTATES;i++) {
         logvars.set(ctr,1,integrator.State.get(i+1,1));
         ctr++;
       }
       #endif
-      //Error States (Sensor Measurements)
+      //Error States (Sensor Measurements) - Always on
       for (int i = 0;i<integrator.NUMSTATES-1;i++) {
         logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
         ctr++;
-      }      
-      //Receiver Commands
+      }       
+      //Receiver Commands - always on
       for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
         logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
-      //Control Commands
+      //Control Commands - always on
       for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
         logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
         ctr++;
       }
       #ifdef RK4_H
-      //Forces and Moments
+      //Forces and Moments - only if RK4
       for (int i = 0;i<3;i++) {
         logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
         ctr++;

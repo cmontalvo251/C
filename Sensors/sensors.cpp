@@ -34,14 +34,13 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	//eventually we will add sensor errors but for now we just need to convert the 
 	//quaternions to ptp
 	//vecset(int in_start,int in_end,MATLAB A,int A_start)
-  //printf("QUATS NO ERRORS \n");
-  //q0123.disp();
+  	//printf("QUATS NO ERRORS \n");
+  	//q0123.disp();
 	q0123.vecset(1,4,state,4);
 	ine2bod321.L321(q0123,1);
 	ine2bod321.getptp(ptp);
 	//printf("PTP NO ERRORS \n");
 	//ptp.disp();
-
 
 	//Oh and PTP needs to be in degrees
 	ptp.mult_eq(180.0/PI);

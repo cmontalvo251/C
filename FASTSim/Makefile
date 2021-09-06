@@ -1,8 +1,8 @@
 EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
 HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
 CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
-#MODELPATH=PortalCube/src
-MODELPATH=Quadcopter/src
+MODELPATH=PortalCube/src
+#MODELPATH=Quadcopter/src
 #Location of HIL.git
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
 HPATH=/home/carlos/Git_Repos/Github/HIL

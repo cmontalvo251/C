@@ -37,6 +37,7 @@ class Dynamics {
   //Private functions and vars
   MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
+  MATLAB actuatorState;
   double m,tlastRCread=-99,tlastCTL=-99,tRC,tCTL;
   Rotation3 ine2bod321;
   environment env;
@@ -47,7 +48,7 @@ class Dynamics {
   controller ctl;
   aerodynamics aero;
   sensors err;
-  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL;
+  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS;
   void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
@@ -58,6 +59,8 @@ class Dynamics {
   void loop(double time);
   void printRC(int all);
   void setRates(double,double);
+  void initActuators(MATLAB);
+  void initController(int);
   //Constructor
   Dynamics();
 };

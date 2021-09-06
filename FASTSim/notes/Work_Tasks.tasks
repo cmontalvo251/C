@@ -33,9 +33,9 @@ FASTSim:
   ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? @done (21-08-20 11:36) 
 
  ☐ Finish the actuator dynamics. There are alot of subtasks for this one
-   ☐ Integrate the state vector to produce State.
-   ☐ Send STate to the sensor routine and receive the polluted state
-   ☐ Send pollutted state to controller built by the user to produce ctlcomms
+   ✔ Integrate the state vector to produce State. @done (21-09-06 08:31)
+   ✔ Send STate to the sensor routine and receive the polluted state @done (21-09-06 08:33)
+   ✔ Send pollutted state to controller built by the user to produce ctlcomms @done (21-09-06 08:34)
    ☐ Send ctlcomms to actuator dynamics to produce actuators values
    ☐ Pollute actuator values with ACTUATOR ERRORS by some percentage
    ☐ Send actuator values to aerodynamics routine written by user to produce Forces and moments

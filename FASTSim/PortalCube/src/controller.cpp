@@ -11,7 +11,7 @@ void controller::setup(MATLAB var) {
 	CONTROLLER_FLAG = var.get(1,1);
 }
 
-void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
+void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* rxcomms) {
 	//At a minimum you need to just feed through the rxcomms into the ctlcomms
 	for (int idx=0;idx<NUMSIGNALS;idx++){
 		ctlcomms.set(idx+1,1,rxcomms[idx]);
@@ -43,20 +43,20 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		printf("Auto ON \n");
 		#endif
 		//For this portal cube we want an altitude controller
-		double z = state.get(3,1);
-		double zdot = statedot.get(3,1);
+		double z = sensor_state.get(3,1);
+		double zdot = sensor_statedot.get(3,1);
 		double zcommand = -50;
 		double kpz = 100;
 		double kdz = 50;
 		double thrust_comm = kpz*(z-zcommand) + kdz*(zdot) + STICK_MIN;
 		ctlcomms.set(1,1,thrust_comm);
 		//We are then going to code a roll and pitch contoller
-		double roll = state.get(4,1)*PI/180.0;
-		double pitch = state.get(5,1)*PI/180.0;  //convert to radians
-		double yaw = state.get(6,1)*PI/180.0;
-		double p = state.get(10,1);
-		double q = state.get(11,1);
-		double r = state.get(12,1)*PI/180.0;
+		double roll = sensor_state.get(4,1)*PI/180.0;
+		double pitch = sensor_state.get(5,1)*PI/180.0;  //convert to radians
+		double yaw = sensor_state.get(6,1)*PI/180.0;
+		double p = sensor_state.get(10,1);
+		double q = sensor_state.get(11,1);
+		double r = sensor_state.get(12,1)*PI/180.0;
 		double kpE = -100;
 		double kdE = -1000;
 		double rollcommand = 0;
