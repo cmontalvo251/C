@@ -1,3 +1,7 @@
+==============================9/7/2021=================================
+
+MORE EDITS TO FASTSim for actuator dynamics. Now is the time to try and compile and get rid of compilation errors. Then it is time for run time errors
+
 ==============================9/6/2021==================================
 
 Started working on actuator dynamics. Kind of a bear. Since I stopped halfway through I have probably breaked the fuck out the code but just run it in debug mode. What you need to do is get the logger to log the right number of variables and add the actuator states to the integrator
