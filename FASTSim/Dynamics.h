@@ -48,7 +48,7 @@ class Dynamics {
   controller ctl;
   aerodynamics aero;
   sensors err;
-  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0;
+  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0,NUMVARS;
   void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
@@ -62,6 +62,7 @@ class Dynamics {
   void initActuators(MATLAB);
   void initActuators(int);
   void initController(int);
+  void initStateVector();
   //Constructor
   Dynamics();
 };

@@ -8,15 +8,15 @@ RK4::RK4() {
 void RK4::init(int n,double dt) {
   //Initialize State Vector
   TIMESTEP = dt;
-  NUMSTATES = n;
-  State.zeros(NUMSTATES,1,"State");
-  StateDel.zeros(NUMSTATES,1,"StateDel");
-  k.zeros(NUMSTATES,1,"k");
-  k1.zeros(NUMSTATES,1,"k1");
-  k2.zeros(NUMSTATES,1,"k2");
-  k3.zeros(NUMSTATES,1,"k3");
-  k4.zeros(NUMSTATES,1,"k4");
-  phi.zeros(NUMSTATES,1,"phi");
+  NUMVARS = n;
+  State.zeros(NUMVARS,1,"State");
+  StateDel.zeros(NUMVARS,1,"StateDel");
+  k.zeros(NUMVARS,1,"k");
+  k1.zeros(NUMVARS,1,"k1");
+  k2.zeros(NUMVARS,1,"k2");
+  k3.zeros(NUMVARS,1,"k3");
+  k4.zeros(NUMVARS,1,"k4");
+  phi.zeros(NUMVARS,1,"phi");
 }
 
 

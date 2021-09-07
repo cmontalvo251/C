@@ -24,8 +24,6 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
-  state.zeros(13,1,"Vehicle state vector");
-  statedot.zeros(13,1,"Vehicle statedot vector");
 }
   
 void Dynamics::setRates(double RCRATE,double CTLRATE) {
@@ -35,10 +33,7 @@ void Dynamics::setRates(double RCRATE,double CTLRATE) {
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   //next 4 states are the quaternions
-  q0123.set(1,1,state_in.get(4,1));
-  q0123.set(2,1,state_in.get(5,1));
-  q0123.set(3,1,state_in.get(6,1));
-  q0123.set(4,1,state_in.get(7,1));
+  q0123.vecset(1,4,state_in,4);
   double norm = q0123.norm();
   q0123.mult_eq(1/norm);
   state_in.vecset(4,7,q0123,1);
@@ -46,22 +41,18 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   state.overwrite(state_in);
   statedot.overwrite(statedot_in);
   ///First 3 states are inertial position
-  cg.set(1,1,state.get(1,1));
-  cg.set(2,1,state.get(2,1));
-  cg.set(3,1,state.get(3,1));
+  cg.vecset(1,3,state,1);
   //We need to convert the quaternions to ptp
   ptp.quat2euler(q0123);
   //next 3 states are the xbody velocities
-  cgdotB.set(1,1,state.get(8,1));
-  cgdotB.set(2,1,state.get(9,1));
-  cgdotB.set(3,1,state.get(10,1));
+  cgdotB.vecset(1,3,state,8);
   //The next 3 states are the pqr angular velocities
-  pqr.set(1,1,state.get(11,1));
-  pqr.set(2,1,state.get(12,1));
-  pqr.set(3,1,state.get(13,1));
+  pqr.vecset(1,3,state,11);
   //The next N states are the actuators
-  actuatorState.vecset(1,NUMACTUATORS,state,14);
-  actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
+  if (NUMACTUATORS > 0) {
+    actuatorState.vecset(1,NUMACTUATORS,state,14);
+    actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
+  }
 }
 
 void Dynamics::initAerodynamics(int A,double percent) {
@@ -70,25 +61,31 @@ void Dynamics::initAerodynamics(int A,double percent) {
     MATLAB var;
     var.zeros(2,1,"aero vars");
     var.set(1,1,A); //Sending Aerodynamics to this var 
-    var.set(2,1,percent);
     aero.setup(var);
   }
+}
+
+void Dynamics::initStateVector() {
+  state.zeros(NUMVARS,1,"Vehicle state vector (also includes actuators");
+  statedot.zeros(NUMVARS,1,"Vehicle statedot vector (also includes actuators");
 }
 
 //?overloaded function to give us default actuators
 void Dynamics::initActuators(int NUMSIGNALS) {
   //Initialize to default of whatever the same number of control signals
   actuatorError.zeros(NUMSIGNALS,1,"actuator_error");
+  NUMVARS = NUMSTATES;
+  initStateVector();
 }
 
 void Dynamics::initActuators(MATLAB actuatordata) {
   //this variable sets the amount of actuator error that is included in the sim
-  ACTUATOR_ERROR_PERCENT = var.get(1,1); 
+  ACTUATOR_ERROR_PERCENT = actuatordata.get(1,1); 
   //Number of Actuators
   NUMACTUATORS = actuatordata.get(2,1);
   if (NUMACTUATORS > 0){
     if (NUMACTUATORS > ctl.NUMSIGNALS) {
-      printf("Number of Actuators is larger than Control Signals \n");
+      printf("Number of Actuators is larger than Number of Control Signals \n");
       exit(1);      
     }
     ///Initialize some vectors
@@ -110,6 +107,7 @@ void Dynamics::initActuators(MATLAB actuatordata) {
     }
     PAUSE();
   }
+  NUMVARS = NUMSTATES + NUMACTUATORS;
 }
 
 void Dynamics::initExtModels(int G) {
@@ -124,8 +122,13 @@ void Dynamics::initController(int C){
   //it for SIMONLY.
   if (C) {
     MATLAB var;
-    var.zeros(1,1,"ctl vars");
+    var.zeros(5,1,"ctl vars");
     var.set(1,1,C);
+    //Sending Mass props in case you need it for your control laws
+    var.set(2,1,vehicle.mass);
+    var.set(3,1,vehicle.I.get(1,1));
+    var.set(4,1,vehicle.I.get(2,2));
+    var.set(5,1,vehicle.I.get(3,3));
     ctl.setup(var);
   }
 }
@@ -232,7 +235,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
       actuatorError.set(i+1,1,val);  
     }
     //Integrate Actuator Dynamics
-   //input will be ctlcomms and the output will be actuator_state
+    //input will be ctlcomms and the output will be actuator_state
     for (int i = 0;i<NUM_ACTUATORS;i++) {
       k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
     }

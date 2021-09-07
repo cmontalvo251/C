@@ -20,9 +20,7 @@ aerodynamics::aerodynamics() {
 void aerodynamics::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
 	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
-	#ifdef DEBUG
 	printf("Aerodynamics Initialized \n");
-	#endif
 }
 
 void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {

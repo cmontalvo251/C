@@ -4,7 +4,7 @@
 //See the following Issue on Github - https://github.com/cmontalvo251/C/issues/3
 #include "main.h"
 
-//define time parameters 
+//define Global time parameters 
 double t = 0;
 double PRINT = 0;
 double LOG = 0;
@@ -51,6 +51,7 @@ void get_fileroot(int argc,char** argv,char fileroot[]) {
 
 //////Main/////////////
 int main(int argc,char** argv) {
+
   //////////////Grab Input Arguments//////////////////////////////////////////
   get_fileroot(argc,argv,fileroot);
   //////////////////////////////////////////////////////////
@@ -76,7 +77,8 @@ int main(int argc,char** argv) {
   double CTLRATE = simdata.get(6,1);
   vehicle.setRates(RCRATE,CTLRATE);
   //These are extras that we only need if we are integrating the but it doesn't
-  //Require any computation time except on startup to read them 
+  //Require any computation time except on startup to read them so just keep
+  //them here for all different scenarios
   int GRAVITY_FLAG = simdata.get(7,1);
   int AERO_FLAG = simdata.get(8,1);
   int CTL_FLAG = simdata.get(9,1);
@@ -84,68 +86,10 @@ int main(int argc,char** argv) {
   int ACTUATOR_FLAG = simdata.get(11,1);
   //////////////////////////////////////////////////////////////////////////////
 
-  /////////////////////Initialize RC INPUT/////////////////////
-  vehicle.initRC();
-  
-  ////////////////////Initialize Controller///////////////////
-  vehicle.initController(CTL_FLAG);
-
-  #ifdef RK4_H
-  /////////////////////////Import Actuator Parameters////////////////////////////
-  if (ACTUATOR_FLAG == 1) {
-    MATLAB actuatordata;
-    char actuatorfile[256]={NULL};
-    strcat(actuatorfile,fileroot);
-    strcat(actuatorfile,"Input_Files/Actuators.txt");
-    ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
-    if (!ok) {exit(1);} else {actuator.disp();}
-    vehicle.initActuators(actuatordata);
-  } else {
-    //If actuators are off we still need a pass through
-    vehicle.initActuators(vehicle.ctl.NUMSIGNALS);
-  }
-  #endif
-
-  ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
-  //Number of states to log
-  vehicle.NUMLOGS = 1; //Always log time
-  //If RK4 is on we log....
-  #ifdef RK4_H
-  //All the states
-  vehicle.NUMLOGS+=(vehicle.NUMSTATES+vehicle.NUMACTUATORS);
-  vehicle.NUMLOGS+=6; //Forces and moments
-  #endif 
-  //No matter what we log the sensor measurements
-  vehicle.NUMLOGS+=(vehicle.NUMSTATES+vehicle.NUMACTUATORS);
-  //We also log all of the receiver signals
-  vechicle.NUMLOGS+=vehicle.rcin.num_of_axis;
-  //We also log the control signals
-  vehicle.NUMLOGS+=vehicle.ctl.NUMSIGNALS;
-  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
-  ///////////////////////////////////////////////////////
-
-  /////////////////Initialize RK4 if simulating Dynamics///////////////////
-  #ifdef RK4_H
-  //First Initialize integrator and Dynamic Model
-  integrator.init(vehicle.NUMSTATES+vehicle.NUMACTUATORS,INTEGRATIONRATE);
-  //Import Initial Conditions, mass properties
-  MATLAB icdata;
-  char initfile[256]={NULL};
-  strcat(initfile,fileroot);
-  strcat(initfile,"Input_Files/Initial_Conditions.txt");
-  ok = logger.ImportFile(initfile,&icdata,"icdata",vehicle.NUMSTATES);
-  if (!ok) { exit(1); } else {icdata.disp();}
-  //Set ICs in integrator 
-  integrator.set_ICs(icdata);
-  //Set State of Vehicle since the integrator doesn't assume a 6DOF model
-  vehicle.setState(integrator.State,integrator.k);
-  #ifdef DEBUG
-  printf("Integrator Initialized\n");
-  #endif
-  #endif
-  ////////////////////////////////////////////////////////////////////////////
-
-  /////////////////////////////MASS DATA///////////////////
+  /////////////////////////////MASS DATA/////////////////////////////
+  ////////////////////////THIS IS GOING TO IMPORT EVERYTIME//////////
+  /////////////////////IN THE EVENT YOU NEED MASS AND INERTIA///////
+  ///////////////////FOR YOUR CONTROL SYSTEM////////////////////////
   MATLAB massdata;
   char massfile[256]={NULL};
   strcat(massfile,fileroot);
@@ -156,11 +100,66 @@ int main(int argc,char** argv) {
   vehicle.setMassProps(massdata);
   /////////////////////////////////////////////////////////////
 
-  //////Initialize Environment and Aerodynamics but again only if RK4//////////
+  ////////////////////Initialize Controller///////////////////
+  /////This happens regardless of the type of simulation
+  vehicle.initController(CTL_FLAG);
+  printf("Controller Online \n");
+  ///The RC input class is initialized all the time and its settings are in
+  //the Makefile and RCInput.cpp
+
+  //////////////////?WHEN INTEGRATING ON THE COMPUTER///////////////////
+  /////////////////////A FEW MORE THINGS NEED TO HAPPEN///////////////
   #ifdef RK4_H
-  vehicle.initAerodynamics(AERO_FLAG,ACTUATOR_ERROR_PERCENTAGE);
+  /////////////////////////Import Actuator Parameters////////////////////////////
+  if (ACTUATOR_FLAG == 1) {
+    MATLAB actuatordata;
+    char actuatorfile[256]={NULL};
+    strcat(actuatorfile,fileroot);
+    strcat(actuatorfile,"Input_Files/Actuators.txt");
+    ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
+    if (!ok) {exit(1);} else {actuator.disp();}
+    vehicle.initActuators(actuatordata);
+    printf("Actuators Online \n")
+  } else {
+    //If actuators are off we still need a pass through
+    vehicle.initActuators(vehicle.ctl.NUMSIGNALS);
+    printf("NO ACTUATORS!!! \n");
+  }
+  //First Initialize integrator and Dynamic Model
+  integrator.init(vehicle.NUMVARS,INTEGRATIONRATE);
+  printf("Integrator Initialized \n");
+
+  //Import Initial Conditions
+  MATLAB icdata;
+  char initfile[256]={NULL};
+  strcat(initfile,fileroot);
+  strcat(initfile,"Input_Files/Initial_Conditions.txt");
+  ok = logger.ImportFile(initfile,&icdata,"icdata",vehicle.NUMSTATES);
+  if (!ok) { exit(1); } else {icdata.disp();}
+  //Set ICs in integrator 
+  if (vehicle.NUMACTUATORS > 0) {
+    //Need to send the integrator the combined state from the states and the 
+    //actuators
+    MATLAB icdataALL;
+    icdataALL.zeros(vehicle.NUMACTUATORS,1,"icdataALL");
+    icdataALL.vecset(1,vehicle.NUMSTATES,icdata,1);
+    icdataALL.vecset(vehicle.NUMSTATES,vehicle.NUMVARS,vehicle.actuatorState);
+    icdataALL.disp();
+    integrator.set_ICs(icdataALL);
+  } else {
+    integrator.set_ICs(icdata);
+  }
+  printf("Initial Conditions Sent to Integrator \n");
+  //Set State of Vehicle since the integrator doesn't assume a 6DOF model or actuators
+  vehicle.setState(integrator.State,integrator.k);
+  printf("Vehicle State Set \n");
+  ////Init Aerodynamics
+  vehicle.initAerodynamics(AERO_FLAG);
+  printf("Aerodynamics is Windy")
+  //Init Extra Models
   vehicle.initExtModels(GRAVITY_FLAG);
-  //Initialize the Error Model but only if we're running the integrator
+  printf("Earth Environment is Flat as of Version 0.9")
+  //Initialize the Error Model 
   if (ERROR_FLAG) {
     MATLAB sensordata;
     char sensorfile[256]={NULL};
@@ -169,14 +168,35 @@ int main(int argc,char** argv) {
     ok = logger.ImportFile(sensorfile,&sensordata,"sensordata",-99); //-99 for automatic length array
     if (!ok) { exit(1); } else {sensordata.disp();}    
     vehicle.initErrModel(sensordata);
+    printf("User has added Sensor Errors \n");
   }
   #endif
-  ////////////////////////////////////////////////////
-  #ifdef DEBUG
-  printf("Extra Models Initialized \n");
-  #endif
-  ////////////////////////////////////////////////////
-  
+  ////////////////////////////////////////////////////////////////////////////
+
+  ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
+  //Number of states to log
+  vehicle.NUMLOGS = 1; //Always log time
+  //If RK4 is on we log....
+  #ifdef RK4_H
+  //All the states including the actuator states
+  vehicle.NUMLOGS+=(vehicle.NUMVARS);
+  vehicle.NUMLOGS+=6; //Forces and moments
+  //It will also log the actuatorError values
+  //But only if this value is non-zero. Otherwise 
+  //this value is just a pass through a worthless
+  vehicle.NUMLOGS+=vehicle.NUMACTUATORS; 
+  #endif 
+  //No matter what we log the sensor measurements
+  //The error model only assumes a 12 state system
+  //The control signals below will give you the commands sent
+  vehicle.NUMLOGS+=12;
+  //We also log all of the receiver signals
+  vechicle.NUMLOGS+=vehicle.rcin.num_of_axis;
+  //We also log the control signals
+  vehicle.NUMLOGS+=vehicle.ctl.NUMSIGNALS;
+  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
+  ///////////////////////////////////////////////////////
+
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
   boost::thread render(runRenderLoop,argc,argv);
@@ -295,9 +315,11 @@ void runMainLoop() {
     /////////////////Print to STDOUT////////////////
     if (PRINT<t) {
       printf("%lf ",t);
-      for (int i = 0;i<integrator.NUMSTATES;i++) {
+      #ifdef RK4_H
+      for (int i = 0;i<integrator.NUMVARS;i++) {
         printf("%lf ",integrator.State.get(i+1,1));
       }
+      #endif
       //vehicle.printRC(0); //the zero means just the sticks
       printf("\n");
       PRINT+=PRINTRATE;
@@ -309,15 +331,8 @@ void runMainLoop() {
     if (LOG<t) {
       logvars.set(1,1,t);
       int ctr = 2;
-      #ifdef RK4_H
-      //Integrator States - only if RK4
-      for (int i = 0;i<integrator.NUMSTATES;i++) {
-        logvars.set(ctr,1,integrator.State.get(i+1,1));
-        ctr++;
-      }
-      #endif
-      //Error States (Sensor Measurements) - Always on
-      for (int i = 0;i<integrator.NUMSTATES-1;i++) {
+      //Error States (Sensor Measurements) - Always on and always 12 states
+      for (int i = 0;i<12;i++) {
         logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
         ctr++;
       }       
@@ -332,7 +347,13 @@ void runMainLoop() {
         ctr++;
       }
       #ifdef RK4_H
-      //Forces and Moments - only if RK4
+      //Integrator States which includes 6DOF states and
+      //actuators if there are any
+      for (int i = 0;i<integrator.NUMVARS;i++) {
+        logvars.set(ctr,1,integrator.State.get(i+1,1));
+        ctr++;
+      }
+      //Forces and Moments
       for (int i = 0;i<3;i++) {
         logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
         ctr++;
@@ -340,6 +361,13 @@ void runMainLoop() {
       for (int i = 0;i<3;i++) {
         logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
         ctr++;
+      }
+      ///Actuator Error Values but only if the user added actuators though
+      if (vehicle.NUMACTUATORS > 0) {
+        for (int i = 0;i<vehicle.NUMACTUATORS;i++) {
+          logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
+          ctr++;
+        }
       }
       #endif
       logger.println(logvars);
