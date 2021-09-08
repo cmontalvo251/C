@@ -301,7 +301,7 @@ void runMainLoop() {
     //It just takes z(i+1) = z(i) + k*dt
     //where k = zdot(i)
     //This routine below takes the integrator states and puts them into
-    //more standard 6DOF nomenclature
+    //more standard 6DOF nomenclature. This also include the actuator states
     vehicle.setState(integrator.State,integrator.k); 
     #endif
     ////////////////////////////////////////////
