@@ -1,4 +1,4 @@
-0.0 !Actuator Error Percent
+0.0 !Actuator Error Percent (ACTUATOR_FLAG must be set in Simulation_Flags.txt)
 4	!Number of Actuators to Simulate
 10.0	!Settling Time (sec) of first actuator
 8.0	!Settling Time (sec) of 2 actuator

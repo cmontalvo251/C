@@ -106,6 +106,8 @@ int main(int argc,char** argv) {
   printf("Controller Online \n");
   ///The RC input class is initialized all the time and its settings are in
   //the Makefile and RCInput.cpp
+  vehicle.rcin.initialize();
+  printf("Receiver Initialized \n");
 
   //////////////////?WHEN INTEGRATING ON THE COMPUTER///////////////////
   /////////////////////A FEW MORE THINGS NEED TO HAPPEN///////////////
@@ -281,6 +283,7 @@ void runMainLoop() {
     //This polls the RC inputs and the controller. This will always run
     //when we're on the RPI but only in SIMONLY and SIL on the desktop
     #if defined (SIMONLY) || (SIL) || (RPI)
+    //printf("Dynamics Loop \n");
     vehicle.loop(t);
     #endif
     ///////////////////////////////////////////////////////////////////

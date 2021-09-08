@@ -151,6 +151,7 @@ void Dynamics::loop(double t) {
   
   ////////////////////Poll External Inputs////////////////////////////
   if (t > tlastRCread + tRC) {
+    //printf("Reading RC State \n");
     rcin.readRCstate();
     //rcin.printRCstate(0);    
     tlastRCread = t;
