@@ -55,12 +55,12 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   }
 }
 
-void Dynamics::initAerodynamics(int A,double percent) {
+void Dynamics::initAerodynamics(int A) {
   //If the AERO Model is on we initialize the aero model
   if (A) {
     MATLAB var;
     var.zeros(2,1,"aero vars");
-    var.set(1,1,A); //Sending Aerodynamics to this var 
+    var.set(1,1,A); //Sending Aerodynamics Flag to this var 
     aero.setup(var);
   }
 }
@@ -125,10 +125,10 @@ void Dynamics::initController(int C){
     var.zeros(5,1,"ctl vars");
     var.set(1,1,C);
     //Sending Mass props in case you need it for your control laws
-    var.set(2,1,vehicle.mass);
-    var.set(3,1,vehicle.I.get(1,1));
-    var.set(4,1,vehicle.I.get(2,2));
-    var.set(5,1,vehicle.I.get(3,3));
+    var.set(2,1,m);
+    var.set(3,1,I.get(1,1));
+    var.set(4,1,I.get(2,2));
+    var.set(5,1,I.get(3,3));
     ctl.setup(var);
   }
 }
@@ -230,13 +230,14 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   //?Actuator Error Model
   if (NUMACTUATORS > 0) {
     ///Get the error actuator state
+    double val = 0;
     for (int i = 0;i<NUMACTUATORS;i++) {  
       val = actuatorState.get(i+1,1)*actuatorErrorPercentage.get(i+1,1);
       actuatorError.set(i+1,1,val);  
     }
     //Integrate Actuator Dynamics
     //input will be ctlcomms and the output will be actuator_state
-    for (int i = 0;i<NUM_ACTUATORS;i++) {
+    for (int i = 0;i<NUMACTUATORS;i++) {
       k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
     }
   } else {

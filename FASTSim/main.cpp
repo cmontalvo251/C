@@ -117,9 +117,9 @@ int main(int argc,char** argv) {
     strcat(actuatorfile,fileroot);
     strcat(actuatorfile,"Input_Files/Actuators.txt");
     ok = logger.ImportFile(actuatorfile,&actuatordata,"actuatordata",-99);
-    if (!ok) {exit(1);} else {actuator.disp();}
+    if (!ok) {exit(1);} else {actuatordata.disp();}
     vehicle.initActuators(actuatordata);
-    printf("Actuators Online \n")
+    printf("Actuators Online \n");
   } else {
     //If actuators are off we still need a pass through
     vehicle.initActuators(vehicle.ctl.NUMSIGNALS);
@@ -143,7 +143,7 @@ int main(int argc,char** argv) {
     MATLAB icdataALL;
     icdataALL.zeros(vehicle.NUMACTUATORS,1,"icdataALL");
     icdataALL.vecset(1,vehicle.NUMSTATES,icdata,1);
-    icdataALL.vecset(vehicle.NUMSTATES,vehicle.NUMVARS,vehicle.actuatorState);
+    icdataALL.vecset(vehicle.NUMSTATES,vehicle.NUMVARS,vehicle.actuatorICs,1);
     icdataALL.disp();
     integrator.set_ICs(icdataALL);
   } else {
@@ -155,10 +155,10 @@ int main(int argc,char** argv) {
   printf("Vehicle State Set \n");
   ////Init Aerodynamics
   vehicle.initAerodynamics(AERO_FLAG);
-  printf("Aerodynamics is Windy")
+  printf("Aerodynamics is Windy \n");
   //Init Extra Models
   vehicle.initExtModels(GRAVITY_FLAG);
-  printf("Earth Environment is Flat as of Version 0.9")
+  printf("Earth Environment is Flat as of Version 0.9 \n");
   //Initialize the Error Model 
   if (ERROR_FLAG) {
     MATLAB sensordata;
@@ -191,7 +191,7 @@ int main(int argc,char** argv) {
   //The control signals below will give you the commands sent
   vehicle.NUMLOGS+=12;
   //We also log all of the receiver signals
-  vechicle.NUMLOGS+=vehicle.rcin.num_of_axis;
+  vehicle.NUMLOGS+=vehicle.rcin.num_of_axis;
   //We also log the control signals
   vehicle.NUMLOGS+=vehicle.ctl.NUMSIGNALS;
   logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
