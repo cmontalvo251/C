@@ -4,6 +4,8 @@ MORE EDITS TO FASTSim for actuator dynamics. Now is the time to try and compile 
 
 Code now compiles so it's time for runtime errors
 
+Code compiles and runs without actuators. Need to get plotting routine working
+
 ==============================9/6/2021==================================
 
 Started working on actuator dynamics. Kind of a bear. Since I stopped halfway through I have probably breaked the fuck out the code but just run it in debug mode. What you need to do is get the logger to log the right number of variables and add the actuator states to the integrator
