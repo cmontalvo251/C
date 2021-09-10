@@ -192,10 +192,11 @@ int main(int argc,char** argv) {
   //The error model only assumes a 12 state system
   //The control signals below will give you the commands sent
   vehicle.NUMLOGS+=12;
-  //We also log all of the receiver signals
-  vehicle.NUMLOGS+=vehicle.rcin.num_of_axis;
+  //We also log all of the receiver signals - also output num of axis
+  vehicle.NUMLOGS+=(vehicle.rcin.num_of_axis+1);
   //We also log the control signals
-  vehicle.NUMLOGS+=vehicle.ctl.NUMSIGNALS;
+  //Also output the numsignals variable
+  vehicle.NUMLOGS+=(vehicle.ctl.NUMSIGNALS+1);
   logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
   ///////////////////////////////////////////////////////
 
@@ -340,21 +341,34 @@ void runMainLoop() {
         ctr++;
       }       
       //Receiver Commands - always on
+      logvars.set(ctr,1,vehicle.rcin.num_of_axis);
+      ctr++;
       for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
         logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
       //Control Commands - always on
+      logvars.set(ctr,1,vehicle.ctl.NUMSIGNALS);
+      ctr++;
       for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
         logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
         ctr++;
       }
       #ifdef RK4_H
-      //Integrator States which includes 6DOF states and
+      //Integrator States which includes 6DOF states (13) and
       //actuators if there are any
       for (int i = 0;i<integrator.NUMVARS;i++) {
         logvars.set(ctr,1,integrator.State.get(i+1,1));
         ctr++;
+      }
+      ///Actuator Error Values but only if the user added actuators though
+      //When NUMACTUATORS == 0 actuatorError is just a pass through and thus 
+      //pointless to log
+      if (vehicle.NUMACTUATORS > 0) {
+        for (int i = 0;i<vehicle.NUMACTUATORS;i++) {
+          logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
+          ctr++;
+        }
       }
       //Forces and Moments
       for (int i = 0;i<3;i++) {
@@ -364,13 +378,6 @@ void runMainLoop() {
       for (int i = 0;i<3;i++) {
         logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
         ctr++;
-      }
-      ///Actuator Error Values but only if the user added actuators though
-      if (vehicle.NUMACTUATORS > 0) {
-        for (int i = 0;i<vehicle.NUMACTUATORS;i++) {
-          logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
-          ctr++;
-        }
       }
       #endif
       logger.println(logvars);

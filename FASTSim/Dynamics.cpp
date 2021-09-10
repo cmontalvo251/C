@@ -84,8 +84,9 @@ void Dynamics::initActuators(MATLAB actuatordata) {
   //Number of Actuators
   NUMACTUATORS = actuatordata.get(2,1);
   if (NUMACTUATORS > 0){
-    if (NUMACTUATORS > ctl.NUMSIGNALS) {
-      printf("Number of Actuators is larger than Number of Control Signals \n");
+    if (NUMACTUATORS != ctl.NUMSIGNALS) {
+      printf("Number of Actuators needs to be the same as the Number of Control Signals \n");
+      printf("Num Actuators = %d, Num Control Signals = %d \n",NUMACTUATORS,ctl.NUMSIGNALS);
       exit(1);      
     }
     ///Initialize some vectors
