@@ -29,8 +29,8 @@
 #define GRAVITYENG 32.2
 #define GRAVITYSI 9.81
 #define RHOSLSI 1.225
-#define GNDSTIFF 112
-#define GNDDAMP 50
+#define GNDSTIFF 112.0
+#define GNDDAMP 50.0
 #define GNDCOEFF 0.1
 #define CONSTRAIN(in,min,max) (in > max ? max : (in < min ? min : in))
 #define wrap_Pi(x) (x < -Pi ? x+Pi2 : (x > Pi ? x - Pi2: x))

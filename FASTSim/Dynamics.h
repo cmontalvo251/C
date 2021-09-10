@@ -35,7 +35,7 @@ class environment {
 class Dynamics {
  private:
   //Private functions and vars
-  MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,MTOTALI,MTOTALB;
+  MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,FGNDI,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
   double m,N,tlastRCread=-99,tlastCTL=-99,tRC,tCTL;
   Rotation3 ine2bod321;

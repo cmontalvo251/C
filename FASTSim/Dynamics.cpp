@@ -19,6 +19,7 @@ Dynamics::Dynamics() {
   uvwdot.zeros(3,1,"Derivaitves of Velocity Body Frame");
   //Initialize Forces and Moments
   FGNDB.zeros(3,1,"Ground Forces Body Frame");
+  FGNDI.zeros(3,1,"Ground Forces Inertial Frame");
   FTOTALB.zeros(3,1,"Total Forces Body Frame");
   MTOTALI.zeros(3,1,"Total Moments Inertial Frame");
   MTOTALB.zeros(3,1,"Total Moments Body Frame");
@@ -227,17 +228,19 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   ///Check for ground plane
   double z = State.get(3,1);
+  double xdot = k.get(1,1);
+  double ydot = k.get(2,1);
   double zdot = k.get(3,1);
   double u = State.get(8,1);
   double v = State.get(9,1);
   if ((z > 0) && (zdot > 0)) {
-    k.set(3,1,0);
     N = m*GRAVITYSI;
-    //N = 0;
-    FGNDB.set(1,1,-N*GNDCOEFF*sat(u,0.1,1.0));
-    FGNDB.set(2,1,-N*GNDCOEFF*sat(v,0.1,1.0));
-    FGNDB.set(3,1,0);
-    FGNDB.disp();
+    FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
+    FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
+    FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
+    //FGNDI.disp();
+    //State.disp();
+    //printf("xdot = %lf ydot = %lf \n",xdot,ydot);
   }
 
   ///Rotational Kinematics (Quaternion Derivatives)
@@ -250,6 +253,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   FTOTALI.overwrite(env.FGRAVI); //add gravity 
 
   //Rotate Forces to body frame
+  ine2bod321.rotateInertial2Body(FGNDB,FGNDI);
   ine2bod321.rotateInertial2Body(FTOTALB,FTOTALI);
 
   //Add Aero Forces and Moments
