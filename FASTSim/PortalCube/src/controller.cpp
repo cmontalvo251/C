@@ -9,10 +9,20 @@ controller::controller() {
 
 void controller::setup(MATLAB var) {
 	CONTROLLER_FLAG = var.get(1,1);
+	//Commented out but you can use these if you'd like
+	//Just make sure to create vars in the *.h file
+	//mass = var.get(2,1);
+	//Ixx = var.get(3,1);
+	//Iyy = var.get(4,1);
+	//Izz = var.get(5,1);
+	////You can always add some noise to these parameters as they are 
+	///not connected to the vehicle state
 }
 
-void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
+void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* rxcomms) {
+	//The sensor state is a 12x1 of standard 6DOF sensors
 	//At a minimum you need to just feed through the rxcomms into the ctlcomms
+	//Which means you can't have more control signals than receiver signals
 	for (int idx=0;idx<NUMSIGNALS;idx++){
 		ctlcomms.set(idx+1,1,rxcomms[idx]);
 	}
@@ -43,20 +53,20 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		printf("Auto ON \n");
 		#endif
 		//For this portal cube we want an altitude controller
-		double z = state.get(3,1);
-		double zdot = statedot.get(3,1);
+		double z = sensor_state.get(3,1);
+		double zdot = sensor_statedot.get(3,1);
 		double zcommand = -50;
 		double kpz = 100;
 		double kdz = 50;
 		double thrust_comm = kpz*(z-zcommand) + kdz*(zdot) + STICK_MIN;
 		ctlcomms.set(1,1,thrust_comm);
 		//We are then going to code a roll and pitch contoller
-		double roll = state.get(4,1)*PI/180.0;
-		double pitch = state.get(5,1)*PI/180.0;  //convert to radians
-		double yaw = state.get(6,1)*PI/180.0;
-		double p = state.get(10,1);
-		double q = state.get(11,1);
-		double r = state.get(12,1)*PI/180.0;
+		double roll = sensor_state.get(4,1)*PI/180.0;
+		double pitch = sensor_state.get(5,1)*PI/180.0;  //convert to radians
+		double yaw = sensor_state.get(6,1)*PI/180.0;
+		double p = sensor_state.get(10,1);
+		double q = sensor_state.get(11,1);
+		double r = sensor_state.get(12,1)*PI/180.0;
 		double kpE = -100;
 		double kdE = -1000;
 		double rollcommand = 0;
@@ -66,10 +76,9 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double pitch_comm = kpE*(pitch-pitchcommand) + kdE*q + STICK_MID;
 		double yaw_comm = kpE*(yaw-yawcommand) + kdE*r + STICK_MID;
 		ctlcomms.set(2,1,roll_comm);
-		//printf("Aileron = %lf \n",ctlcomms.get(2,1));
 		ctlcomms.set(3,1,pitch_comm);
 		ctlcomms.set(4,1,yaw_comm);
-
+		//printf("Yaw Comm = %lf \n",ctlcomms.get(4,1));
 	}
 	//ctlcomms.disp();
 }

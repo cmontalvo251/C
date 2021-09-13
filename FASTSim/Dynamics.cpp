@@ -24,18 +24,8 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
-  state.zeros(13,1,"Vehicle state vector");
-  statedot.zeros(13,1,"Vehicle statedot vector");
-
-  //Run the initialize routine for RCInput so we can compute the number of logvars;
-  rcin.initialize();
-
-  //Number of states to log
-  //(13 states x 2 (actual and sensor values) + time + 8 channels or so on rcin
-  // + ctlcommands (8 - control commands) + 6 forces/moments
-  NUMLOGS = NUMSTATES*2 + 1 + rcin.num_of_axis + 8 + 6;
 }
-
+  
 void Dynamics::setRates(double RCRATE,double CTLRATE) {
   tRC = RCRATE;
   tCTL = CTLRATE;
@@ -43,10 +33,7 @@ void Dynamics::setRates(double RCRATE,double CTLRATE) {
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   //next 4 states are the quaternions
-  q0123.set(1,1,state_in.get(4,1));
-  q0123.set(2,1,state_in.get(5,1));
-  q0123.set(3,1,state_in.get(6,1));
-  q0123.set(4,1,state_in.get(7,1));
+  q0123.vecset(1,4,state_in,4);
   double norm = q0123.norm();
   q0123.mult_eq(1/norm);
   state_in.vecset(4,7,q0123,1);
@@ -54,43 +41,104 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   state.overwrite(state_in);
   statedot.overwrite(statedot_in);
   ///First 3 states are inertial position
-  cg.set(1,1,state.get(1,1));
-  cg.set(2,1,state.get(2,1));
-  cg.set(3,1,state.get(3,1));
+  cg.vecset(1,3,state,1);
   //We need to convert the quaternions to ptp
   ptp.quat2euler(q0123);
   //next 3 states are the xbody velocities
-  cgdotB.set(1,1,state.get(8,1));
-  cgdotB.set(2,1,state.get(9,1));
-  cgdotB.set(3,1,state.get(10,1));
+  cgdotB.vecset(1,3,state,8);
   //The next 3 states are the pqr angular velocities
-  pqr.set(1,1,state.get(11,1));
-  pqr.set(2,1,state.get(12,1));
-  pqr.set(3,1,state.get(13,1));
+  pqr.vecset(1,3,state,11);
+  //The next N states are the actuators
+  if (NUMACTUATORS > 0) {
+    actuatorState.vecset(1,NUMACTUATORS,state,14);
+    actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
+  }
 }
 
-void Dynamics::initAerodynamics(int A,double percent) {
+void Dynamics::initAerodynamics(int A) {
   //If the AERO Model is on we initialize the aero model
   if (A) {
     MATLAB var;
     var.zeros(2,1,"aero vars");
-    var.set(1,1,A); //Sending Aerodynamics to this var 
-    var.set(2,1,percent);
+    var.set(1,1,A); //Sending Aerodynamics Flag to this var 
     aero.setup(var);
   }
 }
 
-void Dynamics::initExtModels(int G,int C) {
+void Dynamics::initStateVector() {
+  state.zeros(NUMVARS,1,"Vehicle state vector (also includes actuators");
+  statedot.zeros(NUMVARS,1,"Vehicle statedot vector (also includes actuators");
+}
+
+//?overloaded function to give us default actuators
+void Dynamics::initActuators(int NUMSIGNALS) {
+  //Initialize to default of whatever the same number of control signals
+  actuatorError.zeros(NUMSIGNALS,1,"actuator_error");
+  NUMVARS = NUMSTATES;
+  initStateVector();
+}
+
+void Dynamics::initActuators(MATLAB actuatordata) {
+  //this variable sets the amount of actuator error that is included in the sim
+  ACTUATOR_ERROR_PERCENT = actuatordata.get(1,1); 
+  //Number of Actuators
+  NUMACTUATORS = actuatordata.get(2,1);
+  if (NUMACTUATORS > 0){
+    if (NUMACTUATORS != ctl.NUMSIGNALS) {
+      printf("Number of Actuators needs to be the same as the Number of Control Signals \n");
+      printf("Num Actuators = %d, Num Control Signals = %d \n",NUMACTUATORS,ctl.NUMSIGNALS);
+      exit(1);      
+    }
+    ///Initialize some vectors
+    actuatorTimeConstants.zeros(NUMACTUATORS,1,"actuatorTimeConstants");
+    actuatorState.zeros(NUMACTUATORS,1,"actuatorState");
+    actuatorStatedot.zeros(NUMACTUATORS,1,"actuatorStatedot");
+    actuatorICs.zeros(NUMACTUATORS,1,"actuatorICs");
+    /////Get Time Constants
+    //actuatorTimeConstants.vecset(1,NUMACTUATORS,actuatordata,3);
+    //This initial command above actually sets the settling time
+    //Remember the settling time Ts = 4*tau so 
+    //tau = Ts/4 but the time constant is 1/tau so 
+    //timeConstant = 4/Ts
+    for (int i = 1;i<=NUMACTUATORS;i++) {
+      double val = 4.0/actuatordata.get(i+2,1);
+      actuatorTimeConstants.set(i,1,val);
+    }
+    actuatorTimeConstants.disp();
+    //Get initial conditions    
+    actuatorICs.vecset(1,NUMACTUATORS,actuatordata,3+NUMACTUATORS);
+    actuatorICs.disp();
+    //to add errors to your control surfaces or thrusters. This variable is set in Simulation_Flags.txt
+    actuatorError.zeros(NUMACTUATORS,1,"Actuator errors");
+    actuatorErrorPercentage.zeros(NUMACTUATORS,1,"Actuator Percent Errors");
+    for (int i = 0;i<NUMACTUATORS;i++) {
+      actuatorErrorPercentage.set(i+1,1,(1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0)); 
+    }
+    //PAUSE();
+  }
+  NUMVARS = NUMSTATES + NUMACTUATORS;
+  initStateVector();
+}
+
+void Dynamics::initExtModels(int G) {
   //Initialize the Gravity model no matter what. 
   env.init(G);
+}
+
+void Dynamics::initController(int C){
   //Initialize control system model
   CONTROLLER_FLAG_INITIAL = C; //The ctl.loop routine can change the controller flag
   //in the ctl.loop so we need to save the initial control value in case we need
   //it for SIMONLY.
   if (C) {
     MATLAB var;
-    var.zeros(1,1,"ctl vars");
+    var.zeros(5,1,"ctl vars");
     var.set(1,1,C);
+    //Sending Mass props in case you need it for your control laws
+    var.set(2,1,m);
+    var.set(3,1,I.get(1,1));
+    var.set(4,1,I.get(2,2));
+    var.set(5,1,I.get(3,3));
     ctl.setup(var);
   }
 }
@@ -113,6 +161,7 @@ void Dynamics::loop(double t) {
   
   ////////////////////Poll External Inputs////////////////////////////
   if (t > tlastRCread + tRC) {
+    //printf("Reading RC State \n");
     rcin.readRCstate();
     //rcin.printRCstate(0);    
     tlastRCread = t;
@@ -189,18 +238,29 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   //Dynamics boils down to F=ma and M=Ia so we need a force a moment model
 
+  //?Actuator Error Model
+  if (NUMACTUATORS > 0) {
+    ///Get the error actuator state
+    double val = 0;
+    for (int i = 0;i<NUMACTUATORS;i++) {  
+      val = actuatorState.get(i+1,1)*actuatorErrorPercentage.get(i+1,1);
+      actuatorError.set(i+1,1,val);  
+    }
+    //Integrate Actuator Dynamics
+    //input will be ctlcomms and the output will be actuator_state
+    for (int i = 0;i<NUMACTUATORS;i++) {
+      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+    }
+  } else {
+    //Otherwise just pass through the ctlcomms
+    actuatorError.overwrite(ctl.ctlcomms);
+  }
+  
   ////////////////FORCE AND MOMENT MODEL///////////////////////
-
-  //Integrate Actuator Dynamics
-  // input will be ctlcomms and the output will be actuator_state
-  // Add to an input file the number of actuators and the time_constant of each
-  //for (int i = 0;i<NUM_ACTUATORS;i++) {
-  //actuator_var_dot = time_constant*(actuator_command - actuator_var)
-  //}
 
   //Aerodynamic Model
   //Send the aero model the actuator_state instead of the ctlcomms
-  aero.ForceMoment(t,State,k,ctl.ctlcomms);
+  aero.ForceMoment(t,State,k,actuatorError);
 
   //Gravity Model
   env.gravitymodel();
