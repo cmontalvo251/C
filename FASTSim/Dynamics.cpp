@@ -156,6 +156,7 @@ void Dynamics::setMassProps(MATLAB massdata) {
   I.set(3,3,massdata.get(4,1));
   Iinv.overwrite(I,"Iinv");
   Iinv.inverse();
+  env.setMass(m);
 }
 
 void Dynamics::loop(double t) {
@@ -235,11 +236,10 @@ void Dynamics::printRC(int all) {
 }
 
 void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
-  //The Derivatives are vehicle specific
+  //The Derivatives are vehicle independent except for the 
+  //forces and moments
 
-  //Dynamics boils down to F=ma and M=Ia so we need a force a moment model
-
-  //?Actuator Error Model
+  //Actuator Error Model is a simple first order filter
   if (NUMACTUATORS > 0) {
     ///Get the error actuator state
     double val = 0;
@@ -256,18 +256,9 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
     //Otherwise just pass through the ctlcomms
     actuatorError.overwrite(ctl.ctlcomms);
   }
-  
-  ////////////////FORCE AND MOMENT MODEL///////////////////////
 
-  //Aerodynamic Model
-  //Send the aero model the actuator_state instead of the ctlcomms
-  aero.ForceMoment(t,State,k,actuatorError);
+  ////////////////////KINEMATICS///////////////
 
-  //Gravity Model
-  env.gravitymodel();
-  env.groundcontact(k,State,m);
-
-  ///////////And then finally an acceleration model////////////
   //Extract individual States from State Vector
   cgdotB.vecset(1,3,State,8);
   q0123.vecset(1,4,State,4);
@@ -286,28 +277,21 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   ine2bod321.rotateBody2Inertial(cgdotI,cgdotB);
   k.vecset(1,3,cgdotI,1);
 
-  ///Check for ground plane
-  /*double z = State.get(3,1);
-  double xdot = k.get(1,1);
-  double ydot = k.get(2,1);
-  double zdot = k.get(3,1);
-  double u = State.get(8,1);
-  double v = State.get(9,1);
-  if ((z > 0) && (zdot > 0)) {
-    N = m*GRAVITYSI;
-    FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
-    FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
-    FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
-    //FGNDI.disp();
-    //State.disp();
-    //printf("xdot = %lf ydot = %lf \n",xdot,ydot);
-    }*/
-
   ///Rotational Kinematics (Quaternion Derivatives)
   k.set(4,1,(-p*q1-q*q2-r*q3)/2.0);
   k.set(5,1,(p*q0+r*q2-q*q3)/2.0);
   k.set(6,1,(q*q0-r*q1+p*q3)/2.0);
   k.set(7,1,(r*q0+q*q1-p*q2)/2.0);
+
+  ////////////////FORCE AND MOMENT MODEL///////////////////////
+
+  //Aerodynamic Model
+  //Send the aero model the actuator_state instead of the ctlcomms
+  aero.ForceMoment(t,State,k,actuatorError);
+
+  //Gravity Model
+  env.gravitymodel();
+  env.groundcontactmodel(State,k);  
 
   //Add Up Forces and Moments
   FTOTALI.overwrite(env.FGRAVI); //add gravity 
@@ -353,6 +337,10 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 environment::environment() {
 }
 
+void environment::setMass(double m) {
+  mass = m;
+}
+
 void environment::init(int G){
   GRAVITY_FLAG = G;
   FGRAVI.zeros(3,1,"FORCE OF GRAVITY INERTIAL");
@@ -363,11 +351,11 @@ void environment::gravitymodel() {
   FGRAVI.mult_eq(0); //zero out gravity
   if (GRAVITY_FLAG == 1) {
     //Flat Earth model
-    FGRAVI.set(3,1,GEARTH);
+    FGRAVI.set(3,1,GEARTH*mass);
   }
 }
 
-void environment::groundcontact(MATLAB k,MATLAB State,double m) {
+void environment::groundcontactmodel(MATLAB State,MATLAB k) {
   double z = State.get(3,1);
   double xdot = k.get(1,1);
   double ydot = k.get(2,1);
@@ -375,13 +363,10 @@ void environment::groundcontact(MATLAB k,MATLAB State,double m) {
   double u = State.get(8,1);
   double v = State.get(9,1);
   if ((z > 0) && (zdot > 0)) {
-    double N = m*GRAVITYSI;
+    double N = mass*GRAVITYSI;
     FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
     FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
     FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
-    //FGNDI.disp();
-    //State.disp();
-    //printf("xdot = %lf ydot = %lf \n",xdot,ydot);
   }
 }
 

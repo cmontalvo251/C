@@ -24,12 +24,13 @@ Only in AUTO will we call the onboard sensors
 
 class environment {
  private:
-  int GRAVITY_FLAG;
+  int GRAVITY_FLAG,mass;
  public:
    MATLAB FGRAVI,FGNDI;
    void init(int G);
    void gravitymodel();
-   void groundcontact(MATLAB k,MATLAB State,double m);
+   void groundcontactmodel(MATLAB,MATLAB);
+   void setMass(double);
    environment(); //constructor   
 };
 
