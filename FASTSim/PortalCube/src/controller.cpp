@@ -76,10 +76,9 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 		double pitch_comm = kpE*(pitch-pitchcommand) + kdE*q + STICK_MID;
 		double yaw_comm = kpE*(yaw-yawcommand) + kdE*r + STICK_MID;
 		ctlcomms.set(2,1,roll_comm);
-		//printf("Aileron = %lf \n",ctlcomms.get(2,1));
 		ctlcomms.set(3,1,pitch_comm);
 		ctlcomms.set(4,1,yaw_comm);
-
+		//printf("Yaw Comm = %lf \n",ctlcomms.get(4,1));
 	}
 	//ctlcomms.disp();
 }

@@ -32,7 +32,7 @@ FASTSim:
 
   ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? done (21-08-20 11:36) 
 
- ☐ Finish the actuator dynamics. There are alot of subtasks for this one
+ ✔ Finish the actuator dynamics. There are alot of subtasks for this one #@done (21-09-12 22:24)
    ✔ Integrate the state vector to produce State. done (21-09-06 08:31)
    ✔ Send STate to the sensor routine and receive the polluted state done (21-09-06 08:33)
    ✔ Send pollutted state to controller built by the user to produce ctlcomms #@done (21-09-06 08:34)

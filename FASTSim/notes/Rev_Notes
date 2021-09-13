@@ -3,6 +3,15 @@
 I forgot to take notes on this but I overhauled the crap out of the plotting routine.
 I need to keep working on it to actually test the actuator model.
 
+Ok process logs works without actuators. Let's....wait. Let's add sensor errors
+first.
+
+Sensor errors works. It kind of worries me because well the controller doesn't do
+too well but then again this is a dumb contorller on a Portalcube
+
+Alright. Time to turn on actuators....Well after a bit of tinkering. Actuator dynamics
+is working. Time to merge :|
+
 ==============================9/7/2021=================================
 
 MORE EDITS TO FASTSim for actuator dynamics. Now is the time to try and compile and get rid of compilation errors. Then it is time for run time errors.

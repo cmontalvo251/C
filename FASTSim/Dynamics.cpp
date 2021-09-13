@@ -95,7 +95,15 @@ void Dynamics::initActuators(MATLAB actuatordata) {
     actuatorStatedot.zeros(NUMACTUATORS,1,"actuatorStatedot");
     actuatorICs.zeros(NUMACTUATORS,1,"actuatorICs");
     /////Get Time Constants
-    actuatorTimeConstants.vecset(1,NUMACTUATORS,actuatordata,3);
+    //actuatorTimeConstants.vecset(1,NUMACTUATORS,actuatordata,3);
+    //This initial command above actually sets the settling time
+    //Remember the settling time Ts = 4*tau so 
+    //tau = Ts/4 but the time constant is 1/tau so 
+    //timeConstant = 4/Ts
+    for (int i = 1;i<=NUMACTUATORS;i++) {
+      double val = 4.0/actuatordata.get(i+2,1);
+      actuatorTimeConstants.set(i,1,val);
+    }
     actuatorTimeConstants.disp();
     //Get initial conditions    
     actuatorICs.vecset(1,NUMACTUATORS,actuatordata,3+NUMACTUATORS);
@@ -106,9 +114,10 @@ void Dynamics::initActuators(MATLAB actuatordata) {
     for (int i = 0;i<NUMACTUATORS;i++) {
       actuatorErrorPercentage.set(i+1,1,(1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0)); 
     }
-    PAUSE();
+    //PAUSE();
   }
   NUMVARS = NUMSTATES + NUMACTUATORS;
+  initStateVector();
 }
 
 void Dynamics::initExtModels(int G) {

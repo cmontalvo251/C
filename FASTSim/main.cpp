@@ -143,9 +143,9 @@ int main(int argc,char** argv) {
     //Need to send the integrator the combined state from the states and the 
     //actuators
     MATLAB icdataALL;
-    icdataALL.zeros(vehicle.NUMACTUATORS,1,"icdataALL");
+    icdataALL.zeros(vehicle.NUMVARS,1,"icdataALL");
     icdataALL.vecset(1,vehicle.NUMSTATES,icdata,1);
-    icdataALL.vecset(vehicle.NUMSTATES,vehicle.NUMVARS,vehicle.actuatorICs,1);
+    icdataALL.vecset(vehicle.NUMSTATES+1,vehicle.NUMVARS,vehicle.actuatorICs,1);
     icdataALL.disp();
     integrator.set_ICs(icdataALL);
   } else {

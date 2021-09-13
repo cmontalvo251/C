@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import matplotlib.pyplot as plt
+plt.rcParams.update({'figure.max_open_warning': 0})
 import sys
 import os
 import numpy as np
@@ -243,8 +244,8 @@ for x in range(0,ctl_numsignals):
     print(label)
     plt.grid()
     if NUMACTUATORS > 0:
-        plt.plot(time,actuator_states[:,x],label='Actuator')
-        plt.plot(time,actuator_error_states[:,x],label='Actuator w/ Error')
+        plt.plot(time,actuator_states[:,x],'--',label='Actuator')
+        plt.plot(time,actuator_error_states[:,x],'-.',label='Actuator w/ Error')
         plt.legend()
     pp.savefig()
 
