@@ -34,7 +34,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:
 	echo ' ' > d.exe
 	echo ' ' > d.o
-	rm -rf $(EXECUTABLE) *.o
+	rm *.exe *.o
 	echo ' ' > ../MATLAB/d.o
 	rm ../MATLAB/*.o
 	echo ' ' > ../Mathp/d.o

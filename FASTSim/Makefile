@@ -67,7 +67,7 @@ clean:
 	rm logs/*.txt
 	echo ' ' > d.exe
 	echo ' ' > d.o
-	rm -rf $(EXECUTABLE) *.o
+	rm *.exe *.o
 	echo ' ' > ../MATLAB/d.o
 	rm ../MATLAB/*.o
 	echo ' ' > ../Datalogger/d.o
