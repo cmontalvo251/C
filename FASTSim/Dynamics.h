@@ -38,27 +38,35 @@ class Dynamics {
   //Private functions and vars
   MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
+  MATLAB actuatorState,actuatorStatedot,actuatorErrorPercentage;
+  MATLAB actuatorTimeConstants;
   double m,tlastRCread=-99,tlastCTL=-99,tRC,tCTL;
   Rotation3 ine2bod321;
   environment env;
+  double ACTUATOR_ERROR_PERCENT;
  public:
   //Public Functions and vars
   MATLAB cg,ptp;
+  MATLAB actuatorICs,actuatorError;
   RCInput rcin;
   controller ctl;
   aerodynamics aero;
   sensors err;
-  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL;
+  int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0,NUMVARS;
   void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
-  void initExtModels(int G,int C);
-  void initAerodynamics(int A,double);
+  void initExtModels(int G);
+  void initAerodynamics(int A);
   void setMassProps(MATLAB massdata);
   void initErrModel(MATLAB sensordata);
   void loop(double time);
   void printRC(int all);
   void setRates(double,double);
+  void initActuators(MATLAB);
+  void initActuators(int);
+  void initController(int);
+  void initStateVector();
   //Constructor
   Dynamics();
 };

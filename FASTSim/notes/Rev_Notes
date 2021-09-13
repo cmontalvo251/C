@@ -1,3 +1,38 @@
+==============================9/12?/2021==============================
+
+I forgot to take notes on this but I overhauled the crap out of the plotting routine.
+I need to keep working on it to actually test the actuator model.
+
+Ok process logs works without actuators. Let's....wait. Let's add sensor errors
+first.
+
+Sensor errors works. It kind of worries me because well the controller doesn't do
+too well but then again this is a dumb contorller on a Portalcube
+
+Alright. Time to turn on actuators....Well after a bit of tinkering. Actuator dynamics
+is working. Time to merge :|
+
+==============================9/7/2021=================================
+
+MORE EDITS TO FASTSim for actuator dynamics. Now is the time to try and compile and get rid of compilation errors. Then it is time for run time errors.
+
+Code now compiles so it's time for runtime errors
+
+Code compiles and runs without actuators. Need to get plotting routine working
+
+==============================9/6/2021==================================
+
+Started working on actuator dynamics. Kind of a bear. Since I stopped halfway through I have probably breaked the fuck out the code but just run it in debug mode. What you need to do is get the logger to log the right number of variables and add the actuator states to the integrator
+
+Ok I think actuator dynamics are ready but you need to run through code line by line before you even attempt to compile and run because there is no way this shit is going to work
+
+I would say the next thing you need to do is run through the main.cpp
+routine and make sure everything is passed through correctly especially 
+with actuator dynamics on or off
+
+The other thing that is currently totally messed up is the way the system logs data
+I think the integrator has the 6DOF states and the actuator states but the sensor measurements only have the 6DOF states. I'm assuming it does not have the actuator states. But if we're running the RK4 I'd like to know the control signals, the actuator state and the actuator error state. So I need to figure out how to do that.
+
 ==============================9/3/2021===================================
 
 With the help of Maxwell I was able to fix the sensor errors issue.

@@ -26,19 +26,19 @@ ANTX:
 
 FASTSim:
 
-  ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot @done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
+  ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
 
-  ✔ The sensor errors are no longer working. why? that needs to be fixed @done (21-09-03 20:58)
+  ✔ The sensor errors are no longer working. why? that needs to be fixed done (21-09-03 20:58)
 
-  ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? @done (21-08-20 11:36) 
+  ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? done (21-08-20 11:36) 
 
- ☐ Finish the actuator dynamics. There are alot of subtasks for this one
-   ☐ Integrate the state vector to produce State.
-   ☐ Send STate to the sensor routine and receive the polluted state
-   ☐ Send pollutted state to controller built by the user to produce ctlcomms
-   ☐ Send ctlcomms to actuator dynamics to produce actuators values
-   ☐ Pollute actuator values with ACTUATOR ERRORS by some percentage
-   ☐ Send actuator values to aerodynamics routine written by user to produce Forces and moments
+ ✔ Finish the actuator dynamics. There are alot of subtasks for this one #@done (21-09-12 22:24)
+   ✔ Integrate the state vector to produce State. done (21-09-06 08:31)
+   ✔ Send STate to the sensor routine and receive the polluted state done (21-09-06 08:33)
+   ✔ Send pollutted state to controller built by the user to produce ctlcomms #@done (21-09-06 08:34)
+   ✔ Send ctlcomms to actuator dynamics to produce actuators values #@done (21-09-07 21:42)
+   ✔ Pollute actuator values with ACTUATOR ERRORS by some percentage #@done (21-09-07 21:42)
+   ✔ Send actuator values to aerodynamics routine written by user to produce Forces and moments #@done (21-09-07 21:43)
 
  ☐ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available
 

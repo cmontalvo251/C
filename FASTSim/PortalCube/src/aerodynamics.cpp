@@ -20,33 +20,22 @@ aerodynamics::aerodynamics() {
 void aerodynamics::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
 	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
-	ACTUATOR_ERROR_PERCENT = var.get(2,1); //this variable sets the amount of actuator error that you can use
-	//to add errors to your control surfaces or thrusters. This variable is set in Simulation_Flags.txt
-	ACTUATOR_ERROR.zeros(NUMACTUATORS,1,"Actuator errors");
-	for (int i = 0;i<NUMACTUATORS;i++) {
-		ACTUATOR_ERROR.set(i+1,1,(1+randnum(-1,1)*ACTUATOR_ERROR_PERCENT/100.0));	
-	}
-	ACTUATOR_ERROR.disp();
-	//PAUSE();
-	#ifdef DEBUG
 	printf("Aerodynamics Initialized \n");
-	#endif
 }
 
-void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB control) {
+void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
 	//The only thing this function needs to do is populate FAEROB and MAEROB. 
 	//You can do whatever you want in here but you must create those two vectors.
 	FAEROB.mult_eq(0); //Zero these out just to make sure something is in here
 	MAEROB.mult_eq(0);
 
 	if (AERODYNAMICS_FLAG == 1) {
-		//Extract Control Inputs
-		//control.disp(); //to display for debugging
+		//Extract Actuator Values
 		//Remember that control is in PWM (us)
-		double throttleUS = control.get(1,1);
-		double aileronUS = control.get(2,1);
-		double elevatorUS = control.get(3,1);
-		double rudderUS = control.get(4,1);
+		double throttleUS = actuators.get(1,1);
+		double aileronUS = actuators.get(2,1);
+		double elevatorUS = actuators.get(3,1);
+		double rudderUS = actuators.get(4,1);
 
 		//Convert throttle signals to thruster value
 		double TMAX = 1000;
@@ -57,12 +46,6 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double Lthrust = (aileronUS - STICK_MID)/mid_slope*TORQUEMAX;
 		double Mthrust = (elevatorUS - STICK_MID)/mid_slope*TORQUEMAX;
 		double Nthrust = (rudderUS - STICK_MID)/mid_slope*TORQUEMAX;
-
-		////ADD Actuator errors
-		Zthrust *= ACTUATOR_ERROR.get(1,1);
-		Lthrust *= ACTUATOR_ERROR.get(2,1);
-		Mthrust *= ACTUATOR_ERROR.get(3,1);
-		Nthrust *= ACTUATOR_ERROR.get(4,1);
 
 		//Aero Parameters
 		double S = 0.1; //m^2
