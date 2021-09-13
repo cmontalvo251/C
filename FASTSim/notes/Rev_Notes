@@ -1,3 +1,8 @@
+==============================9/12?/2021==============================
+
+I forgot to take notes on this but I overhauled the crap out of the plotting routine.
+I need to keep working on it to actually test the actuator model.
+
 ==============================9/7/2021=================================
 
 MORE EDITS TO FASTSim for actuator dynamics. Now is the time to try and compile and get rid of compilation errors. Then it is time for run time errors.

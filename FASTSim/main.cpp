@@ -288,48 +288,6 @@ void runMainLoop() {
     vehicle.loop(t);
     #endif
     ///////////////////////////////////////////////////////////////////
-    
-    /////////RK4 INTEGRATION LOOP///////////////
-    #ifdef RK4_H
-    for (int i = 1;i<=4;i++){
-      vehicle.Derivatives(t,integrator.StateDel,integrator.k);
-      //integrator.StateDel.disp();
-      //integrator.k.disp();
-      //PAUSE();
-      integrator.integrate(i);
-    }
-    //Integrate time
-    t += INTEGRATIONRATE;
-    //Set State of Vehicle rather than the integrator
-    //The integrator is dumb and does not know what the states are
-    //It just takes z(i+1) = z(i) + k*dt
-    //where k = zdot(i)
-    //This routine below takes the integrator states and puts them into
-    //more standard 6DOF nomenclature. This also include the actuator states
-    vehicle.setState(integrator.State,integrator.k); 
-    #endif
-    ////////////////////////////////////////////
-
-    //////////////IF RENDERING//////////////////
-    ////Send state vector to OpenGL
-    #ifdef OPENGL_H
-    glhandle_g.state.UpdateRender(t,vehicle.cg,vehicle.ptp,1);
-    #endif
-
-    /////////////////Print to STDOUT////////////////
-    if (PRINT<t) {
-      printf("%lf ",t);
-      #ifdef RK4_H
-      for (int i = 0;i<integrator.NUMVARS;i++) {
-        printf("%lf ",integrator.State.get(i+1,1));
-      }
-      #endif
-      //vehicle.printRC(0); //the zero means just the sticks
-      printf("\n");
-      PRINT+=PRINTRATE;
-      //PAUSE();
-    }
-    /////////////////////////////////////////////////
 
     ////////////////LOG DATA////////////////////////
     if (LOG<t) {
@@ -384,6 +342,48 @@ void runMainLoop() {
       LOG+=LOGRATE;
     }
     ////////////////////////////////////////////////
+    
+    /////////RK4 INTEGRATION LOOP///////////////
+    #ifdef RK4_H
+    for (int i = 1;i<=4;i++){
+      vehicle.Derivatives(t,integrator.StateDel,integrator.k);
+      //integrator.StateDel.disp();
+      //integrator.k.disp();
+      //PAUSE();
+      integrator.integrate(i);
+    }
+    //Integrate time
+    t += INTEGRATIONRATE;
+    //Set State of Vehicle rather than the integrator
+    //The integrator is dumb and does not know what the states are
+    //It just takes z(i+1) = z(i) + k*dt
+    //where k = zdot(i)
+    //This routine below takes the integrator states and puts them into
+    //more standard 6DOF nomenclature. This also include the actuator states
+    vehicle.setState(integrator.State,integrator.k); 
+    #endif
+    ////////////////////////////////////////////
+
+    //////////////IF RENDERING//////////////////
+    ////Send state vector to OpenGL
+    #ifdef OPENGL_H
+    glhandle_g.state.UpdateRender(t,vehicle.cg,vehicle.ptp,1);
+    #endif
+
+    /////////////////Print to STDOUT////////////////
+    if (PRINT<t) {
+      printf("%lf ",t);
+      #ifdef RK4_H
+      for (int i = 0;i<integrator.NUMVARS;i++) {
+        printf("%lf ",integrator.State.get(i+1,1));
+      }
+      #endif
+      //vehicle.printRC(0); //the zero means just the sticks
+      printf("\n");
+      PRINT+=PRINTRATE;
+      //PAUSE();
+    }
+    /////////////////////////////////////////////////
 
   } //End while loop on main loop
   printf("Simulation Complete\n");

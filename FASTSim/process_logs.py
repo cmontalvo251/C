@@ -66,19 +66,18 @@ rcin_num_of_axis = int(data[:,13][0])
 print('RCIN Num of Axis = ',rcin_num_of_axis)
 rcin_labels = ['Throttle RX (us)','Aileron RX (us)','Elevator RX (us)','Rudder RX (us)','Aux1 RX','Aux2 RX','Aux3 RX','Aux4 RX']
 rcin_states = data[:,14:(14+rcin_num_of_axis)]
-if PLOTEVERYTHING:
-    for x in range(0,rcin_num_of_axis):
-        plt.figure()
-        plt.plot(time,rcin_states[:,x])
-        plt.xlabel('Time (sec)')
-        if x > len(rcin_labels):
-            label = 'Aux' + ' ' + str(4+x-rcin_num_axis)
-        else:
-            label = rcin_labels[x]
-        plt.ylabel(label)
-        print(label)
-        plt.grid()
-        pp.savefig()
+for x in range(0,rcin_num_of_axis):
+    plt.figure()
+    plt.plot(time,rcin_states[:,x])
+    plt.xlabel('Time (sec)')
+    if x > len(rcin_labels):
+        label = 'Aux' + ' ' + str(4+x-rcin_num_axis)
+    else:
+        label = rcin_labels[x]
+    plt.ylabel(label)
+    print(label)
+    plt.grid()
+    pp.savefig()
 ####################################################################
 
 ################THe next N states are the Control Signals###########
@@ -123,12 +122,12 @@ if RK4 == 1:
             pp.savefig()
     q0123 = states_raw[:,3:7]
     ptp = dof.quat2euler(np.transpose(q0123))
-    ptp = np.transpose(ptp)
+    ptp = np.transpose(ptp)*180.0/np.pi
     ptp_labels = ['Roll (deg)','Pitch (deg)','Yaw (deg)']
     if PLOTEVERYTHING == 1:
         for x in range(0,3):
             plt.figure()
-            plt.plot(time,ptp[:,x]*180.0/np.pi)
+            plt.plot(time,ptp[:,x])
             plt.xlabel('Time (sec)')
             plt.ylabel(ptp_labels[x])
             print(ptp_labels[x])
@@ -190,16 +189,64 @@ if RK4 == 1:
     #####################The Final 6 states are the Forces and moments on the Vehicle
     forces_moments = data[:,(28+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS):(28+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS+6)]
     force_moment_labels = ['X (N)','Y (N)','Z (N)','L (N-m)','M (N-m)','N (N-m)']
-    if PLOTEVERYTHING == 0:
-        ###Print All Vars Raw
-        for x in range(0,6):
-            plt.figure()
-            plt.plot(time,forces_moments[:,x])
-            plt.xlabel('Time (sec)')
-            plt.ylabel(force_moment_labels[x])
-            print(force_moment_labels[x])
-            plt.grid()
-            pp.savefig()
+    ###Print All Vars Raw
+    for x in range(0,6):
+        plt.figure()
+        plt.plot(time,forces_moments[:,x])
+        plt.xlabel('Time (sec)')
+        plt.ylabel(force_moment_labels[x])
+        print(force_moment_labels[x])
+        plt.grid()
+        pp.savefig()
+##########################################################################3
+
+##### VARIABLE REGISTRY ####################
+# time - DONE
+# sensor_states and sensor_labels - 12x1 - DONE
+# rcin_states and rcin_labels - rcin_num_of_axis x 1 - DONE
+# ctl_states and ctl_labels - ctl_numsignals x 1 - DONE
+# RK4 - 1 or 0 for on and off 
+# The following states exist if RK4 == 1
+# states_raw and states_raw_labels - 13x1 - ONLY PLOT IF PLOTEVERYTHING IS ON
+# states and state_labels - 12x1 - DONE - DONE
+# forces_moments and force_moment_labels - 6x1 - DONE
+# NUMACTUATORS - 0 to N - number of actuators
+# The following variables only exist if there are actuators
+# actuator_states,actuator_error_states and actuator_labels - NUMACTUATORS x 1 - DONE
+
+###Ok Let's first plot all 12 states (sensors and actual if RK4)
+for x in range(0,12):
+    plt.figure()
+    plt.plot(time,sensor_states[:,x],label='Sensor')
+    plt.xlabel('Time (sec')
+    plt.grid()
+    if RK4 == 1:
+        plt.plot(time,states[:,x],'--',label='Actual')
+        plt.ylabel(state_labels[x])
+        plt.legend()
+    else:
+        plt.ylabel(sensor_labels[x])
+    pp.savefig()
+
+##The RC Signals are plotted above 
+
+##We now need to plot the control signals because if actuators are on they 
+##will need to be plotted alongside the control signals
+#Right now the code won't run unless the number of actuators is the same
+##as the number of control signals
+for x in range(0,ctl_numsignals): 
+    plt.figure()
+    plt.plot(time,ctl_states[:,x],label='Command')
+    plt.xlabel('Time (sec)')
+    label = ctl_labels[x]
+    plt.ylabel(label)
+    print(label)
+    plt.grid()
+    if NUMACTUATORS > 0:
+        plt.plot(time,actuator_states[:,x],label='Actuator')
+        plt.plot(time,actuator_error_states[:,x],label='Actuator w/ Error')
+        plt.legend()
+    pp.savefig()
 
 pp.close()
 sys.exit()
