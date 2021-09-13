@@ -1,8 +1,8 @@
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-#HPATH=/home/carlos/Git_Repos/Github/HIL
+HPATH=/home/carlos/Git_Repos/Github/HIL
 #HPATH=/home/carlos/Files/Git_Repos/Github/HIL
-HPATH=/home/pi/HIL
+#HPATH=/home/pi/HIL
 ##########################################################
 
 #########################WHAT MODE ARE YOU RUNNING IN?#############
@@ -18,7 +18,7 @@ CONTROLLER=-DFLYSKY
 #######################################################################
 
 CC=g++
-EXECUTABLE=FASTSim.exe
+EXECUTABLE=SimPilot.exe
 CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ${HPATH}/RCIO/RCInput.cpp ../Mathp/mathp.cpp ${HPATH}/IMU/IMU.cpp ${HPATH}/IMU/AHRS.cpp ${HPATH}/IMU/MPU9250.cpp ${HPATH}/IMU/LSM9DS1.cpp)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(CPPOBJECTS)
