@@ -55,7 +55,7 @@ BattleBot:
 
   ☐ Ground Contact Model
 
-  ☐ Create aerodynamics (friction model) - I think the vehicle is so slow it doesn't matter so we can just send zeros
+  ☐ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment
 
   ☐ Create a controller to feed transmitter commands to 2 wheels with differential
 

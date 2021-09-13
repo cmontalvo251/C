@@ -64,20 +64,23 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB a
 		//Total Velocity
 		double V = sqrt(u*u + v*v + w*w);
 
-		//Dynamic Pressure
-		double qinf = 0.5*RHOSLSI*V*S;
-
 		//Non-Dimensional Angular Velocity
 		double pbar=0,qbar=0,rbar=0;
-		if (abs(V)>0) {
+		if (abs(V)>0.001) {
 			pbar = p*c/(2*V);
 			qbar = q*c/(2*V);
 			rbar = r*c/(2*V);
 		} else {
+			V = 1.0;
 			pbar = p*c;
 			qbar = q*c;
 			rbar = r*c;
 		}
+
+		//Dynamic Pressure
+		double qinf = 0.5*RHOSLSI*V*S;
+		//printf("qinf = %lf pbar = %lf \n",qinf,pbar);
+		//printf("V = %lf \n",V);
 
 		//Forces
 		FAEROB.plus_eq(qinf);

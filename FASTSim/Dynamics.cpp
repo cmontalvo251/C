@@ -18,6 +18,7 @@ Dynamics::Dynamics() {
   pqrdot.zeros(3,1,"Derivative of Angular Velocity");
   uvwdot.zeros(3,1,"Derivaitves of Velocity Body Frame");
   //Initialize Forces and Moments
+  FGNDB.zeros(3,1,"Ground Forces Body Frame");
   FTOTALB.zeros(3,1,"Total Forces Body Frame");
   MTOTALI.zeros(3,1,"Total Moments Inertial Frame");
   MTOTALB.zeros(3,1,"Total Moments Body Frame");
@@ -264,6 +265,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   //Gravity Model
   env.gravitymodel();
+  env.groundcontact(k,State,m);
 
   ///////////And then finally an acceleration model////////////
   //Extract individual States from State Vector
@@ -285,11 +287,21 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   k.vecset(1,3,cgdotI,1);
 
   ///Check for ground plane
-  double z = State.get(3,1);
+  /*double z = State.get(3,1);
+  double xdot = k.get(1,1);
+  double ydot = k.get(2,1);
   double zdot = k.get(3,1);
+  double u = State.get(8,1);
+  double v = State.get(9,1);
   if ((z > 0) && (zdot > 0)) {
-    k.set(3,1,0);
-  }
+    N = m*GRAVITYSI;
+    FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
+    FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
+    FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
+    //FGNDI.disp();
+    //State.disp();
+    //printf("xdot = %lf ydot = %lf \n",xdot,ydot);
+    }*/
 
   ///Rotational Kinematics (Quaternion Derivatives)
   k.set(4,1,(-p*q1-q*q2-r*q3)/2.0);
@@ -301,10 +313,12 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   FTOTALI.overwrite(env.FGRAVI); //add gravity 
 
   //Rotate Forces to body frame
+  ine2bod321.rotateInertial2Body(FGNDB,env.FGNDI);
   ine2bod321.rotateInertial2Body(FTOTALB,FTOTALI);
 
   //Add Aero Forces and Moments
   FTOTALB.plus_eq(aero.FAEROB);
+  FTOTALB.plus_eq(FGNDB);
 
   //Translational Dynamics
   Kuvw_pqr.cross(pqr,cgdotB);
@@ -342,6 +356,7 @@ environment::environment() {
 void environment::init(int G){
   GRAVITY_FLAG = G;
   FGRAVI.zeros(3,1,"FORCE OF GRAVITY INERTIAL");
+  FGNDI.zeros(3,1,"Ground Forces Inertial Frame");
 }
 
 void environment::gravitymodel() {
@@ -351,3 +366,22 @@ void environment::gravitymodel() {
     FGRAVI.set(3,1,GEARTH);
   }
 }
+
+void environment::groundcontact(MATLAB k,MATLAB State,double m) {
+  double z = State.get(3,1);
+  double xdot = k.get(1,1);
+  double ydot = k.get(2,1);
+  double zdot = k.get(3,1);
+  double u = State.get(8,1);
+  double v = State.get(9,1);
+  if ((z > 0) && (zdot > 0)) {
+    double N = m*GRAVITYSI;
+    FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
+    FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
+    FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
+    //FGNDI.disp();
+    //State.disp();
+    //printf("xdot = %lf ydot = %lf \n",xdot,ydot);
+  }
+}
+
