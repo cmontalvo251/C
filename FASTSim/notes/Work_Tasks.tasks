@@ -53,7 +53,7 @@ BattleBot:
 
   ☐ Create a CAD for the vehicle
 
-  ☐ Ground Contact Model
+  ✔ Ground Contact Model #@done (21-09-13 16:48)
 
   ☐ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment
 
@@ -101,7 +101,7 @@ COMPLEX AUTOPILOT LOOP:
     Inputs: waypoint commands (x,y,altitude)
     Outputs: roll pitch and yaw commands
 
-  ☐ Create a logical architecture that works for all vehicles in the structure the looks like the form above
+  ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form above
     ☐ GraveDigger - The Remote control car in the lab
     ☐ FASTIris
     ☐ Bumblebee

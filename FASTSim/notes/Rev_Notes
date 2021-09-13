@@ -1,3 +1,10 @@
+==============================9/13/2021===============================
+
+Maxwell's ground contact model has been merged. 
+The actuator dynamics branch has been merged.
+Software has been cleaned up a bit and SimPilot got a clean compile
+
+
 ==============================9/12?/2021==============================
 
 I forgot to take notes on this but I overhauled the crap out of the plotting routine.
