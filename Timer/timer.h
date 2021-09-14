@@ -32,6 +32,7 @@ class TIMER {
   double getTimeSinceStart(); //gives time from when the start_sec_ was created.
   void resetStartTime(); //use this function to reset the start timer
   void updateTime();
+  void printTime();
   //Constructor
   TIMER();
 

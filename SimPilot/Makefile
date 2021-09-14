@@ -6,15 +6,18 @@ HPATH=/home/carlos/Git_Repos/Github/HIL
 ##########################################################
 
 #########################WHAT MODE ARE YOU RUNNING IN?#############
-EXETYPE=-DAUTO
+#EXETYPE=-DAUTO ##For running in autonomous mode rather than simulation
+EXETYPE=-DSIL ##For running in real time
 ########################################################
 
 ###############################HARDWARE#######################
-HARDWARE=-DRPI
+#HARDWARE=-DRPI #on RPI
+HARDWARE=-DDESKTOP #on Desktop
 ########################################################
 
 #####################WHAT TYPE OF TRANSMITTER ARE YOU USING?###############
-CONTROLLER=-DFLYSKY
+#CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
+CONTROLLER=-DXBOX
 #######################################################################
 
 CC=g++

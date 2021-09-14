@@ -82,6 +82,10 @@ double TIMER::getTimeSinceStart() {
   return (end_sec-start_sec_);
 }
 
+void TIMER::printTime() {
+  printf("%lf ",currentTime);
+}
+
 void TIMER::updateTime() {
   //Get Current Time
   getCurrentTime();
