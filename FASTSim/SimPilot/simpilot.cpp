@@ -10,8 +10,8 @@ using namespace std;
 RCInput rcin;
 
 //Include the IMU Class
-//#include <IMU/IMU.h>
-//IMU orientation;
+#include <IMU/IMU.h>
+IMU orientation;
 
 //Get a Timer
 //time and clock are reserved variables so I used watch
@@ -25,7 +25,7 @@ int main(int argc,char** argv) {
 	rcin.initialize(); //The default is 8 input channels
 
 	//Select an IMU
-	//orientation.init(0); //0 for MPU and 1 for LSM
+	orientation.init(0); //0 for MPU and 1 for LSM
 
 	//We create a loop to write stuff
 	watch.resetStartTime();
@@ -38,17 +38,21 @@ int main(int argc,char** argv) {
 		////////////////////USER INPUT (Xc)////////////////////////////
 		//Poll Receiver - rcin
 		rcin.readRCstate();
-		rcin.printRCstate(0); //to notify user of status
+		rcin.printRCstate(-4); //to notify user of status
 
 		////////////////////SENSOR BLOCK (H)//////////////////////////
-		//double s = 0.0; //0 for no filtering and 1.0 for overfiltering
-		//orientation.loop(watch.elapsedTime,s);
+		double s = 0.0; //0 for no filtering and 1.0 for overfiltering
+		orientation.loop(watch.elapsedTime,s);
+		orientation.printALL();
 
 		////////////////////CONTROL BLOCK (C)////////////////////////
 		//PID Controller For Quadcopter
 
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
 		//rcout
+
+		////////////////////////////////////////////////////////////
+		printf("\n");
 	}
 
 	return 0;

@@ -3,7 +3,10 @@
 Maxwell's ground contact model has been merged. 
 The actuator dynamics branch has been merged.
 Software has been cleaned up a bit and SimPilot got a clean compile
-
+SimPilot is now in FASTSim in its own folder
+RCInput works with XBOX controller both in the RCtest and in Simpilot.
+The IMU on Desktop works as well. Working on the Controller for a quadcopter
+right now.
 
 ==============================9/12?/2021==============================
 

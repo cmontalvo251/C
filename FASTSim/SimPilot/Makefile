@@ -22,12 +22,12 @@ CONTROLLER=-DXBOX
 
 CC=g++
 EXECUTABLE=SimPilot.exe
-CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ${HPATH}/RCIO/RCInput.cpp ../Mathp/mathp.cpp ${HPATH}/IMU/IMU.cpp ${HPATH}/IMU/AHRS.cpp ${HPATH}/IMU/MPU9250.cpp ${HPATH}/IMU/LSM9DS1.cpp)
+CPPSOURCES=$(wildcard *.cpp ../../Timer/timer.cpp ../../MATLAB/MATLAB.cpp ${HPATH}/RCIO/RCInput.cpp ../../Mathp/mathp.cpp ${HPATH}/IMU/IMU.cpp ${HPATH}/IMU/AHRS.cpp ${HPATH}/IMU/MPU9250.cpp ${HPATH}/IMU/LSM9DS1.cpp)
 CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
 OBJECTS=$(CPPOBJECTS)
 COMPILE=-c -w -O3
 LIB=-L/usr/local/lib
-INCLUDE=-I../ -I${HPATH}
+INCLUDE=-I../../ -I${HPATH}
 
 all: $(CPPSOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
