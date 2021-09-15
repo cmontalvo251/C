@@ -21,9 +21,9 @@ aerodynamics::aerodynamics() {
 	//Quadcopter Aerodynamic Parameters
 	//These come from data sheets
   	//at a signal of
-  	double pwm_datapt = 1766.0;
+  	double pwm_datapt = STICK_MID;
   	//thrust is
-  	double Tdatapt = 3.5; //Newtons to kg to lbf
+  	double Tdatapt = 0.735*GEARTH/4.0; //Newtons to kg to lbf
   	//angular velocity is
   	double omegaRPMdatapt = 3500.0;
   	//Rotor Size

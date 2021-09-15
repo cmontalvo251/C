@@ -49,7 +49,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		printf("STAB \n");
 		double roll_command = (aileron-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double pitch_command = (elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
-		double yaw_rate_command = (rudder-STICK_MID)*10.0/((STICK_MAX-STICK_MIN)/2.0);
+		double yaw_rate_command = (rudder-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double roll = state.get(4,1);
 		double pitch = state.get(5,1);
 		double yaw = state.get(6,1);
