@@ -301,6 +301,8 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   ine2bod321.rotateInertial2Body(FTOTALB,FTOTALI);
 
   //Add Aero Forces and Moments
+  //FTOTALB.disp();
+  //env.FGRAVI.disp();
   FTOTALB.plus_eq(aero.FAEROB);
   FTOTALB.plus_eq(FGNDB);
 
@@ -338,7 +340,9 @@ environment::environment() {
 }
 
 void environment::setMass(double m) {
+  //printf("m = %lf \n",m);
   mass = m;
+  //PAUSE();
 }
 
 void environment::init(int G){
@@ -349,6 +353,8 @@ void environment::init(int G){
 
 void environment::gravitymodel() {
   FGRAVI.mult_eq(0); //zero out gravity
+  //printf("GRAVITY FLAG == %d \n",GRAVITY_FLAG);
+  //printf("mass = %lf \n",mass);
   if (GRAVITY_FLAG == 1) {
     //Flat Earth model
     FGRAVI.set(3,1,GEARTH*mass);
@@ -362,7 +368,7 @@ void environment::groundcontactmodel(MATLAB State,MATLAB k) {
   double zdot = k.get(3,1);
   double u = State.get(8,1);
   double v = State.get(9,1);
-  if ((z > 0) && (zdot > 0)) {
+  if ((z > 0)) {
     double N = mass*GRAVITYSI;
     FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
     FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));

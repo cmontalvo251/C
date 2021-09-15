@@ -3,14 +3,14 @@
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIMONLY #-DSIL #-DSIMONLY #-DSIL #-DHIL #-DAUTO 
+EXETYPE=-DSIL 
 #############################################################
 
 #################WHAT HARDWARE ARE YOU RUNNING ON#############
 #DESKTOP - running on a laptop or desktop macine
 #RPI - running on a raspbery pi 
 #ARDUINO - running on an arduino (may require a separate ino)
-HARDWARE=-DDESKTOP #-DRPI #-DDESKTOP #-DRPI -DARDUINO
+HARDWARE=-DDESKTOP 
 ###########################################################
 
 ###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
@@ -19,8 +19,8 @@ CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 
 #########WHAT MODEL DO YOU WANT??##############
 #This needs to point to a source folder with aerodynamics.* and controller.*
-MODELPATH=PortalCube/src
-#MODELPATH=Quadcopter/src
+#MODELPATH=PortalCube/src
+MODELPATH=Quadcopter/src
 ###########################################
 
 #####################WHERE IS HIL LOCATED?#####################

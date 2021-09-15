@@ -24,7 +24,8 @@ Only in AUTO will we call the onboard sensors
 
 class environment {
  private:
-  int GRAVITY_FLAG,mass;
+  int GRAVITY_FLAG;
+  double mass;
  public:
    MATLAB FGRAVI,FGNDI;
    void init(int G);

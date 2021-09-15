@@ -1,3 +1,9 @@
+==============================9/14/2021===========================
+
+Added a very crude aerodynamic model to the quadcopter model and also added a super simple autopilot
+loop to the controller.cpp file. Need to now copy it over into SimPilot. 
+Haven't touched the work tasks because I haven't done it on the pi just yet.
+
 ==============================9/13/2021===============================
 
 Maxwell's ground contact model has been merged. 

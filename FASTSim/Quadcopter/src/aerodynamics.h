@@ -20,6 +20,9 @@ class aerodynamics {
 	private:
 		//You can put any private functions or vars in here that you like but it 
 		//must adhere to the standards below
+		double Rrotor,cq,ct,kt,rx,ry,rz;
+		MATLAB thrust_motors,torque_motors;
+		void compute_thrust_and_torque(MATLAB);
 	public:
 		//This variable turns the aerodynamics model on and off and is set in 
 		//Input_Files/Simulation_Flags.txt
