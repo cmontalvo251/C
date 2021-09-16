@@ -13,6 +13,11 @@ RCInput rcin;
 #include <IMU/IMU.h>
 IMU orientation;
 
+//Include the Controller Class
+#include <controller.h>
+controller ctl;
+MATLAB state,statedot;
+
 //Get a Timer
 //time and clock are reserved variables so I used watch
 #include <Timer/timer.h>
@@ -30,6 +35,10 @@ int main(int argc,char** argv) {
 	//We create a loop to write stuff
 	watch.resetStartTime();
 
+	//Create dummy vars for controller
+	state.zeros(12,1,"state");
+	statedot.zeros(12,1,"statedot");
+
 	while (1) {
 		//Update Timer
 		watch.updateTime();
@@ -38,15 +47,25 @@ int main(int argc,char** argv) {
 		////////////////////USER INPUT (Xc)////////////////////////////
 		//Poll Receiver - rcin
 		rcin.readRCstate();
-		rcin.printRCstate(-4); //to notify user of status
+		rcin.printRCstate(-4); //to notify user of status (-4 is to only print first 4 rx vals)
 
 		////////////////////SENSOR BLOCK (H)//////////////////////////
 		double s = 0.0; //0 for no filtering and 1.0 for overfiltering
 		orientation.loop(watch.elapsedTime,s);
 		orientation.printALL();
 
+		///Put vars into state
+		state.set(4,1,orientation.roll);
+		state.set(5,1,orientation.pitch);
+		state.set(6,1,orientation.yaw);
+		state.set(10,1,orientation.roll_rate);
+		state.set(11,1,orientation.pitch_rate);
+		state.set(12,1,orientation.yaw_rate);
+
 		////////////////////CONTROL BLOCK (C)////////////////////////
 		//PID Controller For Quadcopter
+		ctl.loop(watch.currentTime,state,statedot,rcin.rxcomm);
+		ctl.print();
 
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
 		//rcout

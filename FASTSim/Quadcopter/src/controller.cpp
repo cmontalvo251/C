@@ -11,6 +11,12 @@ void controller::setup(MATLAB var) {
 	CONTROLLER_FLAG = var.get(1,1);
 }
 
+void controller::print() {
+	for (int i = 1;i<=NUMSIGNALS;i++) {
+		printf("%d ",int(ctlcomms.get(i,1)));
+	}
+}
+
 void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//I want to keep track of timeElapsed so that I can run integrators
 	timeElapsed = t - lastTime;

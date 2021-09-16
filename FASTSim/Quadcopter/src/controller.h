@@ -23,6 +23,7 @@ public:
 	int NUMSIGNALS=4; //TAER
 	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);
 	void setup(MATLAB var); //var is open ended right now
+	void print();
 	controller(); //constructor
 };
 

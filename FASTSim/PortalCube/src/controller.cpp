@@ -19,6 +19,12 @@ void controller::setup(MATLAB var) {
 	///not connected to the vehicle state
 }
 
+void controller::print() {
+	for (int i = 1;i<=NUMSIGNALS;i++) {
+		printf("%d ",int(ctlcomms.get(i,1)));
+	}
+}
+
 void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* rxcomms) {
 	//The sensor state is a 12x1 of standard 6DOF sensors
 	//At a minimum you need to just feed through the rxcomms into the ctlcomms

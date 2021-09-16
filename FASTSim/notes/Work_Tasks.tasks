@@ -10,9 +10,9 @@ SIMPILOT:
 
  ☐ Since you just edited the RCInput and RCOutput routine go back and make sure that SIMONLY, SIL and Rpi hooks are working in FASTSim. In order to get the RPi hooks working you're going to have to compile this routine in AUTO mode on the RPI. You'll also need to hook up the PWM outputs and some servos to make sure you're getting the output you think you're supposed to get. You might need to use an o-scope
 
- ☐ Quadcopter autopilot - write a simple PID loop. This can be open source since it won't work in flight. This will require creating a folder like Portalcube. For now leave the aerodynamics blank and just sent zeros since we're just interested in the controller. However make sure that the aerodynamics.cpp/.h are at least there.
+ ✔ Quadcopter autopilot - write a simple PID loop. This can be open source since it won't work in flight. This will require creating a folder like Portalcube. For now leave the aerodynamics blank and just sent zeros since we're just interested in the controller. However make sure that the aerodynamics.cpp/.h are at least there. #@done (21-09-15 22:15)
 
- ☐ After you write the loop above pull out the controller and paste it into the simpilot.exe so its easier to see
+ ✔ After you write the loop above pull out the controller and paste it into the simpilot.exe so its easier to see #@done (21-09-15 22:15)
 
  ☐ Test this on FASTIris and Bumblebee in the lab and video tape it to post on youtube
 
@@ -44,16 +44,22 @@ FASTSim:
    ✔ Pollute actuator values with ACTUATOR ERRORS by some percentage #@done (21-09-07 21:42)
    ✔ Send actuator values to aerodynamics routine written by user to produce Forces and moments #@done (21-09-07 21:43)
 
+ ✔ Complete the controller.cpp/.h file for the quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-15 22:17)
+
  ☐ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available
 
- ☐ Complete aerodynamics fo X8
+ ☐ Complete aerodynamics for X8
+
+ ☐ Complete the PID controller for the X8
 
  ☐ Complete aerodynamics for Aircraft
+
+ ☐ Complete the controller (PID) for the A/C
 
  ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
 
 BattleBot:
-  This does not include any hardware testing on the actual tank in the lab 
+  #This does not include any hardware testing on the actual tank in the lab 
 
   ☐ Create a CAD for the vehicle
 
@@ -94,7 +100,7 @@ HIL:
 
 FASTPILOT:
 
- ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git
+ ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git - To do this just put the MODELS in FASTPilot. So all you need to do is edit the MakeFile to reference that FASTPilot folder but main.cpp will still be in github
 
 COMPLEX AUTOPILOT LOOP:
 

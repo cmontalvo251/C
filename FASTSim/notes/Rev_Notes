@@ -1,3 +1,8 @@
+=============================9/15/2021=========================
+
+Added controller.* for quadcopter into Simpilot. All that's left is to add
+the RCOUT commands and Simpilot will be done.
+
 ==============================9/14/2021===========================
 
 Added a very crude aerodynamic model to the quadcopter model and also added a super simple autopilot
