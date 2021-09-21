@@ -46,7 +46,7 @@ FASTSim:
 
  ✔ Complete the controller.cpp/.h file for the quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-15 22:17)
 
- ☐ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available
+ ✔ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-21 11:00)
 
  ☐ Complete aerodynamics for X8
 
@@ -59,7 +59,7 @@ FASTSim:
  ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
 
 BattleBot:
-  #This does not include any hardware testing on the actual tank in the lab 
+  This does not include any hardware testing on the actual tank in the lab 
 
   ☐ Create a CAD for the vehicle
 
