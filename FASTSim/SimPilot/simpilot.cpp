@@ -47,7 +47,7 @@ int main(int argc,char** argv) {
 		////////////////////USER INPUT (Xc)////////////////////////////
 		//Poll Receiver - rcin
 		rcin.readRCstate();
-		rcin.printRCstate(-4); //to notify user of status (-4 is to only print first 4 rx vals)
+		rcin.printRCstate(-5); //to notify user of status (-4 is to only print first 4 rx vals)
 
 		////////////////////SENSOR BLOCK (H)//////////////////////////
 		double s = 0.0; //0 for no filtering and 1.0 for overfiltering
