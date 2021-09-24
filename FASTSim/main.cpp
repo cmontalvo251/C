@@ -100,14 +100,13 @@ int main(int argc,char** argv) {
   vehicle.setMassProps(massdata);
   /////////////////////////////////////////////////////////////
 
-  ////////////////////Initialize Controller///////////////////
+  ////////////////////Initialize Receiver,Controller,PWM outputs///////////////////
   /////This happens regardless of the type of simulation
   vehicle.initController(CTL_FLAG);
   printf("Controller Online \n");
-  ///The RC input class is initialized all the time and its settings are in
-  //the Makefile and RCInput.cpp
-  vehicle.rcin.initialize();
-  printf("Receiver Initialized \n");
+  ///Initialize radio controlled input and output
+  //These settings are defined in the Makefile using -D commands
+  vehicle.rcio_init();
 
   //////////////////?WHEN INTEGRATING ON THE COMPUTER///////////////////
   /////////////////////A FEW MORE THINGS NEED TO HAPPEN///////////////

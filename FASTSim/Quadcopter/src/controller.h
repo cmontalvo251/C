@@ -20,7 +20,7 @@ public:
 	int CONTROLLER_FLAG = 0;
 	///You must set the number of signals here or the simulation
 	//will not work properly.
-	int NUMSIGNALS=4; //TAER
+	int NUMSIGNALS=4; //motor 1,2,3,4
 	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);
 	void setup(MATLAB var); //var is open ended right now
 	void print();

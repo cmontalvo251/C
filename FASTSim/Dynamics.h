@@ -51,6 +51,7 @@ class Dynamics {
   MATLAB cg,ptp;
   MATLAB actuatorICs,actuatorError;
   RCInput rcin;
+  RCOutput rcout;
   controller ctl;
   aerodynamics aero;
   sensors err;
@@ -69,6 +70,7 @@ class Dynamics {
   void initActuators(int);
   void initController(int);
   void initStateVector();
+  void rcio_init();
   //Constructor
   Dynamics();
 };

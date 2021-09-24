@@ -6,7 +6,7 @@ SIMPILOT:
 
  ✔ Add navio receiver rcin protocols to current RCInput.h/.cpp and test with receiver in the Lab What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. @done (21-09-23 12:19)
 
- ☐ Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. You'll probably have to create some test scripts. What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. 
+ ☐ (Do this in FASTSim first before you do this) Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. You'll probably have to create some test scripts. What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. 
 
  ☐ Since you just edited the RCInput and RCOutput routine go back and make sure that SIMONLY, SIL and Rpi hooks are working in FASTSim. In order to get the RPi hooks working you're going to have to compile this routine in AUTO mode on the RPI. You'll also need to hook up the PWM outputs and some servos to make sure you're getting the output you think you're supposed to get. You might need to use an o-scope
 
@@ -47,6 +47,8 @@ FASTSim:
  ✔ Complete the controller.cpp/.h file for the quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-15 22:17)
 
  ✔ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-21 11:00)
+
+ ☐ Create the minimum viable rcout class for SIMONLY and SIL
 
  ☐ Complete aerodynamics for X8
 

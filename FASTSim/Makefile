@@ -3,7 +3,7 @@
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIL 
+EXETYPE=-DSIMONLY 
 #############################################################
 
 #################WHAT HARDWARE ARE YOU RUNNING ON#############
@@ -25,8 +25,8 @@ MODELPATH=Quadcopter/src
 
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-HPATH=/home/carlos/Git_Repos/Github/HIL
-#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Git_Repos/Github/HIL
+HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 ##########################################################
 
 ##NON USER FLAGS
@@ -41,11 +41,13 @@ HPATH=/home/carlos/Git_Repos/Github/HIL
 
 CC=g++
 EXECUTABLE=FASTSim.exe
-CSOURCES=$(wildcard *.c)
-CPPSOURCES=$(wildcard *.cpp ../Timer/timer.cpp ../MATLAB/MATLAB.cpp ../Datalogger/Datalogger.cpp ../6DOF/Rotation3.cpp ../Sensors/sensors.cpp ${HPATH}/RCIO/RCInput.cpp ${MODELPATH}/aerodynamics.cpp ${MODELPATH}/controller.cpp ../RK4/RK4.cpp ../Mathp/mathp.cpp ../OpenGL/opengl.cpp)
-COBJECTS=$(CSOURCES:.c=.o)
-CPPOBJECTS=$(CPPSOURCES:.cpp=.o)
-OBJECTS=$(COBJECTS) $(CPPOBJECTS)
+CCPDIR=../
+CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/OpenGL/opengl.cpp ${CPPDIR}/RK4/RK4.cpp)
+IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
+RCIOSOURCES=$(${HPATH}/RCIO/RCInput.cpp ${HPATH}/RCIO/RCOutput.cpp)
+MODELSOURCES=$(wildcard ${MODELPATH}/*.cpp)
+SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES}
+OBJECTS=$(SOURCES:.cpp=.o)
 COMPILE=-c -w -O3
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
@@ -55,7 +57,7 @@ RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-ge
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
 
-all: $(CSOURCES) $(CPPSOURCES) $(EXECUTABLE)
+all: $(CPPSOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 .c.o:
@@ -88,6 +90,8 @@ clean:
 	rm ../RK4/*.o
 	echo ' ' > ../OpenGL/d.o
 	rm ../OpenGL/*.o
+	echo ' ' > ${HPATH}/IMU/d.o
+	rm ${HPATH}/IMU/*.o
 rebuild:
 	make clean
 	make
