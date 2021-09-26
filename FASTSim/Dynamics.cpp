@@ -161,7 +161,7 @@ void Dynamics::initErrModel(MATLAB sensordata) {
 void Dynamics::rcio_init() {
   rcin.initialize();
   printf("Receiver Initialized \n");
-  rcout.initialize();
+  rcout.initialize(ctl.NUMSIGNALS);
   printf("PWM Outputs Initialized \n");
 }
 
@@ -221,7 +221,10 @@ void Dynamics::loop(double t) {
   //////Send CtlComms to ESCs///////////////
   ///If you're running in SIL or SIMONLY this will just be a dummy function
   //I'm also assuming this happens as fast as possible
-  rcout.write(ctlcomms);
+  for (int i = 0;i<rcout.NUMSIGNALS;i++){
+    rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);    
+  }
+  rcout.write();
 }
 
 void Dynamics::saturation_block() {

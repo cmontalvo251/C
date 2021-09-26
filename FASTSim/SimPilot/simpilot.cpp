@@ -9,6 +9,10 @@ using namespace std;
 #include <RCIO/RCInput.h>
 RCInput rcin;
 
+//Include the RCOUT class
+#include <RCIO/RCOutput.h>
+RCOutput rcout;
+
 //Include the IMU Class
 #include <IMU/IMU.h>
 IMU orientation;
@@ -28,6 +32,9 @@ int main(int argc,char** argv) {
 
 	//You then need to initialize the RCIN by running initialize
 	rcin.initialize(); //The default is 8 input channels
+
+	//Initialize the rcout class because this is outputting signals to the PWM ports
+	rcout.initialize(4);
 
 	//Select an IMU
 	orientation.init(0); //0 for MPU and 1 for LSM
@@ -68,7 +75,11 @@ int main(int argc,char** argv) {
 		ctl.print();
 
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
-		//rcout
+		///Send the signals from the controller to the rcout class
+		for (int i = 0;i<rcout.NUMSIGNALS;i++){
+			rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);
+		}
+		rcout.write();
 
 		////////////////////////////////////////////////////////////
 		printf("\n");

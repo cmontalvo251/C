@@ -9,6 +9,11 @@
 //If running in SIMONLY the rcin class just acts as a place holder for variables
 #include <RCIO/RCInput.h>
 
+//The RCOutput class is for sending PWM signals.
+//It's possible we may only need this when in AUTO mode
+//but for now we will include it all the time
+#include <RCIO/RCOutput.h> 
+
 //These two includes are craft dependent.
 //There is an open source portal cube example. The aircraft and 
 //quad, etc are all in private repos

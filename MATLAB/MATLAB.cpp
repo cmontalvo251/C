@@ -252,6 +252,18 @@ void MATLAB::dmatrixprint(double **A,int DIM,char* name) {
   printf("%s","\n");
 }
 
+void MATLAB::list() {
+  int i;
+  int j;
+  for(i=0;i<row_;i++)
+    {
+      for(j=0;j<col_;j++)
+      {
+        printf("%.8e%s",data_[i][j]," ");
+      }
+    }
+}
+
 void MATLAB::disp() {
   printf("%s%s%s",name_," = ","\n");
   int i;
