@@ -77,7 +77,7 @@ int main(int argc,char** argv) {
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
 		///Send the signals from the controller to the rcout class
 		for (int i = 0;i<rcout.NUMSIGNALS;i++){
-			rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);
+		  rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);
 		}
 		rcout.write();
 
