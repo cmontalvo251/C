@@ -52,6 +52,15 @@ void get_fileroot(int argc,char** argv,char fileroot[]) {
 //////Main/////////////
 int main(int argc,char** argv) {
 
+  ////////////////////??CHECK FOR SUDO IF RUNNING IN AUTO MODE///////////////
+  #ifdef AUTO
+  if (getuid()) {
+    fprintf(stderr, "Not root. Please launch like this: sudo %s\n", argv[0]);
+    exit(1);
+  }
+  #endif
+  ///////////////////////////////////////////////////////////////////////////
+
   //////////////Grab Input Arguments//////////////////////////////////////////
   get_fileroot(argc,argv,fileroot);
   //////////////////////////////////////////////////////////
@@ -201,6 +210,7 @@ int main(int argc,char** argv) {
 
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
+  printf("Kicking off OpenGL \n");
   boost::thread render(runRenderLoop,argc,argv);
   //Wait for the opengl routine to actually start
   while (glhandle_g.ready == 0) {
@@ -211,6 +221,7 @@ int main(int argc,char** argv) {
 
   //////////////////////////////Begin MainLoop///////////////////////////////////////////////
   #ifdef OPENGL_H 
+  printf("Kicking off Main Loop as a thread \n");
   //When you have opengl running you need to kick this off as a thread
   boost::thread run(runMainLoop); 
   //Now there is a problem here. When you kick off the rendering environment and the Mainloop

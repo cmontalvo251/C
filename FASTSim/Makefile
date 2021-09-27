@@ -3,7 +3,8 @@
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIMONLY
+#EXETYPE=-DSIMONLY
+EXETYPE=-DSIL
 #############################################################
 
 #################WHAT HARDWARE ARE YOU RUNNING ON#############
@@ -17,7 +18,8 @@ HARDWARE=-DDESKTOP
 #RCTECH - USB Controller in FASTLab
 #XBOX - USB XBOX controller at home
 #FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
-CONTROLLER=-DXBOX
+#CONTROLLER=-DXBOX
+CONTROLLER=-DRCTECH
 ############################################################
 
 #########WHAT MODEL DO YOU WANT??##############
@@ -28,8 +30,8 @@ MODELPATH=Quadcopter/src
 
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-HPATH=/home/carlos/Git_Repos/Github/HIL
-#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Git_Repos/Github/HIL
+HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 ##########################################################
 
 ##NON USER FLAGS
@@ -47,7 +49,7 @@ EXECUTABLE=FASTSim.exe
 CPPDIR=../
 CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/OpenGL/opengl.cpp ${CPPDIR}/RK4/RK4.cpp)
 IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
-RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp)
+RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp ${HPATH}/Util/Util.cpp)
 MODELSOURCES=$(wildcard ${MODELPATH}/*.cpp)
 SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES}
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -79,6 +81,8 @@ clean:
 	rm ../Mathp/*.o
 	echo ' ' > ../6DOF/d.o
 	rm ../6DOF/*.o
+	echo ' ' > ${HPATH}/Util/d.o
+	rm ${HPATH}/Util/*.o
 	echo ' ' > ${HPATH}/RCIO/d.o
 	rm ${HPATH}/RCIO/*.o
 	echo ' ' > ${MODELPATH}/d.o

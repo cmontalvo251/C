@@ -30,6 +30,13 @@ TIMER watch;
 int main(int argc,char** argv) {
 	printf("Running Simple Autopilot (SimPilot) Demo \n");
 
+	#ifdef AUTO
+	if (getuid()) {
+    	fprintf(stderr, "Not root. Please launch like this: sudo %s\n", argv[0]);
+    	exit(1);
+  	}
+  	#endif
+
 	//You then need to initialize the RCIN by running initialize
 	rcin.initialize(); //The default is 8 input channels
 
