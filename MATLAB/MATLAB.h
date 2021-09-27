@@ -101,6 +101,8 @@ class MATLAB {
 
   double dot(MATLAB);
 
+  void list();
+
   void skew(MATLAB);
 
   void size();

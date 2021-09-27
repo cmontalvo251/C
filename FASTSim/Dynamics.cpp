@@ -55,6 +55,16 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
     actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
   }
 }
+void Dynamics::setMassProps(MATLAB massdata) {
+  m = massdata.get(1,1);
+  I.zeros(3,3,"Inertia");
+  I.set(1,1,massdata.get(2,1));
+  I.set(2,2,massdata.get(3,1));
+  I.set(3,3,massdata.get(4,1));
+  Iinv.overwrite(I,"Iinv");
+  Iinv.inverse();
+  env.setMass(m);
+}
 
 void Dynamics::initAerodynamics(int A) {
   //If the AERO Model is on we initialize the aero model
@@ -148,15 +158,11 @@ void Dynamics::initErrModel(MATLAB sensordata) {
   err.initSensorErr(sensordata);
 }
 
-void Dynamics::setMassProps(MATLAB massdata) {
-  m = massdata.get(1,1);
-  I.zeros(3,3,"Inertia");
-  I.set(1,1,massdata.get(2,1));
-  I.set(2,2,massdata.get(3,1));
-  I.set(3,3,massdata.get(4,1));
-  Iinv.overwrite(I,"Iinv");
-  Iinv.inverse();
-  env.setMass(m);
+void Dynamics::rcio_init() {
+  rcin.initialize();
+  printf("Receiver Initialized \n");
+  rcout.initialize(ctl.NUMSIGNALS);
+  printf("PWM Outputs Initialized \n");
 }
 
 void Dynamics::loop(double t) {
@@ -212,11 +218,13 @@ void Dynamics::loop(double t) {
   }
   /////////////////////////////////////////////////////////////////
 
-  //////Send CtlComms to ESCs if running on Hardware///////////////
-  /////This only runs in AUTO mode
-  #ifdef AUTO
-  rcout.ESCcommands(ctlcomms);
-  #endif
+  //////Send CtlComms to ESCs///////////////
+  ///If you're running in SIL or SIMONLY this will just be a dummy function
+  //I'm also assuming this happens as fast as possible
+  for (int i = 0;i<rcout.NUMSIGNALS;i++){
+    rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);    
+  }
+  rcout.write();
 }
 
 void Dynamics::saturation_block() {
