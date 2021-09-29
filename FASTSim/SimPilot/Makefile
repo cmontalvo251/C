@@ -26,6 +26,7 @@ HARDWARE=-DRPI #on the raspberry pi
 #FLYSKY, XBOX, RCTECH
 CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
 #CONTROLLER=-DXBOX
+#CONTROLLER=-DRCTECH
 #######################################################################
 
 CC=g++
