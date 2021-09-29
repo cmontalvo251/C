@@ -388,7 +388,7 @@ void runMainLoop() {
         printf("%lf ",integrator.State.get(i+1,1));
       }
       #endif
-      //vehicle.printRC(0); //the zero means just the sticks
+      vehicle.printRC(-5); //the zero means just the sticks
       printf("\n");
       PRINT+=PRINTRATE;
       //PAUSE();

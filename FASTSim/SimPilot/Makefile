@@ -25,7 +25,8 @@ HARDWARE=-DDESKTOP #on Desktop
 #####################WHAT TYPE OF TRANSMITTER ARE YOU USING?###############
 #FLYSKY, XBOX, RCTECH
 #CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
-CONTROLLER=-DXBOX
+#CONTROLLER=-DXBOX
+CONTROLLER=-DRCTECH
 #######################################################################
 
 CC=g++

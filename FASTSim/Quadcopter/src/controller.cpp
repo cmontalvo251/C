@@ -54,7 +54,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		//STABILIZE MODE
 		printf(" STAB ");
 		double roll_command = (aileron-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
-		double pitch_command = (elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
+		double pitch_command = -(elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double yaw_rate_command = (rudder-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double roll = state.get(4,1);
 		double pitch = state.get(5,1);
@@ -79,10 +79,10 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		motor_lower_right = throttle + droll + dpitch - dyaw;
 	} else {
 		//ACRO MODE
-		motor_upper_left = throttle + (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);
-		motor_upper_right = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) - (rudder-STICK_MID);
-		motor_lower_left = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) - (rudder-STICK_MID);
-		motor_lower_right = throttle - (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
+		motor_upper_left = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
+		motor_upper_right = throttle - (aileron-STICK_MID) - (elevator-STICK_MID) - (rudder-STICK_MID);
+		motor_lower_left = throttle + (aileron-STICK_MID) + (elevator-STICK_MID) - (rudder-STICK_MID);
+		motor_lower_right = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);
 	}
 
 	//Send the motor commands to the ctlcomms values
