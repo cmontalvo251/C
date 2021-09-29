@@ -59,20 +59,20 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double roll = state.get(4,1);
 		double pitch = state.get(5,1);
 		double yaw = state.get(6,1);
-		double roll_rate = state.get(10,1)*180.0/PI;
-		double pitch_rate = state.get(11,1)*180.0/PI;
-		double yaw_rate = state.get(12,1)*180.0/PI;
+		double roll_rate = state.get(10,1); //For SIL/SIMONLY see Sensors.cpp
+		double pitch_rate = state.get(11,1); //These are already in deg/s
+		double yaw_rate = state.get(12,1); //Check IMU.cpp to see for HIL
 		double kp = 1.0;
 		double kd = 0.5;
 		double kyaw = 100.0;
 		double droll = kp*(roll-roll_command) + kd*(roll_rate);
 		droll = CONSTRAIN(droll,-500,500);
 		double dpitch = kp*(pitch-pitch_command) + kd*(pitch_rate);
-		dpitch = CONSTRAIN(dpitch,-500,500);
+		dpitch = 0*CONSTRAIN(dpitch,-500,500);
 		double dyaw = kyaw*(yaw_rate-yaw_rate_command);
-		dyaw = CONSTRAIN(dyaw,-500,500);
-		//printf("d = %lf %lf %lf \n",droll,dpitch,dyaw);
-		//printf("ROll Command = %lf \n",roll_command);
+		dyaw = 0*CONSTRAIN(dyaw,-500,500);
+		printf("d = %lf %lf %lf ",droll,dpitch,dyaw);
+		printf(" Roll Command = %lf ",roll_command);
 		motor_upper_left = throttle - droll - dpitch - dyaw;
 		motor_upper_right = throttle + droll - dpitch + dyaw;
 		motor_lower_left = throttle - droll + dpitch + dyaw;
@@ -91,4 +91,18 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	ctlcomms.set(3,1,motor_lower_left);
 	ctlcomms.set(4,1,motor_lower_right);
 	//ctlcomms.disp();
+	saturation_block();
 }
+
+void controller::saturation_block() {
+  for (int idx=0;idx<NUMSIGNALS;idx++) {
+    double val = ctlcomms.get(idx+1,1);
+    if (val > OUTMAX) {
+      ctlcomms.set(idx+1,1,OUTMAX);
+    }
+    if (val < OUTMIN) {
+      ctlcomms.set(idx+1,1,OUTMIN);
+    }
+  }
+}
+

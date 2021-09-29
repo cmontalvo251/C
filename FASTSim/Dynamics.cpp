@@ -230,11 +230,11 @@ void Dynamics::loop(double t) {
 void Dynamics::saturation_block() {
   for (int idx=0;idx<ctl.NUMSIGNALS;idx++) {
     double val = ctl.ctlcomms.get(idx+1,1);
-    if (val > STICK_MAX) {
-      ctl.ctlcomms.set(idx+1,1,STICK_MAX);
+    if (val > OUTMAX) {
+      ctl.ctlcomms.set(idx+1,1,OUTMAX);
     }
-    if (val < STICK_MIN) {
-      ctl.ctlcomms.set(idx+1,1,STICK_MIN);
+    if (val < OUTMIN) {
+      ctl.ctlcomms.set(idx+1,1,OUTMIN);
     }
   }
 }

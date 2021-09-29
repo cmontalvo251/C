@@ -61,12 +61,10 @@ int main(int argc,char** argv) {
 		////////////////////USER INPUT (Xc)////////////////////////////
 		//Poll Receiver - rcin
 		rcin.readRCstate();
-		rcin.printRCstate(-5); //to notify user of status (-4 is to only print first 4 rx vals)
 
 		////////////////////SENSOR BLOCK (H)//////////////////////////
 		double s = 0.0; //0 for no filtering and 1.0 for overfiltering
 		orientation.loop(watch.elapsedTime,s);
-		orientation.printALL();
 
 		///Put vars into state
 		state.set(4,1,orientation.roll);
@@ -79,7 +77,6 @@ int main(int argc,char** argv) {
 		////////////////////CONTROL BLOCK (C)////////////////////////
 		//PID Controller For Quadcopter
 		ctl.loop(watch.currentTime,state,statedot,rcin.rxcomm);
-		ctl.print();
 
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
 		///Send the signals from the controller to the rcout class
@@ -88,6 +85,11 @@ int main(int argc,char** argv) {
 		}
 		rcout.write();
 
+		///////PRINT EVERYTHING TO THE USER/////////////
+		rcin.printRCstate(-5); //to notify user of status (-4 is to only print first 4 rx vals)
+		ctl.print();
+		orientation.printALL();
+		
 		////////////////////////////////////////////////////////////
 		printf("\n");
 	}
