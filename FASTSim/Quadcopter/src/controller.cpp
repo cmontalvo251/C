@@ -24,7 +24,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//printf("Time Elapsed = %lf \n",timeElapsed);
 
 	//At a minimum you need to compute the 4 motor signals based on 
-	//the standard acro mode from the rx comms
+	//the standard acro mode
 	double motor_upper_left = STICK_MIN;
 	double motor_upper_right = STICK_MIN;
 	double motor_lower_left = STICK_MIN;
@@ -92,18 +92,4 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	ctlcomms.set(3,1,motor_lower_left);
 	ctlcomms.set(4,1,motor_lower_right);
 	//ctlcomms.disp();
-	saturation_block();
 }
-
-void controller::saturation_block() {
-  for (int idx=0;idx<NUMSIGNALS;idx++) {
-    double val = ctlcomms.get(idx+1,1);
-    if (val > OUTMAX) {
-      ctlcomms.set(idx+1,1,OUTMAX);
-    }
-    if (val < OUTMIN) {
-      ctlcomms.set(idx+1,1,OUTMIN);
-    }
-  }
-}
-

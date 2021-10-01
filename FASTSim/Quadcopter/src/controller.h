@@ -6,7 +6,6 @@
 
 #include <MATLAB/MATLAB.h>
 #include <RCIO/RCInput.h> //this is for STICK values
-#include <RCIO/RCOutput.h> //this is for OUT max/min
 
 class controller {
 private:
@@ -25,7 +24,6 @@ public:
 	void loop(double t,MATLAB state,MATLAB statedot,int* rxcomms);
 	void setup(MATLAB var); //var is open ended right now
 	void print();
-	void saturation_block();
 	controller(); //constructor
 };
 

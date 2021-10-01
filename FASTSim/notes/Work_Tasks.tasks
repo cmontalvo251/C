@@ -14,7 +14,7 @@ SIMPILOT:
 
  ✔ After you write the loop above pull out the controller and paste it into the simpilot.exe so its easier to see #@done (21-09-15 22:15)
 
- ☐ Move saturation block to RCIO to saturate pwmcomms during the write loop
+ ✔ Move saturation block to RCIO to saturate pwmcomms during the write loop #@done (21-09-30 20:24)
 
  ☐ Add pwmcomms to logfile and update plotting routine to plot pwmcomms instead of ctlcomms
 

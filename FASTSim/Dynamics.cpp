@@ -208,14 +208,6 @@ void Dynamics::loop(double t) {
   if (t > tlastCTL + tCTL) {
     tlastCTL = t;
     ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
-    /////////////////////////////////////////////////////////////////
-
-    /////////////////////Saturation Block/////////////////////////////////
-    /*Need to call a saturation block to make sure we don't send a 
-    command that's too big. This needs to happen here in the dynamics
-    routine because the controller.cpp is written by someone else.
-    */
-    saturation_block();
   }
   /////////////////////////////////////////////////////////////////
 
@@ -226,18 +218,6 @@ void Dynamics::loop(double t) {
     rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);    
   }
   rcout.write();
-}
-
-void Dynamics::saturation_block() {
-  for (int idx=0;idx<ctl.NUMSIGNALS;idx++) {
-    double val = ctl.ctlcomms.get(idx+1,1);
-    if (val > OUTMAX) {
-      ctl.ctlcomms.set(idx+1,1,OUTMAX);
-    }
-    if (val < OUTMIN) {
-      ctl.ctlcomms.set(idx+1,1,OUTMIN);
-    }
-  }
 }
 
 void Dynamics::printRC(int all) {
