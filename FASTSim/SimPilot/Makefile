@@ -1,8 +1,8 @@
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
 #HPATH=/home/carlos/Git_Repos/Github/HIL
-HPATH=/home/carlos/Files/Git_Repos/Github/HIL
-#HPATH=/home/pi/HIL
+#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+HPATH=/home/pi/HIL
 ##########################################################
 
 ##############WHAT VEHICLE ARE YOU RUNNING THIS ON###########
@@ -12,22 +12,22 @@ MODEL=Quadcopter
 
 #########################WHAT MODE ARE YOU RUNNING IN?#############
 #AUTO,SIL
-#EXETYPE=-DAUTO ##For running in autonomous mode rather than simulation
-EXETYPE=-DSIL ##For running in real time
+EXETYPE=-DAUTO ##For running in autonomous mode rather than simulation
+#EXETYPE=-DSIL ##For running in real time
 #EXETYPE=-DSIMONLY #This won't actually do anything
 ########################################################
 
 ###############################HARDWARE#######################
 #DESKTOP, RPI
-HARDWARE=-DDESKTOP #on Desktop
-#HARDWARE=-DRPI #on the raspberry pi
+#HARDWARE=-DDESKTOP #on Desktop
+HARDWARE=-DRPI #on the raspberry pi
 ########################################################
 
 #####################WHAT TYPE OF TRANSMITTER ARE YOU USING?###############
 #FLYSKY, XBOX, RCTECH
-#CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
+CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
 #CONTROLLER=-DXBOX
-CONTROLLER=-DRCTECH
+#CONTROLLER=-DRCTECH
 #######################################################################
 
 CC=g++

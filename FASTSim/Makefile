@@ -4,14 +4,16 @@
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
 #EXETYPE=-DSIMONLY
-EXETYPE=-DSIL
+#EXETYPE=-DSIL
+EXETYPE=-DAUTO
 #############################################################
 
 #################WHAT HARDWARE ARE YOU RUNNING ON#############
 #DESKTOP - running on a laptop or desktop macine
 #RPI - running on a raspbery pi 
 #ARDUINO - running on an arduino (may require a separate ino)
-HARDWARE=-DDESKTOP 
+#HARDWARE=-DDESKTOP
+HARDWARE=-DRPI
 ###########################################################
 
 ###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
@@ -19,7 +21,8 @@ HARDWARE=-DDESKTOP
 #XBOX - USB XBOX controller at home
 #FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
 #CONTROLLER=-DXBOX
-CONTROLLER=-DRCTECH
+#CONTROLLER=-DRCTECH
+CONTROLLER=-DFLYSKY
 ############################################################
 
 #########WHAT MODEL DO YOU WANT??##############
@@ -31,7 +34,8 @@ MODELPATH=Quadcopter/src
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
 #HPATH=/home/carlos/Git_Repos/Github/HIL
-HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+HPATH=/home/pi/HIL
 ##########################################################
 
 ##NON USER FLAGS
