@@ -3,8 +3,8 @@
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIMONLY
-#EXETYPE=-DSIL
+#EXETYPE=-DSIMONLY
+EXETYPE=-DSIL
 #############################################################
 
 #################WHAT HARDWARE ARE YOU RUNNING ON#############
