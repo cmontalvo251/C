@@ -63,8 +63,8 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double pitch_rate = state.get(11,1); //These are already in deg/s
 		double yaw_rate = state.get(12,1); //Check IMU.cpp to see for HIL
 		//printf("PQR Rate in Controller %lf %lf %lf \n",roll_rate,pitch_rate,yaw_rate);
-		double kp = 1.0;
-		double kd = 0.5;
+		double kp = 10.0;
+		double kd = 2.0;
 		double kyaw = 100.0;
 		double droll = kp*(roll-roll_command) + kd*(roll_rate);
 		droll = CONSTRAIN(droll,-500,500);
