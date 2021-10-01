@@ -1,4 +1,4 @@
-1.0 !mass  //Point Mass
-1.0 !Ixx
-1.0 !Iyy
-1.0 !Izz
+4.66 !mass  //Point Mass (kg)
+0.056 !Ixx //(kg-m^2)
+0.035 !Iyy //(kg-m^2)
+0.077 !Izz //(kg-m^2)
