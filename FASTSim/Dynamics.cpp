@@ -166,6 +166,8 @@ void Dynamics::rcio_init() {
 }
 
 void Dynamics::loop(double t) {
+
+  //printf("time = %lf tlastRCRead = %lf tRC = %lf \n",t,tlastRCread,tRC);
   
   ////////////////////Poll External Inputs////////////////////////////
   if (t > tlastRCread + tRC) {
@@ -206,6 +208,7 @@ void Dynamics::loop(double t) {
   ////////////////////Call the Control loop////////////////////////
   ////////////////////Use the err state variables//////////////////
   if (t > tlastCTL + tCTL) {
+    //printf("Running the controller \n");
     tlastCTL = t;
     ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
   }
@@ -218,6 +221,8 @@ void Dynamics::loop(double t) {
     rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);    
   }
   rcout.write();
+  //rcout.print();
+  //printf("\n");
 }
 
 void Dynamics::printRC(int all) {

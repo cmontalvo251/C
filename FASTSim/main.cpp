@@ -262,6 +262,7 @@ void runMainLoop() {
 
   //////////////////Initialize timer if code running realtime////////////////////
   #ifdef REALTIME
+  printf("Running in Real Time \n");
   startTime = timer.getTimeSinceStart();
   current_time = timer.getTimeSinceStart() - startTime;
   PRINTRATE = 1.0;
@@ -283,6 +284,7 @@ void runMainLoop() {
 
     //////////////////GET CURRENT TIME////////////////////////////////////
     #ifdef REALTIME
+    //printf("Getting Current time \n");
     //Keep simulating until user hits CTRL+C when running in AUTO or HIL mode
     tfinal = t+100; 
     //Get Time right now
@@ -371,6 +373,8 @@ void runMainLoop() {
     //This routine below takes the integrator states and puts them into
     //more standard 6DOF nomenclature. This also include the actuator states
     vehicle.setState(integrator.State,integrator.k); 
+    #else
+    t = current_time;
     #endif
     ////////////////////////////////////////////
 

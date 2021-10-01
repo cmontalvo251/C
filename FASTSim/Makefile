@@ -51,18 +51,19 @@ HPATH=/home/pi/HIL
 CC=g++
 EXECUTABLE=FASTSim.exe
 CPPDIR=../
-CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/OpenGL/opengl.cpp ${CPPDIR}/RK4/RK4.cpp)
+CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/RK4/RK4.cpp)
+OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
 IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
 RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp ${HPATH}/Util/Util.cpp)
 MODELSOURCES=$(wildcard ${MODELPATH}/*.cpp)
-SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES}
+SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES} #${OPENGLSOURCES}
 OBJECTS=$(SOURCES:.cpp=.o)
 COMPILE=-c -w -O3
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
 INCLUDE=-I${MODELPATH} -I../ -I${HPATH}
 #No RENDER IF RPI
-RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+RENDER= #-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
 
