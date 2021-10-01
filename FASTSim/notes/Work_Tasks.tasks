@@ -50,11 +50,11 @@ SIMPILOT:
 
  ✔ Change FASTsim to use pwmcomms to run actuator dynamics #@done (21-09-30 20:34)
 
- ☐ ACRO and STAB mode on Hardware do not seem to function properly
+ ✔ ACRO and STAB mode on Hardware do not seem to function properly #@done (21-10-01 11:50)
 
- ☐ As a final check make sure both SimPilot SIMONLY,SIL and AUTO work
+ ✔ As a final check make sure both SimPilot SIMONLY,SIL and AUTO work #@done (21-10-01 11:54)
 
- ☐ Do the same for FASTsim SIMONLY, SIL and AUTO
+ ☐ Do the same for FASTsim SIMONLY, SIL
 
 FASTSim:
 
