@@ -52,7 +52,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
 		//STABILIZE MODE
-		printf(" STAB ");
+		//printf(" STAB ");
 		double roll_command = (aileron-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double pitch_command = -(elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double yaw_rate_command = (rudder-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
@@ -62,17 +62,18 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double roll_rate = state.get(10,1); //For SIL/SIMONLY see Sensors.cpp
 		double pitch_rate = state.get(11,1); //These are already in deg/s
 		double yaw_rate = state.get(12,1); //Check IMU.cpp to see for HIL
+		//printf("PQR Rate in Controller %lf %lf %lf \n",roll_rate,pitch_rate,yaw_rate);
 		double kp = 1.0;
 		double kd = 0.5;
 		double kyaw = 100.0;
 		double droll = kp*(roll-roll_command) + kd*(roll_rate);
 		droll = CONSTRAIN(droll,-500,500);
 		double dpitch = kp*(pitch-pitch_command) + kd*(pitch_rate);
-		dpitch = 0*CONSTRAIN(dpitch,-500,500);
+		dpitch = CONSTRAIN(dpitch,-500,500);
 		double dyaw = kyaw*(yaw_rate-yaw_rate_command);
-		dyaw = 0*CONSTRAIN(dyaw,-500,500);
-		printf("d = %lf %lf %lf ",droll,dpitch,dyaw);
-		printf(" Roll Command = %lf ",roll_command);
+		dyaw = CONSTRAIN(dyaw,-500,500);
+		//printf("d = %lf %lf %lf ",droll,dpitch,dyaw);
+		//printf(" Roll Command = %lf ",roll_command);
 		motor_upper_left = throttle - droll - dpitch - dyaw;
 		motor_upper_right = throttle + droll - dpitch + dyaw;
 		motor_lower_left = throttle - droll + dpitch + dyaw;
