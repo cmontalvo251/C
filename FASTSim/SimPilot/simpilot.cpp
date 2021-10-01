@@ -87,7 +87,7 @@ int main(int argc,char** argv) {
 
 		///////PRINT EVERYTHING TO THE USER/////////////
 		rcin.printRCstate(-5); //to notify user of status (-4 is to only print first 4 rx vals)
-		ctl.print();
+		rcout.print();
 		orientation.printALL();
 		
 		////////////////////////////////////////////////////////////

@@ -65,7 +65,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		//printf("PQR Rate in Controller %lf %lf %lf \n",roll_rate,pitch_rate,yaw_rate);
 		double kp = 10.0;
 		double kd = 2.0;
-		double kyaw = 100.0;
+		double kyaw = 5.0;
 		double droll = kp*(roll-roll_command) + kd*(roll_rate);
 		droll = CONSTRAIN(droll,-500,500);
 		double dpitch = kp*(pitch-pitch_command) + kd*(pitch_rate);
