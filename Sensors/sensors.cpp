@@ -50,6 +50,9 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	uvw.vecset(1,3,state,8);
 	pqr.vecset(1,3,state,11);
 
+	//PQR also needs to be in degrees because of IMU.cpp in HIL
+	pqr.mult_eq(180.0/PI);
+
 	//For the state derivatives the easiest thing in my opinion would be to 
 	//compute ptpdot from the H matrix.
 	ptpdot.mult(ine2bod321.H,pqr);

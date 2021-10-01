@@ -1,8 +1,8 @@
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-HPATH=/home/carlos/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Git_Repos/Github/HIL
 #HPATH=/home/carlos/Files/Git_Repos/Github/HIL
-#HPATH=/home/pi/HIL
+HPATH=/home/pi/HIL
 ##########################################################
 
 ##############WHAT VEHICLE ARE YOU RUNNING THIS ON###########
@@ -11,18 +11,23 @@ MODEL=Quadcopter
 ############################################################
 
 #########################WHAT MODE ARE YOU RUNNING IN?#############
-#EXETYPE=-DAUTO ##For running in autonomous mode rather than simulation
-EXETYPE=-DSIL ##For running in real time
+#AUTO,SIL
+EXETYPE=-DAUTO ##For running in autonomous mode rather than simulation
+#EXETYPE=-DSIL ##For running in real time
+#EXETYPE=-DSIMONLY #This won't actually do anything
 ########################################################
 
 ###############################HARDWARE#######################
-#HARDWARE=-DRPI #on RPI
-HARDWARE=-DDESKTOP #on Desktop
+#DESKTOP, RPI
+#HARDWARE=-DDESKTOP #on Desktop
+HARDWARE=-DRPI #on the raspberry pi
 ########################################################
 
 #####################WHAT TYPE OF TRANSMITTER ARE YOU USING?###############
-#CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
-CONTROLLER=-DXBOX
+#FLYSKY, XBOX, RCTECH
+CONTROLLER=-DFLYSKY ##IRIS 3DR transmitters in FASTLab
+#CONTROLLER=-DXBOX
+#CONTROLLER=-DRCTECH
 #######################################################################
 
 CC=g++
@@ -31,7 +36,7 @@ CPPDIR=../../
 MODELPATH=../
 CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp)
 IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
-RCIOSOURCES=${HPATH}/RCIO/RCInput.cpp
+RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp ${HPATH}/Util/Util.cpp)
 MODELSOURCES=$(wildcard ${MODELPATH}${MODEL}/src/*.cpp)
 SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES}
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -62,6 +67,8 @@ clean:
 	rm ${HPATH}/RCIO/*.o
 	echo ' ' > ${HPATH}/IMU/d.o
 	rm ${HPATH}/IMU/*.o
+	echo ' ' > ${HPATH}/Util/d.o
+	rm ${HPATH}/Util/*.o
 	echo ' ' > ${CPPDIR}Timer/d.o
 	rm ${CPPDIR}Timer/*.o
 	echo ' ' > ${MODELPATH}${MODEL}/src/d.o

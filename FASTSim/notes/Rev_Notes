@@ -1,3 +1,17 @@
+============================9/30/2021======================
+
+Alot has changed in the code. Simpilot is almost fully operational
+and the rcout class has been completely overhauled. I am currently tuning the
+controller right now in simulation and should have something working properly 
+in a day or so.
+
+==============================9/25/2021======================
+
+Haven't been commenting here very much but I am starting to work on the rcout 
+class. It's moving slow but I have a branch called RCOUTPUT and I for right now
+have rcout working in SIMONLY and SIL mode which isn't saying much because it doesn't
+do anything in that mode. The real test will be AUTO mode
+
 =============================9/15/2021=========================
 
 Added controller.* for quadcopter into Simpilot. All that's left is to add

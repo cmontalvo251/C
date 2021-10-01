@@ -9,6 +9,10 @@ using namespace std;
 #include <RCIO/RCInput.h>
 RCInput rcin;
 
+//Include the RCOUT class
+#include <RCIO/RCOutput.h>
+RCOutput rcout;
+
 //Include the IMU Class
 #include <IMU/IMU.h>
 IMU orientation;
@@ -26,8 +30,18 @@ TIMER watch;
 int main(int argc,char** argv) {
 	printf("Running Simple Autopilot (SimPilot) Demo \n");
 
+	#ifdef AUTO
+	if (getuid()) {
+    	fprintf(stderr, "Not root. Please launch like this: sudo %s\n", argv[0]);
+    	exit(1);
+  	}
+  	#endif
+
 	//You then need to initialize the RCIN by running initialize
 	rcin.initialize(); //The default is 8 input channels
+
+	//Initialize the rcout class because this is outputting signals to the PWM ports
+	rcout.initialize(4);
 
 	//Select an IMU
 	orientation.init(0); //0 for MPU and 1 for LSM
@@ -47,12 +61,10 @@ int main(int argc,char** argv) {
 		////////////////////USER INPUT (Xc)////////////////////////////
 		//Poll Receiver - rcin
 		rcin.readRCstate();
-		rcin.printRCstate(-4); //to notify user of status (-4 is to only print first 4 rx vals)
 
 		////////////////////SENSOR BLOCK (H)//////////////////////////
 		double s = 0.0; //0 for no filtering and 1.0 for overfiltering
 		orientation.loop(watch.elapsedTime,s);
-		orientation.printALL();
 
 		///Put vars into state
 		state.set(4,1,orientation.roll);
@@ -65,11 +77,19 @@ int main(int argc,char** argv) {
 		////////////////////CONTROL BLOCK (C)////////////////////////
 		//PID Controller For Quadcopter
 		ctl.loop(watch.currentTime,state,statedot,rcin.rxcomm);
-		ctl.print();
 
 		////////////////////ACTUATOR OUTPUT (u)/////////////////////
-		//rcout
+		///Send the signals from the controller to the rcout class
+		for (int i = 0;i<rcout.NUMSIGNALS;i++){
+		  rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);
+		}
+		rcout.write();
 
+		///////PRINT EVERYTHING TO THE USER/////////////
+		rcin.printRCstate(-5); //to notify user of status (-4 is to only print first 4 rx vals)
+		rcout.print();
+		orientation.printALL();
+		
 		////////////////////////////////////////////////////////////
 		printf("\n");
 	}

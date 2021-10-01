@@ -9,6 +9,11 @@
 //If running in SIMONLY the rcin class just acts as a place holder for variables
 #include <RCIO/RCInput.h>
 
+//The RCOutput class is for sending PWM signals.
+//It's possible we may only need this when in AUTO mode
+//but for now we will include it all the time
+#include <RCIO/RCOutput.h> 
+
 //These two includes are craft dependent.
 //There is an open source portal cube example. The aircraft and 
 //quad, etc are all in private repos
@@ -51,11 +56,11 @@ class Dynamics {
   MATLAB cg,ptp;
   MATLAB actuatorICs,actuatorError;
   RCInput rcin;
+  RCOutput rcout;
   controller ctl;
   aerodynamics aero;
   sensors err;
   int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0,NUMVARS;
-  void saturation_block();
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
   void initExtModels(int G);
@@ -69,6 +74,7 @@ class Dynamics {
   void initActuators(int);
   void initController(int);
   void initStateVector();
+  void rcio_init();
   //Constructor
   Dynamics();
 };

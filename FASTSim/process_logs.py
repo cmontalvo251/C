@@ -8,7 +8,8 @@ import numpy as np
 #sys.path.append('/home/mjcobar13/Documents/GIT/CMontalvo251/Python/pdf')
 #print(sys.path)
 
-MODELPATH='PortalCube/'
+#MODELPATH='PortalCube/'
+MODELPATH='Quadcopter/'
 PLOTEVERYTHING = 0
 
 try:
@@ -49,7 +50,7 @@ time = data[:,0]
 #####The next 12 states are always the sensor states
 #####################################################
 sensor_states = data[:,1:13]
-sensor_labels = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (rad/s)','Sensor q (rad/s)','Sensor r (rad/s)']
+sensor_labels = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (deg/s)','Sensor q (deg/s)','Sensor r (deg/s)']
 
 if PLOTEVERYTHING == 1:
     for x in range(0,12):
@@ -84,14 +85,13 @@ for x in range(0,rcin_num_of_axis):
 ################THe next N states are the Control Signals###########
 ctl_numsignals = int(data[:,14+rcin_num_of_axis][0])
 print('Num Control Signals = ',ctl_numsignals)
-ctl_labels = ['Throttle Command (us)','Aileron Command (us)','Elevator Command (us)','Rudder Command (us)','Aux1 Command (us)','Aux2 Command (us)','Aux3 Command (us)','Aux4 Command (us)']
 ctl_states = data[:,(15+rcin_num_of_axis):(15+rcin_num_of_axis+ctl_numsignals)]
 if PLOTEVERYTHING == 1:
     for x in range(0,ctl_numsignals):
         plt.figure()
         plt.plot(time,ctl_states[:,x])
         plt.xlabel('Time (sec)')
-        label = ctl_labels[x]
+        label = 'PWM Output ' + str(x+1) + ' (us)'
         plt.ylabel(label)
         print(label)
         plt.grid()
@@ -125,6 +125,9 @@ if RK4 == 1:
     ptp = dof.quat2euler(np.transpose(q0123))
     ptp = np.transpose(ptp)*180.0/np.pi
     ptp_labels = ['Roll (deg)','Pitch (deg)','Yaw (deg)']
+    ##PQR Must also be converted to deg/s
+    pqr = states_raw[:,10:]*180.0/np.pi
+    pqr_labels = ['p (deg/s)','q (deg/s)','r (deg/s)']
     if PLOTEVERYTHING == 1:
         for x in range(0,3):
             plt.figure()
@@ -134,11 +137,11 @@ if RK4 == 1:
             print(ptp_labels[x])
             plt.grid()
             pp.savefig()
-    state_labels = state_raw_labels[0:3] + ptp_labels + state_raw_labels[7:]
+    state_labels = state_raw_labels[0:3] + ptp_labels + state_raw_labels[7:10] + pqr_labels
     #print(np.shape(states_raw[:,0:3]))
     #print(np.shape(states_raw[:,7:]))
     #print(np.shape(ptp))
-    states = np.concatenate((states_raw[:,0:3],ptp,states_raw[:,7:]),axis=1)
+    states = np.concatenate((states_raw[:,0:3],ptp,states_raw[:,7:10],pqr),axis=1)
     #print(np.shape(states))
     if PLOTEVERYTHING == 1:
         ###Print All Vars Raw
@@ -239,7 +242,7 @@ for x in range(0,ctl_numsignals):
     plt.figure()
     plt.plot(time,ctl_states[:,x],label='Command')
     plt.xlabel('Time (sec)')
-    label = ctl_labels[x]
+    label = 'PWM Output ' + str(x+1) + ' (us)'
     plt.ylabel(label)
     print(label)
     plt.grid()

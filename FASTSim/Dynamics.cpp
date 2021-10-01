@@ -55,6 +55,16 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
     actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
   }
 }
+void Dynamics::setMassProps(MATLAB massdata) {
+  m = massdata.get(1,1);
+  I.zeros(3,3,"Inertia");
+  I.set(1,1,massdata.get(2,1));
+  I.set(2,2,massdata.get(3,1));
+  I.set(3,3,massdata.get(4,1));
+  Iinv.overwrite(I,"Iinv");
+  Iinv.inverse();
+  env.setMass(m);
+}
 
 void Dynamics::initAerodynamics(int A) {
   //If the AERO Model is on we initialize the aero model
@@ -148,18 +158,16 @@ void Dynamics::initErrModel(MATLAB sensordata) {
   err.initSensorErr(sensordata);
 }
 
-void Dynamics::setMassProps(MATLAB massdata) {
-  m = massdata.get(1,1);
-  I.zeros(3,3,"Inertia");
-  I.set(1,1,massdata.get(2,1));
-  I.set(2,2,massdata.get(3,1));
-  I.set(3,3,massdata.get(4,1));
-  Iinv.overwrite(I,"Iinv");
-  Iinv.inverse();
-  env.setMass(m);
+void Dynamics::rcio_init() {
+  rcin.initialize();
+  printf("Receiver Initialized \n");
+  rcout.initialize(ctl.NUMSIGNALS);
+  printf("PWM Outputs Initialized \n");
 }
 
 void Dynamics::loop(double t) {
+
+  //printf("time = %lf tlastRCRead = %lf tRC = %lf \n",t,tlastRCread,tRC);
   
   ////////////////////Poll External Inputs////////////////////////////
   if (t > tlastRCread + tRC) {
@@ -180,7 +188,8 @@ void Dynamics::loop(double t) {
   */
   #if defined (SIMONLY) || (SIL)
   if ((CONTROLLER_FLAG_INITIAL == 1) && (rcin.joy_fd == -1)) {
-    rcin.rxcomm[4] = STICK_MAX;
+    rcin.rxcomm[4] = STICK_MAX; //This automatically turns on the autopilot
+    rcin.rxcomm[0] = STICK_MID; //This will put throttle in the center
   }
   #endif
   //////////////////////////////////////////////////////////////////////
@@ -199,36 +208,21 @@ void Dynamics::loop(double t) {
   ////////////////////Call the Control loop////////////////////////
   ////////////////////Use the err state variables//////////////////
   if (t > tlastCTL + tCTL) {
+    //printf("Running the controller \n");
     tlastCTL = t;
     ctl.loop(t,err.errstate,err.errstatedot,rcin.rxcomm);
-    /////////////////////////////////////////////////////////////////
-
-    /////////////////////Saturation Block/////////////////////////////////
-    /*Need to call a saturation block to make sure we don't send a 
-    command that's too big. This needs to happen here in the dynamics
-    routine because the controller.cpp is written by someone else.
-    */
-    saturation_block();
   }
   /////////////////////////////////////////////////////////////////
 
-  //////Send CtlComms to ESCs if running on Hardware///////////////
-  /////This only runs in AUTO mode
-  #ifdef AUTO
-  rcout.ESCcommands(ctlcomms);
-  #endif
-}
-
-void Dynamics::saturation_block() {
-  for (int idx=0;idx<ctl.NUMSIGNALS;idx++) {
-    double val = ctl.ctlcomms.get(idx+1,1);
-    if (val > STICK_MAX) {
-      ctl.ctlcomms.set(idx+1,1,STICK_MAX);
-    }
-    if (val < STICK_MIN) {
-      ctl.ctlcomms.set(idx+1,1,STICK_MIN);
-    }
+  //////Send CtlComms to ESCs///////////////
+  ///If you're running in SIL or SIMONLY this will just be a dummy function
+  //I'm also assuming this happens as fast as possible
+  for (int i = 0;i<rcout.NUMSIGNALS;i++){
+    rcout.pwmcomms[i] = ctl.ctlcomms.get(i+1,1);    
   }
+  rcout.write();
+  //rcout.print();
+  //printf("\n");
 }
 
 void Dynamics::printRC(int all) {
@@ -250,7 +244,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
     //Integrate Actuator Dynamics
     //input will be ctlcomms and the output will be actuator_state
     for (int i = 0;i<NUMACTUATORS;i++) {
-      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(rcout.pwmcomms[i] - actuatorState.get(i+1,1)));
     }
   } else {
     //Otherwise just pass through the ctlcomms

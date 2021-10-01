@@ -52,6 +52,15 @@ void get_fileroot(int argc,char** argv,char fileroot[]) {
 //////Main/////////////
 int main(int argc,char** argv) {
 
+  ////////////////////??CHECK FOR SUDO IF RUNNING IN AUTO MODE///////////////
+  #ifdef AUTO
+  if (getuid()) {
+    fprintf(stderr, "Not root. Please launch like this: sudo %s\n", argv[0]);
+    exit(1);
+  }
+  #endif
+  ///////////////////////////////////////////////////////////////////////////
+
   //////////////Grab Input Arguments//////////////////////////////////////////
   get_fileroot(argc,argv,fileroot);
   //////////////////////////////////////////////////////////
@@ -100,14 +109,13 @@ int main(int argc,char** argv) {
   vehicle.setMassProps(massdata);
   /////////////////////////////////////////////////////////////
 
-  ////////////////////Initialize Controller///////////////////
+  ////////////////////Initialize Receiver,Controller,PWM outputs///////////////////
   /////This happens regardless of the type of simulation
   vehicle.initController(CTL_FLAG);
   printf("Controller Online \n");
-  ///The RC input class is initialized all the time and its settings are in
-  //the Makefile and RCInput.cpp
-  vehicle.rcin.initialize();
-  printf("Receiver Initialized \n");
+  ///Initialize radio controlled input and output
+  //These settings are defined in the Makefile using -D commands
+  vehicle.rcio_init();
 
   //////////////////?WHEN INTEGRATING ON THE COMPUTER///////////////////
   /////////////////////A FEW MORE THINGS NEED TO HAPPEN///////////////
@@ -202,6 +210,7 @@ int main(int argc,char** argv) {
 
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
   #ifdef OPENGL_H
+  printf("Kicking off OpenGL \n");
   boost::thread render(runRenderLoop,argc,argv);
   //Wait for the opengl routine to actually start
   while (glhandle_g.ready == 0) {
@@ -212,6 +221,7 @@ int main(int argc,char** argv) {
 
   //////////////////////////////Begin MainLoop///////////////////////////////////////////////
   #ifdef OPENGL_H 
+  printf("Kicking off Main Loop as a thread \n");
   //When you have opengl running you need to kick this off as a thread
   boost::thread run(runMainLoop); 
   //Now there is a problem here. When you kick off the rendering environment and the Mainloop
@@ -252,6 +262,7 @@ void runMainLoop() {
 
   //////////////////Initialize timer if code running realtime////////////////////
   #ifdef REALTIME
+  printf("Running in Real Time \n");
   startTime = timer.getTimeSinceStart();
   current_time = timer.getTimeSinceStart() - startTime;
   PRINTRATE = 1.0;
@@ -273,6 +284,7 @@ void runMainLoop() {
 
     //////////////////GET CURRENT TIME////////////////////////////////////
     #ifdef REALTIME
+    //printf("Getting Current time \n");
     //Keep simulating until user hits CTRL+C when running in AUTO or HIL mode
     tfinal = t+100; 
     //Get Time right now
@@ -305,11 +317,11 @@ void runMainLoop() {
         logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
-      //Control Commands - always on
-      logvars.set(ctr,1,vehicle.ctl.NUMSIGNALS);
+      //PWM Commands - always on
+      logvars.set(ctr,1,vehicle.rcout.NUMSIGNALS);
       ctr++;
-      for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
-        logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
+      for (int i = 0;i<vehicle.rcout.NUMSIGNALS;i++) {
+        logvars.set(ctr,1,vehicle.rcout.pwmcomms[i]);
         ctr++;
       }
       #ifdef RK4_H
@@ -361,6 +373,8 @@ void runMainLoop() {
     //This routine below takes the integrator states and puts them into
     //more standard 6DOF nomenclature. This also include the actuator states
     vehicle.setState(integrator.State,integrator.k); 
+    #else
+    t = current_time;
     #endif
     ////////////////////////////////////////////
 
@@ -378,7 +392,8 @@ void runMainLoop() {
         printf("%lf ",integrator.State.get(i+1,1));
       }
       #endif
-      //vehicle.printRC(0); //the zero means just the sticks
+      vehicle.printRC(-5); //the zero means just the sticks
+      vehicle.rcout.print(); //This prints the motor signals
       printf("\n");
       PRINT+=PRINTRATE;
       //PAUSE();
