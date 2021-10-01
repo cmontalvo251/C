@@ -1,4 +1,4 @@
-0.0	!Initial X Position (m) ///Sixdof Model with quaternions
+20.0	!Initial X Position (m) ///Sixdof Model with quaternions
 0.0	!Initial Y Position (m)
 0.0	!Initial Z Position (m)
 1.0	!Quaternion 0
@@ -10,7 +10,7 @@
 0.0	!Initial Zbody Velocity (m/s)
 0.0	!Initial Roll Rate (rad/s)
 0.0	!Initial Pitch Rate (rad/s)
-0.0	!Initial Yaw Rate (rad/s)
+0.1	!Initial Yaw Rate (rad/s)
 
 0.0	!Initial X Position (m) ////Point Mass in Space
 0.0	!Initial Y Position (m)

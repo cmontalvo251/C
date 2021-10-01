@@ -393,6 +393,7 @@ void runMainLoop() {
       }
       #endif
       vehicle.printRC(-5); //the zero means just the sticks
+      printf(":::");
       vehicle.rcout.print(); //This prints the motor signals
       printf("\n");
       PRINT+=PRINTRATE;

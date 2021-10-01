@@ -30,13 +30,13 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	MAEROB.mult_eq(0);
 
 	if (AERODYNAMICS_FLAG == 1) {
-	        //Friction Parameters
-	        double DAMPCOEFF = 50.0; //Guess and Check (y-direction)
-		double DAMPROTCOEFF = 50.0; //Guess and Check (yaw)
+        //Friction Parameters
+        double DAMPCOEFF = 50.0; //Guess and Check (y-direction)
+		double DAMPROTCOEFF = 5.0; //Guess and Check (yaw)
 		double d = 0.13335; //(m) - From wheel to center
 		double force1;
 		double force2;
-		double Vmax = 0.0; //(m/s) Need to find the max speed of the tank
+		double Vmax = 20.0; //(m/s) Need to find the max speed of the tank
 		
 		//Extract Actuator Values
 		//Remember that control is in PWM (us)
@@ -55,13 +55,19 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double V = sqrt(u*u + v*v + w*w);
 
 		//Calculate Forces
-		if (V == Vmax){
+		if (abs(V) > Vmax){
 		  force1 = 0.0;
 		  force2 = 0.0;
 		} else{
-		  force1 = 0.0; //Need to find equation by plotting microsec vs force
-		  force2 = 0.0; //Need to find equation by plotting microsec vs force
+		  double kt = 0.1;
+  		  if (V < 0) {
+		  	V = -V;
+		  }
+		  double vf = 1.0-V/Vmax;
+		  force1 = -vf*kt*fabs(motor1_US-STICK_MID)*(motor1_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		  force2 = vf*kt*fabs(motor2_US-STICK_MID)*(motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
 		}
+		//printf("forces = %lf %lf \n",force1,force2);
 		double xforce = force1 + force2;
 		double yforce = -DAMPCOEFF*v;
 

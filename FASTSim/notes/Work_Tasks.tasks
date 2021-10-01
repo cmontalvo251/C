@@ -76,9 +76,13 @@ BattleBot:
 
   ✔ Ground Contact Model #@done (21-09-13 16:48)
 
-  ☐ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment
+  ✔ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment #@done (21-10-01 12:48)
 
-  ☐ Create a controller to feed transmitter commands to 2 wheels with differential
+  ✔ Create a controller to feed transmitter commands to 2 wheels with differential #@done (21-10-01 12:48)
+
+  ✔ Run SIMONLY #@done (21-10-01 12:52)
+
+  ✔ Run SIL #@done (21-10-01 13:10)
 
   ☐ Run AUTO mode on RPI for battle bot
 

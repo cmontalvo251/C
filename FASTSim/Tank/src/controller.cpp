@@ -25,7 +25,7 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 
 	double motor1_us = STICK_MID; //Left Motor
 	double motor2_us = STICK_MID; //Right Motor
-	double DIFFERENTIAL = 1.0;
+	double DIFFERENTIAL = 0.25;
 
 	//First extract the relavent commands from the receiver.
 	double aileron = rxcomms[1];
@@ -57,14 +57,15 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 	    motor2_us = STICK_MAX;
 	  }
 	} else {
-	  motor1_us = STICK_MID + (STICK_MID - elevator) + DIFFERENTIAL*(aileron - STICK_MID);
+	  motor1_us = STICK_MID + (STICK_MID - elevator) - DIFFERENTIAL*(aileron - STICK_MID);
+	  motor2_us = elevator - DIFFERENTIAL*(aileron - STICK_MID);
+
 	  if (motor1_us < STICK_MIN) {
 	    motor1_us = STICK_MIN;
 	  }
 	  if (motor1_us > STICK_MAX) {
 	    motor1_us = STICK_MAX;
 	  }
-	  motor2_us = elevator + DIFFERENTIAL*(aileron - STICK_MID);
 	  if (motor2_us < STICK_MIN) {
 	    motor2_us = STICK_MIN;
 	  }
