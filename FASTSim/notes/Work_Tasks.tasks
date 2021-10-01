@@ -30,32 +30,6 @@ RENDERING:
 
   ☐ How do you feel about updating OpenGL rendering environment to Unreal engine or something like Godot or even Unity???
 
-SIMPILOT:
-
- ✔ Make sure the RCInput main.cpp test works in the Test_Scripts folder in HIL.git #@done (21-09-23 12:15)
-
- ✔ Add navio receiver rcin protocols to current RCInput.h/.cpp and test with receiver in the Lab What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. #@done (21-09-23 12:19)
-
- ✔ (Do this in FASTSim first before you do this) Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. You'll probably have to create some test scripts. What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. #@done (21-09-27 12:29)
-
- ✔ Since you just edited the RCInput and RCOutput routine go back and make sure that SIMONLY, SIL and Rpi hooks are working in FASTSim. In order to get the RPi hooks working you're going to have to compile this routine in AUTO mode on the RPI. You'll also need to hook up the PWM outputs and some servos to make sure you're getting the output you think you're supposed to get. You might need to use an o-scope #@done (21-09-27 12:47)
-
- ✔ Quadcopter autopilot - write a simple PID loop. This can be open source since it won't work in flight. This will require creating a folder like Portalcube. For now leave the aerodynamics blank and just sent zeros since we're just interested in the controller. However make sure that the aerodynamics.cpp/.h are at least there. #@done (21-09-15 22:15)
-
- ✔ After you write the loop above pull out the controller and paste it into the simpilot.exe so its easier to see #@done (21-09-15 22:15)
-
- ✔ Move saturation block to RCIO to saturate pwmcomms during the write loop #@done (21-09-30 20:24)
-
- ✔ Add pwmcomms to logfile and update plotting routine to plot pwmcomms instead of ctlcomms #@done (21-09-30 20:34)
-
- ✔ Change FASTsim to use pwmcomms to run actuator dynamics #@done (21-09-30 20:34)
-
- ✔ ACRO and STAB mode on Hardware do not seem to function properly #@done (21-10-01 11:50)
-
- ✔ As a final check make sure both SimPilot SIMONLY,SIL and AUTO work #@done (21-10-01 11:54)
-
- ☐ Do the same for FASTsim SIMONLY, SIL
-
 FASTSim:
 
   ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
@@ -105,6 +79,8 @@ BattleBot:
   ☐ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment
 
   ☐ Create a controller to feed transmitter commands to 2 wheels with differential
+
+  ☐ Run AUTO mode on RPI for battle bot
 
 HIL:
 
@@ -294,3 +270,29 @@ You can also use mavlink to send and receive parameters (such as controller gain
 Most of this work was guided by this blog post (https://discuss.ardupilot.org/t/mavlink-and-arduino-step-by-step/25566) so I suggest at least a quick read of that will help the students out in understanding how everything fits together.  The parameter stuff was an internal development which I hope to get written up properly one day and into a blog post to more-widely share the technique.
 Hopefully that all helps and let me know if you have any other questions.  Good luck!
 matt
+
+SIMPILOT:
+
+ ✔ Make sure the RCInput main.cpp test works in the Test_Scripts folder in HIL.git #@done (21-09-23 12:15)
+
+ ✔ Add navio receiver rcin protocols to current RCInput.h/.cpp and test with receiver in the Lab What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. #@done (21-09-23 12:19)
+
+ ✔ (Do this in FASTSim first before you do this) Add ESC outputs to existing RCOoutput but combine everything to the minimum viable set of routines. You'll probably have to create some test scripts. What exactly is your plan for RCIO? Do you want RCInput and RCOutput to be in this folder like this? RCInput.h/RCInput.cpp and RCOutput.h/RCOutput.cpp That seems the most reasonable in my opinion. #@done (21-09-27 12:29)
+
+ ✔ Since you just edited the RCInput and RCOutput routine go back and make sure that SIMONLY, SIL and Rpi hooks are working in FASTSim. In order to get the RPi hooks working you're going to have to compile this routine in AUTO mode on the RPI. You'll also need to hook up the PWM outputs and some servos to make sure you're getting the output you think you're supposed to get. You might need to use an o-scope #@done (21-09-27 12:47)
+
+ ✔ Quadcopter autopilot - write a simple PID loop. This can be open source since it won't work in flight. This will require creating a folder like Portalcube. For now leave the aerodynamics blank and just sent zeros since we're just interested in the controller. However make sure that the aerodynamics.cpp/.h are at least there. #@done (21-09-15 22:15)
+
+ ✔ After you write the loop above pull out the controller and paste it into the simpilot.exe so its easier to see #@done (21-09-15 22:15)
+
+ ✔ Move saturation block to RCIO to saturate pwmcomms during the write loop #@done (21-09-30 20:24)
+
+ ✔ Add pwmcomms to logfile and update plotting routine to plot pwmcomms instead of ctlcomms #@done (21-09-30 20:34)
+
+ ✔ Change FASTsim to use pwmcomms to run actuator dynamics #@done (21-09-30 20:34)
+
+ ✔ ACRO and STAB mode on Hardware do not seem to function properly #@done (21-10-01 11:50)
+
+ ✔ As a final check make sure both SimPilot SIMONLY,SIL and AUTO work #@done (21-10-01 11:54)
+
+ ✔ Do the same for FASTsim SIMONLY, SIL #@done (21-10-01 12:39)
