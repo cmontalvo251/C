@@ -315,11 +315,11 @@ void runMainLoop() {
         logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
-      //Control Commands - always on
-      logvars.set(ctr,1,vehicle.ctl.NUMSIGNALS);
+      //PWM Commands - always on
+      logvars.set(ctr,1,vehicle.rcout.NUMSIGNALS);
       ctr++;
-      for (int i = 0;i<vehicle.ctl.NUMSIGNALS;i++) {
-        logvars.set(ctr,1,vehicle.ctl.ctlcomms.get(i+1,1));
+      for (int i = 0;i<vehicle.rcout.NUMSIGNALS;i++) {
+        logvars.set(ctr,1,vehicle.rcout.pwmcomms[i]);
         ctr++;
       }
       #ifdef RK4_H

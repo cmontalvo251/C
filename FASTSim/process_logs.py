@@ -91,7 +91,7 @@ if PLOTEVERYTHING == 1:
         plt.figure()
         plt.plot(time,ctl_states[:,x])
         plt.xlabel('Time (sec)')
-        label = 'PWM Output ' + str(x+1)
+        label = 'PWM Output ' + str(x+1) + ' (us)'
         plt.ylabel(label)
         print(label)
         plt.grid()
@@ -242,7 +242,7 @@ for x in range(0,ctl_numsignals):
     plt.figure()
     plt.plot(time,ctl_states[:,x],label='Command')
     plt.xlabel('Time (sec)')
-    label = 'PWM Output ' + str(x+1)
+    label = 'PWM Output ' + str(x+1) + ' (us)'
     plt.ylabel(label)
     print(label)
     plt.grid()

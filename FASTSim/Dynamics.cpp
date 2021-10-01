@@ -239,7 +239,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
     //Integrate Actuator Dynamics
     //input will be ctlcomms and the output will be actuator_state
     for (int i = 0;i<NUMACTUATORS;i++) {
-      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(ctl.ctlcomms.get(i+1,1) - actuatorState.get(i+1,1)));
+      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(rcout.pwmcomms[i] - actuatorState.get(i+1,1)));
     }
   } else {
     //Otherwise just pass through the ctlcomms
