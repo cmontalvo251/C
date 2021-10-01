@@ -20,12 +20,13 @@ CONTROLLER=-DXBOX #-DRCTECH #-DXBOX
 #########WHAT MODEL DO YOU WANT??##############
 #This needs to point to a source folder with aerodynamics.* and controller.*
 #MODELPATH=PortalCube/src
-MODELPATH=Quadcopter/src
+#MODELPATH=Quadcopter/src
+MODELPATH=Tank/src
 ###########################################
 
 #####################WHERE IS HIL LOCATED?#####################
-#HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-HPATH=/home/carlos/Git_Repos/Github/HIL
+HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
+#HPATH=/home/carlos/Git_Repos/Github/HIL
 #HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 ##########################################################
 
