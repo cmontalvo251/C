@@ -165,7 +165,7 @@ void Dynamics::rcio_init() {
   printf("PWM Outputs Initialized \n");
 }
 
-void Dynamics::loop(double t) {
+void Dynamics::loop(double t,double dt) {
 
   //printf("time = %lf tlastRCRead = %lf tRC = %lf \n",t,tlastRCread,tRC);
   
@@ -196,7 +196,7 @@ void Dynamics::loop(double t) {
 
   ///////////////////////Call the Sensor Block////////////////////////
   #ifdef AUTO
-  err.readSensors(); //this calls onboard sensors on the Navio
+  err.readSensors(t); //this calls onboard sensors on the Navio
   #else
   //state.disp();
   err.readSensors(state,statedot); //this simulates sensors

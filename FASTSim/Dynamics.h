@@ -67,7 +67,7 @@ class Dynamics {
   void initAerodynamics(int A);
   void setMassProps(MATLAB massdata);
   void initErrModel(MATLAB sensordata);
-  void loop(double time);
+  void loop(double time,double dt);
   void printRC(int all);
   void setRates(double,double);
   void initActuators(MATLAB);

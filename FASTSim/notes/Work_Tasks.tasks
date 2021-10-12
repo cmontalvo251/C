@@ -70,6 +70,8 @@ FASTSim:
 
  ☐ Complete the controller (PID) for the A/C
 
+ ☐ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly
+
 BattleBot:
 
   ☐ Create a CAD for the vehicle

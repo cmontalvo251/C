@@ -20,12 +20,68 @@ sensors::sensors() {
 	errstatedot.zeros(12,1,"Full Statedot From Sensors");
 }
 
-void sensors::readSensors() {
-	///Read the IMU (ptp,pqr)
+//This only gets called if you have Navio plugged in
+void sensors::initSensors(int IMUTYPE) {
+  orientation.init(IMUTYPE); //0 for MPU and 1 for LSM
+}
 
-	//Read the GPS (lat/lon/alt)
+///Overloaded sensor routine that reads 
+///sensors on board Navio
+void sensors::readSensors(double time,double dt) {
 
-	//Read the Pitot Probes (uvw)
+  ///////////////////?FIRST POLL ALL SENSORS////////////////////////
+  
+  ///Read the IMU (ptp,pqr)
+  double s = 0.0; //0 for no filtering and 1.0 for overfiltering
+  orientation.loop(dt,s);
+  //Later we can do the following
+  //satellites.poll(time,0);
+  //satellites.latitude/longitude/altitude - convertGPS2XY() and computeSpeed(double)
+  //barotemp.poll(time);
+  //analog.get_results();
+  //barotemp.pressure
+  //barotemp.temperature
+  //analog.results is an array of length analog.channel_count
+
+  /////////////////////////////////////////////////////////////////
+
+  ///////////////////??THEN POPULATE STATE VECTOR////////////////////
+
+  //Initialize everything to -99
+  errstate.mult_eq(0);
+  errstate.plus_eq(-99);
+  errstatedot.mult_eq(0);
+  errstatedot.plus_eq(-99);
+
+  ///XYZ
+  //errstate
+
+  //PTP
+  errstate.set(4,1,orientation.roll);
+  errstate.set(5,1,orientation.pitch);
+  errstate.set(6,1,orientation.yaw);
+
+  //UWV
+
+  //PQR
+  errstate.set(10,1,orientation.roll_rate);
+  errstate.set(11,1,orientation.pitch_rate);
+  errstate.set(12,1,orientation.yaw_rate);
+
+  //XYZDOT
+  //???
+
+  //PTPDOT
+  errstatedot.set(4,1,orientation.roll_rate);
+  errstatedot.set(5,1,orientation.pitch_rate);
+  errstatedot.set(6,1,orientation.yaw_rate);
+
+  //UVWDOT
+  //???
+
+  //PQRDOT
+  //????
+  
 }
 
 void sensors::readSensors(MATLAB state,MATLAB statedot) {

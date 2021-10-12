@@ -8,7 +8,7 @@
 double t = 0;
 double PRINT = 0;
 double LOG = 0;
-double startTime,current_time;
+double startTime,current_time,prev_time;
 double tfinal,INTEGRATIONRATE,PRINTRATE;
 double LOGRATE;
 
@@ -116,6 +116,10 @@ int main(int argc,char** argv) {
   ///Initialize radio controlled input and output
   //These settings are defined in the Makefile using -D commands
   vehicle.rcio_init();
+  //?If running in AUTO mode you need to turn on the sensors
+  #ifdef AUTO
+  vehicle.err.initSensors(0); //0 for MPU and 1 for LSM
+  #endif
 
   //////////////////?WHEN INTEGRATING ON THE COMPUTER///////////////////
   /////////////////////A FEW MORE THINGS NEED TO HAPPEN///////////////
@@ -272,7 +276,7 @@ void runMainLoop() {
   //Kick off main while loop
   while (t < tfinal) {
 
-    /////////////UPDATE CURRENT TIME//////////////////////////////////
+    /////////////WAIT LOOP//////////////////////////////////
     #if defined (SIL) || (HIL)
     //Wait loop to make sure we run in realtime
     //Don't do in AUTO or SIMONLY because we want to run as fast as possible
@@ -292,12 +296,18 @@ void runMainLoop() {
     #endif
     ///////////////////////////////////////////////////////////////////
 
+    ///////////////////GET TIME ELAPSED################################
+    #ifdef AUTO
+    INTEGRATIONRATE = current_time - prev_time;
+    prev_time = current_time;
+    #endif
+
     //////////////////////Run the Main Vehicle Loop////////////////////
     //This polls the RC inputs and the controller. This will always run
     //when we're on the RPI but only in SIMONLY and SIL on the desktop
     #if defined (SIMONLY) || (SIL) || (RPI)
     //printf("Dynamics Loop \n");
-    vehicle.loop(t);
+    vehicle.loop(t,INTEGRATIONRATE);
     #endif
     ///////////////////////////////////////////////////////////////////
 
