@@ -196,7 +196,7 @@ void Dynamics::loop(double t,double dt) {
 
   ///////////////////////Call the Sensor Block////////////////////////
   #ifdef AUTO
-  err.readSensors(t); //this calls onboard sensors on the Navio
+  err.readSensors(t,dt); //this calls onboard sensors on the Navio
   #else
   //state.disp();
   err.readSensors(state,statedot); //this simulates sensors

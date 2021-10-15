@@ -269,7 +269,7 @@ void runMainLoop() {
   printf("Running in Real Time \n");
   startTime = timer.getTimeSinceStart();
   current_time = timer.getTimeSinceStart() - startTime;
-  PRINTRATE = 1.0;
+  PRINTRATE = 0.1;
   #endif
   ///////////////////////////////////////////////////////////////////////////////
 
@@ -403,8 +403,12 @@ void runMainLoop() {
       }
       #endif
       vehicle.printRC(-5); //the zero means just the sticks
-      printf(":::");
+      printf(" ::: ");
       vehicle.rcout.print(); //This prints the motor signals
+      printf(" ::: ");
+      for (int idx = 0;idx<3;idx++){
+	printf("%lf ",vehicle.err.errstate.get(4+idx,1));
+      }
       printf("\n");
       PRINT+=PRINTRATE;
       //PAUSE();
