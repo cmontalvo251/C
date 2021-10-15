@@ -52,11 +52,13 @@ FASTSim:
 
  ✔ Create the minimum viable rcout class for SIMONLY and SIL #@done (21-09-25 21:54) This was kind of easy because in SIMONLY and SIL mode the RCOutput does not do anything
 
- ☐ Run SIL on RPI - This mode should run in realtime but not with openGL
+ ✔ Run SIL on RPI - This mode should run in realtime but not with openGL #@done (21-10-15 11:25)
 
- ☐ Run SIMONLY only on RPI
+ ✔ Run SIMONLY only on RPI #@done (21-10-15 11:25)
 
- ☐ Finish writing sensor class for FASTsim
+ ✔ Finish writing sensor class for FASTsim #@done (21-10-15 11:26)
+
+  ☐ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly
 
  ☐ Run AUTO mode on RPI on IrisClone
 
@@ -69,24 +71,6 @@ FASTSim:
  ☐ Complete aerodynamics for Aircraft
 
  ☐ Complete the controller (PID) for the A/C
-
- ☐ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly
-
-BattleBot:
-
-  ☐ Create a CAD for the vehicle
-
-  ✔ Ground Contact Model #@done (21-09-13 16:48)
-
-  ✔ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment #@done (21-10-01 12:48)
-
-  ✔ Create a controller to feed transmitter commands to 2 wheels with differential #@done (21-10-01 12:48)
-
-  ✔ Run SIMONLY #@done (21-10-01 12:52)
-
-  ✔ Run SIL #@done (21-10-01 13:10)
-
-  ☐ Run AUTO mode on RPI for battle bot
 
 HIL:
 
@@ -276,6 +260,22 @@ You can also use mavlink to send and receive parameters (such as controller gain
 Most of this work was guided by this blog post (https://discuss.ardupilot.org/t/mavlink-and-arduino-step-by-step/25566) so I suggest at least a quick read of that will help the students out in understanding how everything fits together.  The parameter stuff was an internal development which I hope to get written up properly one day and into a blog post to more-widely share the technique.
 Hopefully that all helps and let me know if you have any other questions.  Good luck!
 matt
+
+BattleBot:
+
+  ✔ Create a CAD for the vehicle #@done (21-10-15 11:27)
+
+  ✔ Ground Contact Model #@done (21-09-13 16:48)
+
+  ✔ Create aerodynamics - I think the vehicle is so slow such that we don't need to worry about the forwards force but I do think we need a -k*v force in the Y direction also feed control signals to forces and moments. Also need -k*r in the yaw moment #@done (21-10-01 12:48)
+
+  ✔ Create a controller to feed transmitter commands to 2 wheels with differential #@done (21-10-01 12:48)
+
+  ✔ Run SIMONLY #@done (21-10-01 12:52)
+
+  ✔ Run SIL #@done (21-10-01 13:10)
+
+  ✔ Run AUTO mode on RPI for battle bot #@done (21-10-15 11:28)
 
 SIMPILOT:
 
