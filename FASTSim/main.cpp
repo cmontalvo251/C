@@ -312,7 +312,7 @@ void runMainLoop() {
     ///////////////////////////////////////////////////////////////////
 
     ////////////////LOG DATA////////////////////////
-    if (LOG<t) {
+    if (LOG<=t) {
       logvars.set(1,1,t);
       int ctr = 2;
       //Error States (Sensor Measurements) - Always on and always 12 states
