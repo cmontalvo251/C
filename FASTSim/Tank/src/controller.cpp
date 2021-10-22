@@ -25,7 +25,7 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 
 	double motor1_us = STICK_MID; //Left Motor
 	double motor2_us = STICK_MID; //Right Motor
-	double DIFFERENTIAL = 0.25;
+	double DIFFERENTIAL = 1.0;
 
 	//First extract the relavent commands from the receiver.
 	double aileron = rxcomms[1];
