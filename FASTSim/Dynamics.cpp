@@ -22,6 +22,7 @@ Dynamics::Dynamics() {
   FTOTALB.zeros(3,1,"Total Forces Body Frame");
   MTOTALI.zeros(3,1,"Total Moments Inertial Frame");
   MTOTALB.zeros(3,1,"Total Moments Body Frame");
+  MGNDB.zeros(3,1,"Ground Moments Body Frame");
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
@@ -306,8 +307,15 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   uvwdot.minus(FTOTALB,Kuvw_pqr); 
   k.vecset(8,10,uvwdot,1);
 
+  //Rotate Ground Contact Friction to Body
+  //env.MGNDI.disp();
+  ine2bod321.rotateInertial2Body(MGNDB,env.MGNDI);
+  //MGNDB.disp();
+  //PAUSE();
+
   //Moments vector
   MTOTALB.overwrite(aero.MAEROB);
+  MTOTALB.plus_eq(MGNDB);
 
   ///Rotational Dynamics
   //pqrskew = [0 -r q;r 0 -p;-q p 0];  
@@ -343,6 +351,7 @@ void environment::init(int G){
   GRAVITY_FLAG = G;
   FGRAVI.zeros(3,1,"FORCE OF GRAVITY INERTIAL");
   FGNDI.zeros(3,1,"Ground Forces Inertial Frame");
+  MGNDI.zeros(3,1,"Ground Moments Inertial Frame");
 }
 
 void environment::gravitymodel() {
@@ -362,11 +371,19 @@ void environment::groundcontactmodel(MATLAB State,MATLAB k) {
   double zdot = k.get(3,1);
   double u = State.get(8,1);
   double v = State.get(9,1);
+  double r = State.get(13,1);
+  double N = mass*GRAVITYSI;
   if ((z > 0)) {
-    double N = mass*GRAVITYSI;
     FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
     FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
     FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
+  } else {
+    FGNDI.mult_eq(0);
+  }
+  if (abs(r)>0.01) {
+    MGNDI.set(3,1,-0.0001*N*GNDSTIFF*sat(r,0.01,1.0));
+  } else {
+    MGNDI.mult_eq(0);
   }
 }
 

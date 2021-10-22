@@ -32,7 +32,7 @@ class environment {
   int GRAVITY_FLAG;
   double mass;
  public:
-   MATLAB FGRAVI,FGNDI;
+   MATLAB FGRAVI,FGNDI,MGNDI;
    void init(int G);
    void gravitymodel();
    void groundcontactmodel(MATLAB,MATLAB);
@@ -43,7 +43,7 @@ class environment {
 class Dynamics {
  private:
   //Private functions and vars
-  MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,MTOTALI,MTOTALB;
+  MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,MGNDB,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
   MATLAB actuatorState,actuatorStatedot,actuatorErrorPercentage;
   MATLAB actuatorTimeConstants;

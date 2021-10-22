@@ -72,6 +72,8 @@ FASTSim:
 
  ☐ Complete the controller (PID) for the A/C
 
+ ☐ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY
+
 HIL:
 
   ☐ Create a script that sends data back and forth

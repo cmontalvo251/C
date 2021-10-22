@@ -32,7 +32,7 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	if (AERODYNAMICS_FLAG == 1) {
         //Friction Parameters
         double DAMPCOEFF = 50.0; //Guess and Check (y-direction)
-		double DAMPROTCOEFF = 5.0; //Guess and Check (yaw)
+		double DAMPROTCOEFF = 10.0; //Guess and Check (yaw)
 		double d = 0.13335; //(m) - From wheel to center
 		double force1;
 		double force2;
