@@ -34,9 +34,10 @@ void sensors::readSensors(double time,double dt) {
   ///Read the IMU (ptp,pqr)
   double s = 0.0; //0 for no filtering and 1.0 for overfiltering
   orientation.loop(dt,s);
-  //Later we can do the following
-  //satellites.poll(time,0);
-  //satellites.latitude/longitude/altitude - convertGPS2XY() and computeSpeed(double)
+  //Read the GPS
+  satellites.poll(time,1); //This will compute XYZ as well. For now we are using 
+  //hardcoded GPS coordinates
+
   //barotemp.poll(time);
   //analog.get_results();
   //barotemp.pressure
@@ -54,7 +55,9 @@ void sensors::readSensors(double time,double dt) {
   errstatedot.plus_eq(-99);
 
   ///XYZ
-  //errstate
+  errstate.set(1,1,satellites.X);
+  errstate.set(2,1,satellites.Y);
+  errstate.set(3,1,satellites.Z);
 
   //PTP
   errstate.set(4,1,orientation.roll);
@@ -62,13 +65,18 @@ void sensors::readSensors(double time,double dt) {
   errstate.set(6,1,orientation.yaw);
 
   //UWV
+  //Assume that the vehicle is traveling straight so V and W are zero
+  errstate.set(7,1,satellites.speed);
+  errstate.set(8,1,0);
+  errstate.set(9,1,0);
 
   //PQR
   errstate.set(10,1,orientation.roll_rate);
   errstate.set(11,1,orientation.pitch_rate);
   errstate.set(12,1,orientation.yaw_rate);
 
-  //XYZDOT
+  //XYZDOT - Probably would need to run the GPS coordinates through a derivative
+  //filter. If we really need these I can get them. 
   //???
 
   //PTPDOT
