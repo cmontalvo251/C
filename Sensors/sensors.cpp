@@ -167,9 +167,9 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
   	orientation.gz = -pqr.get(3,1)*PI/180.0;
 		orientation.filter();
 		//After we run the filter we just grab g*_filtered
-		pqr.set(1,1,orientation.gx_filtered);
-		pqr.set(1,1,orientation.gy_filtered);
-		pqr.set(1,1,orientation.gz_filtered);
+		pqr.set(1,1,orientation.roll_rate);
+		pqr.set(2,1,orientation.pitch_rate);
+		pqr.set(3,1,orientation.yaw_rate);
 	}
 
 	//printf("PTP AFTER ERRORS \n");
