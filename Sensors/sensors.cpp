@@ -32,8 +32,8 @@ void sensors::readSensors(double time,double dt) {
   ///////////////////?FIRST POLL ALL SENSORS////////////////////////
   
   ///Read the IMU (ptp,pqr)
-  double s = 0.0; //0 for no filtering and 1.0 for overfiltering
-  orientation.loop(dt,s);
+  orientation.FilterConstant = 0.0; //0 for no filtering and 1.0 for overfiltering
+  orientation.loop(dt); 
   //Read the GPS
   satellites.poll(time,1); //This will compute XYZ as well. For now we are using 
   //hardcoded GPS coordinates
@@ -147,6 +147,29 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 			polluted = original + bias + noise;
 			pqr.set(idx,1,polluted);
 		}
+
+		//So right here if we ADD_ERRORS I'm assuming we are going to run these
+		//through the IMU filter. Which is why I want the IMU filter to be it's own 
+		//function
+		orientation.FilterConstant = 0.0;
+		//Because of the way the filter works though we need to set a few things up
+	  //gx_filtered = gx_filtered*s + (1-s)*gy*RAD2DEG;
+  	//gy_filtered = gy_filtered*s + (1-s)*gx*RAD2DEG;
+  	//gz_filtered = gz_filtered*s + (1-s)*(-gz)*RAD2DEG;
+  	//roll_rate = gx_filtered; //NOTICE THAT I PUT RAD2DEG UP THERE
+  	//pitch_rate = gy_filtered; //THIS IS SO RPY IS IN DEG AND PQR
+  	//yaw_rate = gz_filtered; //IS IN DEG/S
+  	//So gy is the roll rate in rad/s
+  	orientation.gy = pqr.get(1,1)*PI/180.0;
+  	//gx is the pitch rate
+  	orientation.gx = pqr.get(2,1)*PI/180.0;
+  	//gz is the yaw rate but negative
+  	orientation.gz = -pqr.get(3,1)*PI/180.0;
+		orientation.filter();
+		//After we run the filter we just grab g*_filtered
+		pqr.set(1,1,orientation.gx_filtered);
+		pqr.set(1,1,orientation.gy_filtered);
+		pqr.set(1,1,orientation.gz_filtered);
 	}
 
 	//printf("PTP AFTER ERRORS \n");
