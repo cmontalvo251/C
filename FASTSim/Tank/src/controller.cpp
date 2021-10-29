@@ -30,6 +30,7 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 	//First extract the relavent commands from the receiver.
 	double aileron = rxcomms[1];
 	double elevator = rxcomms[2];
+	//printf("Elevator = %lf \n",elevator);
 	double autopilot = rxcomms[4];
 
 	//Determine if the user wants the controller on or not

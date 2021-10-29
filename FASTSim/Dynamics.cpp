@@ -300,6 +300,12 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   //env.FGRAVI.disp();
   FTOTALB.plus_eq(aero.FAEROB);
   FTOTALB.plus_eq(FGNDB);
+  //aero.FAEROB.disp();
+  //FGNDB.disp();
+  //FTOTALB.disp();  
+  //if (FTOTALB.get(1,1) > 0) {
+  //  PAUSE();
+  //}
 
   //Translational Dynamics
   Kuvw_pqr.cross(pqr,cgdotB);
@@ -377,11 +383,11 @@ void environment::groundcontactmodel(MATLAB State,MATLAB k) {
     FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
     FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
     FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
-    if (abs(r)>0.01) {
-      MGNDI.set(3,1,-0.0001*N*GNDSTIFF*sat(r,0.01,1.0));
-    } else {
+    //if (abs(r)>0.01) {
+    //  MGNDI.set(3,1,-0.0001*N*GNDSTIFF*sat(r,0.01,1.0));
+    //} else {
       MGNDI.mult_eq(0);
-    } 
+    //} 
   } else {
     FGNDI.mult_eq(0);
   }

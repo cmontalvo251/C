@@ -51,23 +51,30 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double q = state.get(12,1);
 		double r = state.get(13,1);
 
-		//Total Velocity
-		double V = sqrt(u*u + v*v + w*w);
-
 		//Calculate Forces
-		if (abs(V) > Vmax){
-		  force1 = 0.0;
-		  force2 = 0.0;
-		} else{
-		  double kt = 0.1;
-  		  if (V < 0) {
-		  	V = -V;
-		  }
-		  double vf = 1.0-V/Vmax;
-		  force1 = -vf*kt*fabs(motor1_US-STICK_MID)*(motor1_US-STICK_MID); //Need to find equation by plotting microsec vs force
-		  force2 = vf*kt*fabs(motor2_US-STICK_MID)*(motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		double kt = 4e-4;
+		force1 = -kt*fabs(motor1_US-STICK_MID)*(motor1_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		force2 = kt*fabs(motor2_US-STICK_MID)*(motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		//printf("forces before = %lf %lf \n",force1,force2);
+
+		double vf=1.0;
+		//First check and see if the user is trying to accelerate and moving forward
+		if ((u > 0) && (force1+force2 > 0)) {
+			vf = 1-u/Vmax;
 		}
-		//printf("forces = %lf %lf \n",force1,force2);
+		if ((u < 0) && (force1 + force2 < 0)) {
+			vf = 1+u/Vmax;
+		}
+
+		if (vf < 0) {
+			force1 = 0.0;
+			force2 = 0.0;
+		} else {
+			force1 *= vf;
+			force2 *= vf;
+		}
+
+		//printf("forces after = %lf %lf \n",force1,force2);
 		double xforce = force1 + force2;
 		double yforce = -DAMPCOEFF*v;
 

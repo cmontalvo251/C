@@ -395,6 +395,8 @@ void runMainLoop() {
     #endif
 
     /////////////////Print to STDOUT////////////////
+    //vehicle.printRC(-5);
+    //printf("\n");
     if (PRINT<t) {
       printf("%lf ",t);
       #ifdef RK4_H
