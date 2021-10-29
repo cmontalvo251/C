@@ -19,33 +19,43 @@ aerodynamics::aerodynamics() {
 	torque_motors.zeros(4,1,"Torque Motors");
 
 	//Quadcopter Aerodynamic Parameters
+	double thrust_max = 0.4*GEARTH; //kilograms * gravity
+ 	//Rotor Size
+	Rrotor = (9.5/12.0)/(2*3.28); //9.5 inch props to meters
+	//Area
+	AREA = PI*pow(Rrotor,2.0);  //m^2
+	//Battery Size
+	double Voltage = 3.7*4; //4 Cell
+	//KV Rating
+	double KV = 950.0;
+	//angular velocity is
+  	double omegaRPM = KV*Voltage;
+  	double omegarads = omegaRPM*2.0*PI/180.0;
+  	spin_slope = omegarads/(STICK_MAX-STICK_MIN);
+  	//printf("omegarads = %lf \n",omegarads);
+
 	//These come from data sheets
   	//at a signal of
-  	double pwm_datapt = STICK_MID;
+  	//double pwm_datapt = STICK_MID;
   	//thrust is
-  	double Tdatapt = 0.735*GEARTH/4.0; //Newtons to kg to lbf
-  	//angular velocity is
-  	double omegaRPMdatapt = 3500.0;
-  	//Rotor Size
-	Rrotor = (5.0/12.0)/3.28; //5 inch props to meters
-
+  	//double Tdatapt = 0.735*GEARTH/4.0; //Newtons to kg to lbf
+  	
 	//Compute Kt
-  	double dpwm = pwm_datapt - STICK_MIN;
-  	kt = Tdatapt/(dpwm*dpwm);
+  	//double dpwm = pwm_datapt - STICK_MIN;
+  	//kt = Tdatapt/(dpwm*dpwm);
   
   	//Angular Velocity computation
-  	double a = (omegaRPMdatapt*2*PI/60.0)/dpwm;
-
-  	//Constants
-  	double A = PI*pow(Rrotor,2.0);  //m^2
+  	//double a = (omegaRPMdatapt*2*PI/60.0)/dpwm;
 
   	//Compute ct and cq
-	ct = kt/(RHOSLSI*A*pow(Rrotor*a,2.0)); //.0335
-    cq = sqrt(pow(ct,3.0)/2.0); 
+	ct = thrust_max/(0.5*RHOSLSI*AREA*pow(Rrotor*omegarads,2.0)); //.0335
+    cq = pow(ct,3.0/2.0)/sqrt(2.0); 
+    //printf("CT/CQ = %lf/%lf \n",ct,cq);
+    //PAUSE();
 
     //Distance from Cg to rotor
-    rx = (3.0/12.0)/3.28; //meters
-    ry = (3.0/12.0)/3.28; 
+    rx = (9.0/12.0)/3.28; //meters
+    ry = (9.0/12.0)/3.28; 
     rz = 0.0;
 }
 
@@ -59,10 +69,14 @@ void aerodynamics::setup(MATLAB var) {
 
 void aerodynamics::compute_thrust_and_torque(MATLAB ctlcomms) {
 	for (int i = 1;i<=4;i++) {
-		double thrust = kt*pow((ctlcomms.get(i,1) - STICK_MIN),2.0);
+		double omega = spin_slope*(ctlcomms.get(i,1) - STICK_MIN);
+		double thrust = 0.5*RHOSLSI*AREA*pow(omega*Rrotor,2.0)*ct;
+		double torque = 0.5*RHOSLSI*AREA*pow(omega*Rrotor,2.0)*Rrotor*cq;
 		thrust_motors.set(i,1,thrust);
-		torque_motors.set(i,1,thrust*Rrotor*cq/ct);
+		torque_motors.set(i,1,torque);
 	}
+	//thrust_motors.disp();
+	//torque_motors.disp();
 }
 
 void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB ctlcomms) {
@@ -81,8 +95,8 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 
 	//Torque is a bit more complex
 	//First we add up all the torques in a specific way
-	double aero_torque = torque_motors.get(1,1) - torque_motors.get(2,1) - torque_motors.get(3,1) + torque_motors.get(4,1);
-	MAEROB.set(3,1,aero_torque);
+	double yaw_torque = torque_motors.get(1,1) - torque_motors.get(2,1) - torque_motors.get(3,1) + torque_motors.get(4,1);
+	MAEROB.set(3,1,yaw_torque);
 
 	//Then we extract the four forces
     //From the controller - us signals

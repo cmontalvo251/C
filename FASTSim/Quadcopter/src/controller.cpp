@@ -71,6 +71,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double dpitch = kp*(pitch-pitch_command) + kd*(pitch_rate);
 		dpitch = CONSTRAIN(dpitch,-500,500);
 		double dyaw = kyaw*(yaw_rate-yaw_rate_command);
+		//printf("YAW RATE = %lf YAW RATE COMMAND = %lf DYAW = %lf \n",yaw_rate,yaw_rate_command,dyaw);
 		dyaw = CONSTRAIN(dyaw,-500,500);
 		//printf("d = %lf %lf %lf ",droll,dpitch,dyaw);
 		//printf(" Roll Command = %lf ",roll_command);

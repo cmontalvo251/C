@@ -33,16 +33,16 @@ OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
 #RCTECH - USB Controller in FASTLab
 #XBOX - USB XBOX controller at home
 #FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
-#CONTROLLER=-DXBOX
-CONTROLLER=-DRCTECH
+CONTROLLER=-DXBOX
+#CONTROLLER=-DRCTECH
 #CONTROLLER=-DFLYSKY
 ############################################################
 
 #########WHAT MODEL DO YOU WANT??##############
 #This needs to point to a source folder with aerodynamics.* and controller.*
 #MODELPATH=PortalCube/src
-#MODELPATH=Quadcopter/src
-MODELPATH=Tank/src
+MODELPATH=Quadcopter/src
+#MODELPATH=Tank/src
 ###########################################
 
 #####################WHERE IS HIL LOCATED?#####################

@@ -398,16 +398,16 @@ void runMainLoop() {
     if (PRINT<t) {
       printf("%lf ",t);
       #ifdef RK4_H
-      for (int i = 0;i<integrator.NUMVARS;i++) {
-        printf("%lf ",integrator.State.get(i+1,1));
-      }
+      //for (int i = 0;i<integrator.NUMVARS;i++) {
+        //printf("%lf ",integrator.State.get(i+1,1));
+      //}
       #endif
       vehicle.printRC(-5); //the zero means just the sticks
       printf(" ::: ");
       vehicle.rcout.print(); //This prints the motor signals
       printf(" ::: ");
       for (int idx = 0;idx<3;idx++){
-	printf("%lf ",vehicle.err.errstate.get(4+idx,1));
+        printf("%lf ",vehicle.err.errstate.get(4+idx,1));
       }
       printf("\n");
       PRINT+=PRINTRATE;
