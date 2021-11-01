@@ -32,7 +32,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 
 	//First extract the relavent commands from the receiver.
 	//for (int i = 0;i<4;i++) {
-		//printf("%d ",rxcomms[i]);
+	//	printf("%d ",rxcomms[i]);
 	//}
 	//printf("\n");
 	double throttle = rxcomms[0];
