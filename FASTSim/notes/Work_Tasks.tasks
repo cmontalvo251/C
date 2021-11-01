@@ -23,8 +23,8 @@ FASTSim SysML:
 RENDERING:
 
   ☐ Create CAD for all vehicles you are using
-    ✔ Car (Tank) @done (21-10-29 23:37)
-    ☐ Plane
+    ✔ Car (Tank) #@done (21-10-29 23:37)
+    ✔ Plane #@done (21-10-31 22:13)
     ✔ Quad #@done (21-09-30 20:40)
     ☐ X8
 
@@ -72,9 +72,9 @@ FASTSim:
 
  ☐ Complete the PID controller for the X8
 
- ☐ Complete aerodynamics for Aircraft
+ ✔ Complete aerodynamics for Aircraft #@done (21-10-31 22:14)
 
- ☐ Complete the controller (PID) for the A/C
+ ✔ Complete the controller (PID) for the A/C #@done (21-10-31 22:14)
 
  ☐ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY
 
