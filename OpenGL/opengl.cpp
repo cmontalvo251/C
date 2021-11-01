@@ -132,7 +132,8 @@ void OPENGL::loop(int argc,char** argv,char fileroot[],int inFarplane,int inWidt
                 error(err);
               }
 		          getline(file,input);
-		          state.positionscale.set(ii+1,1,atof(input.c_str()));
+              double scale = atof(input.c_str());
+		          state.positionscale.set(ii+1,1,scale);
 		          printf("Position Scale Factor = %lf \n",state.positionscale.get(ii+1,1));
             }
         } else {
@@ -365,7 +366,7 @@ void StateHistory::UpdateRender(double time,MATLAB cgin,MATLAB ptpin,int objectn
   
   statemutex.lock();
   for (int idx = 1;idx<=3;idx++) {
-    cg.set(idx,objectnumber,cgin.get(idx,1));
+    cg.set(idx,objectnumber,positionscale.get(objectnumber,1)*cgin.get(idx,1));
     ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
   statemutex.unlock();
@@ -381,8 +382,6 @@ double StateHistory::getTime()
 {
   return simtime_;
 }
-
-
 
 /////////////////CAMERA CONTROL////////////////
 

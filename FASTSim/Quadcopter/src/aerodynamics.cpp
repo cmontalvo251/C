@@ -29,34 +29,34 @@ aerodynamics::aerodynamics() {
 	//KV Rating
 	double KV = 950.0;
 	//angular velocity is
-  	double omegaRPM = KV*Voltage;
-  	double omegarads = omegaRPM*2.0*PI/180.0;
-  	spin_slope = omegarads/(STICK_MAX-STICK_MIN);
-  	//printf("omegarads = %lf \n",omegarads);
+  double omegaRPM = KV*Voltage;
+  double omegarads = omegaRPM*2.0*PI/180.0;
+  spin_slope = omegarads/(STICK_MAX-STICK_MIN);
+  //printf("omegarads = %lf \n",omegarads);
 
 	//These come from data sheets
-  	//at a signal of
-  	//double pwm_datapt = STICK_MID;
-  	//thrust is
-  	//double Tdatapt = 0.735*GEARTH/4.0; //Newtons to kg to lbf
+  //at a signal of
+  //double pwm_datapt = STICK_MID;
+  //thrust is
+  //double Tdatapt = 0.735*GEARTH/4.0; //Newtons to kg to lbf
   	
 	//Compute Kt
-  	//double dpwm = pwm_datapt - STICK_MIN;
-  	//kt = Tdatapt/(dpwm*dpwm);
+  //double dpwm = pwm_datapt - STICK_MIN;
+  //kt = Tdatapt/(dpwm*dpwm);
   
-  	//Angular Velocity computation
-  	//double a = (omegaRPMdatapt*2*PI/60.0)/dpwm;
+  //Angular Velocity computation
+  //double a = (omegaRPMdatapt*2*PI/60.0)/dpwm;
 
-  	//Compute ct and cq
+  //Compute ct and cq
 	ct = thrust_max/(0.5*RHOSLSI*AREA*pow(Rrotor*omegarads,2.0)); //.0335
-    cq = pow(ct,3.0/2.0)/sqrt(2.0); 
-    //printf("CT/CQ = %lf/%lf \n",ct,cq);
-    //PAUSE();
+  cq = pow(ct,3.0/2.0)/sqrt(2.0); 
+  //printf("CT/CQ = %lf/%lf \n",ct,cq);
+  //PAUSE();
 
-    //Distance from Cg to rotor
-    rx = (9.0/12.0)/3.28; //meters
-    ry = (9.0/12.0)/3.28; 
-    rz = 0.0;
+  //Distance from Cg to rotor
+  rx = (9.0/12.0)/3.28; //meters
+  ry = (9.0/12.0)/3.28; 
+  rz = 0.0;
 }
 
 void aerodynamics::setup(MATLAB var) {

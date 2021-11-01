@@ -42,7 +42,8 @@ CONTROLLER=-DXBOX
 #This needs to point to a source folder with aerodynamics.* and controller.*
 #MODELPATH=PortalCube/src
 #MODELPATH=Quadcopter/src
-MODELPATH=Tank/src
+#MODELPATH=Tank/src
+MODELPATH=Airplane/src
 ###########################################
 
 #####################WHERE IS HIL LOCATED?#####################
