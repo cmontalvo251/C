@@ -2,8 +2,8 @@
 3  		     	!Number of objects in window 
 10				!Camera Offset Z axis
 Tank/objects/tank.obj 	!First Object file - No spaces allowed!!
-50.0000  	    !Scale Factor of Object
-1.000000		!Scale Factor of Position
+25.0000  	    !Scale Factor of Object
+8.000000		!Scale Factor of Position
 static_objects/sky/skydome.obj 	!Second Object file - This is the skydome
 100.000000  	        !Scale Factor of Object
 1.000000  	        !Scale Factor of Position

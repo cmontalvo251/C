@@ -31,12 +31,13 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 
 	if (AERODYNAMICS_FLAG == 1) {
         //Friction Parameters
+        double XDAMPCOEFF = 2.864;
         double DAMPCOEFF = 50.0; //Guess and Check (y-direction)
-		double DAMPROTCOEFF = 10.0; //Guess and Check (yaw)
+		double DAMPROTCOEFF = 1.0; //Guess and Check (yaw)
 		double d = 0.13335; //(m) - From wheel to center
 		double force1;
 		double force2;
-		double Vmax = 20.0; //(m/s) Need to find the max speed of the tank
+		double Vmax = 1.0; //(m/s) Need to find the max speed of the tank
 		
 		//Extract Actuator Values
 		//Remember that control is in PWM (us)
@@ -44,7 +45,10 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double motor2_US = ctlcomms.get(2,1);
 
 		//Extract States
+		double x = state.get(1,1);
+		printf("x = %lf \n",x);
 		double u = state.get(8,1);
+		//printf("u = %lf \n",u);
 		double v = state.get(9,1);
 		double w = state.get(10,1);
 		double p = state.get(11,1);
@@ -52,12 +56,15 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double r = state.get(13,1);
 
 		//Calculate Forces
-		double kt = 4e-4;
-		force1 = -kt*fabs(motor1_US-STICK_MID)*(motor1_US-STICK_MID); //Need to find equation by plotting microsec vs force
-		force2 = kt*fabs(motor2_US-STICK_MID)*(motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		double force_max = (((1.7)/2.2)*9.81)/2.0;
+		double s = 0.007681;
+		double dpwm1 = (motor1_US-STICK_MID);
+		double dpwm2 = (motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
+		force1 = -copysign(1.0,dpwm1)*force_max*(1-exp(-s*fabs(dpwm1)));
+		force2 = copysign(1.0,dpwm2)*force_max*(1-exp(-s*fabs(dpwm2)));
 		//printf("forces before = %lf %lf \n",force1,force2);
 
-		double vf=1.0;
+		/*double vf=1.0;
 		//First check and see if the user is trying to accelerate and moving forward
 		if ((u > 0) && (force1+force2 > 0)) {
 			vf = 1-u/Vmax;
@@ -72,10 +79,10 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		} else {
 			force1 *= vf;
 			force2 *= vf;
-		}
+		}*/
 
 		//printf("forces after = %lf %lf \n",force1,force2);
-		double xforce = force1 + force2;
+		double xforce = force1 + force2 - XDAMPCOEFF*u;
 		double yforce = -DAMPCOEFF*v;
 
 		//Calculate Moments

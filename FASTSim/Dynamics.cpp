@@ -391,5 +391,6 @@ void environment::groundcontactmodel(MATLAB State,MATLAB k) {
   } else {
     FGNDI.mult_eq(0);
   }
+  //FGNDI.disp();
 }
 

@@ -1,4 +1,4 @@
-20.0	!Initial X Position (m) ///Sixdof Model with quaternions
+2.0	!Initial X Position (m) ///Sixdof Model with quaternions
 0.0	!Initial Y Position (m)
 0.0	!Initial Z Position (m)
 1.0	!Quaternion 0
