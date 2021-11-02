@@ -8,8 +8,8 @@ CPPDIR=../
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-#EXETYPE=-DSIMONLY
-EXETYPE=-DSIL
+EXETYPE=-DSIMONLY
+#EXETYPE=-DSIL
 #EXETYPE=-DAUTO
 #############################################################
 
@@ -48,8 +48,8 @@ MODELPATH=Tank/src
 
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-#HPATH=/home/carlos/Git_Repos/Github/HIL
-HPATH=/home/carlos/Files/Git_Repos/Github/HIL
+HPATH=/home/carlos/Git_Repos/Github/HIL
+#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 #HPATH=/home/pi/HIL
 ##########################################################
 

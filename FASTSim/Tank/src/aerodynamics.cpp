@@ -31,7 +31,7 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 
 	if (AERODYNAMICS_FLAG == 1) {
         //Friction Parameters
-        double XDAMPCOEFF = 2.864;
+        double XDAMPCOEFF = 7.26;
         double DAMPCOEFF = 50.0; //Guess and Check (y-direction)
 		double DAMPROTCOEFF = 1.0; //Guess and Check (yaw)
 		double d = 0.13335; //(m) - From wheel to center
@@ -46,7 +46,7 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 
 		//Extract States
 		double x = state.get(1,1);
-		printf("x = %lf \n",x);
+		//printf("x = %lf \n",x);
 		double u = state.get(8,1);
 		//printf("u = %lf \n",u);
 		double v = state.get(9,1);
@@ -56,8 +56,10 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 		double r = state.get(13,1);
 
 		//Calculate Forces
-		double force_max = (((1.7)/2.2)*9.81)/2.0;
+		double force_max = (((1.7)/2.2)*9.81 + 4.454)/2.0;
 		double s = 0.007681;
+		//motor1_US = STICK_MAX;
+		//motor2_US = STICK_MAX;
 		double dpwm1 = (motor1_US-STICK_MID);
 		double dpwm2 = (motor2_US-STICK_MID); //Need to find equation by plotting microsec vs force
 		force1 = -copysign(1.0,dpwm1)*force_max*(1-exp(-s*fabs(dpwm1)));
