@@ -1,0 +1,19 @@
+0.0 !Actuator Error Percent (ACTUATOR_FLAG must be set in Simulation_Flags.txt)
+8	!Number of Actuators to Simulate (Must be the same as control signals)
+0.1	!Settling Time (sec) of first actuator
+0.1	!Settling Time (sec) of 2 actuator
+0.1	!Settling Time (sec) of 3 actuator
+0.1	!Settling Time (sec) of 4 actuator
+0.1 	!5 
+0.1	!6
+0.1	!7
+0.1	!8
+1500.0    !Initial Condition of Actuator 1 (Throttle)
+1500.0    !Initial Condition of Actuator 2 (Aileron)
+1500.0    !Initial Condition of Actuator 3 (Elevator)
+1500.0    !Initial Condition of Actuator 4 (Rudder)
+1500.0	  !Motor5
+1500.0	  !Motor6
+1500.0	  !Motor7
+1500.0	  !Motor8
+

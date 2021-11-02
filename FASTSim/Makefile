@@ -8,8 +8,8 @@ CPPDIR=../
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIMONLY
-#EXETYPE=-DSIL
+#EXETYPE=-DSIMONLY
+EXETYPE=-DSIL
 #EXETYPE=-DAUTO
 #############################################################
 
@@ -33,8 +33,8 @@ OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
 #RCTECH - USB Controller in FASTLab
 #XBOX - USB XBOX controller at home
 #FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
-#CONTROLLER=-DXBOX
-CONTROLLER=-DRCTECH
+CONTROLLER=-DXBOX
+#CONTROLLER=-DRCTECH
 #CONTROLLER=-DFLYSKY
 ############################################################
 
@@ -42,7 +42,8 @@ CONTROLLER=-DRCTECH
 #This needs to point to a source folder with aerodynamics.* and controller.*
 #MODELPATH=PortalCube/src
 #MODELPATH=Quadcopter/src
-MODELPATH=Tank/src
+#MODELPATH=Tank/src
+MODELPATH=X8/src
 #MODELPATH=Airplane/src
 ###########################################
 

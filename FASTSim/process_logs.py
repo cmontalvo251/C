@@ -10,7 +10,9 @@ import numpy as np
 
 #MODELPATH='PortalCube/'
 #MODELPATH='Quadcopter/'
-MODELPATH='Tank/'
+#MODELPATH='Tank/'
+#MODELPATH='Airplane/'
+MODELPATH='X8/'
 PLOTEVERYTHING = 0
 
 try:
