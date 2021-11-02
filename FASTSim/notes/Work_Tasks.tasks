@@ -68,9 +68,9 @@ FASTSim:
 
  ☐ Add telemetry to send data to ground station
 
- ☐ Complete aerodynamics for X8
+ ✔ Complete aerodynamics for X8 @done (21-11-02 16:04)
 
- ☐ Complete the PID controller for the X8
+ ✔ Complete the PID controller for the X8 @done (21-11-02 16:04)
 
  ✔ Complete aerodynamics for Aircraft #@done (21-10-31 22:14)
 
