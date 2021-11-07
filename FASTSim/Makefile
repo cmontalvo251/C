@@ -1,51 +1,5 @@
-#DO NOT CHANGE THIS
-CPPDIR=../
-
-##############CHANGE EVERYTHING BELOW HERE####################
-
-###############WHAT SIMULATION TYPE DO YOU WANT###############
-#SIMONLY - this as fast as possible to generate plots
-#SIL - this is software in the loop running in realtime
-#HIL - this is in real time and also requires Serial communication betwee desktop and computer
-#AUTO - this is no simulation at all and will run on control board
-EXETYPE=-DSIMONLY
-#EXETYPE=-DSIL
-#EXETYPE=-DAUTO
-#############################################################
-
-#################WHAT HARDWARE ARE YOU RUNNING ON#############
-#DESKTOP - running on a laptop or desktop macine
-#RPI - running on a raspbery pi 
-#ARDUINO - running on an arduino (may require a separate ino)
-HARDWARE=-DDESKTOP
-#HARDWARE=-DRPI
-###########################################################
-
-###################RENDER????########################
-#Either OpenGL or nothing
-#RENDER=
-#OPENGLSOURCES=
-RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
-OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
-################################################################
-
-###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
-#RCTECH - USB Controller in FASTLab
-#XBOX - USB XBOX controller at home
-#FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
-CONTROLLER=-DXBOX
-#CONTROLLER=-DRCTECH
-#CONTROLLER=-DFLYSKY
-############################################################
-
-#########WHAT MODEL DO YOU WANT??##############
-#This needs to point to a source folder with aerodynamics.* and controller.*
-#MODELPATH=PortalCube/src
-#MODELPATH=Quadcopter/src
-#MODELPATH=Tank/src
-#MODELPATH=X8/src
-MODELPATH=Airplane/src
-###########################################
+#############UNCOMMENT HPATH, ARGS and MODEL IF YOU WANT TO DO 
+##############THIS THE OLD FASHIONED WAY
 
 #####################WHERE IS HIL LOCATED?#####################
 #HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
@@ -53,6 +7,49 @@ HPATH=/home/carlos/Git_Repos/Github/HIL
 #HPATH=/home/carlos/Files/Git_Repos/Github/HIL
 #HPATH=/home/pi/HIL
 ##########################################################
+
+#########WHAT MODEL DO YOU WANT??##############
+#This needs to point to a source folder with aerodynamics.* and controller.*
+#MODEL=PortalCube
+#MODEL=Quadcopter
+MODEL=Tank
+#MODEL=X8
+#MODEL=Airplane
+###########################################
+
+#####################ARGS#######################
+ARGS=-DRCTECH -DDESKTOP -DSIL
+
+###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
+#RCTECH - USB Controller in FASTLab
+#XBOX - USB XBOX controller at home
+#FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
+############################################################
+
+#################WHAT HARDWARE ARE YOU RUNNING ON#############
+#DESKTOP - running on a laptop or desktop macine
+#RPI - running on a raspbery pi 
+#ARDUINO - running on an arduino (may require a separate ino)
+###########################################################
+
+###############WHAT SIMULATION TYPE DO YOU WANT###############
+#SIMONLY - this as fast as possible to generate plots
+#SIL - this is software in the loop running in realtime
+#HIL - this is in real time and also requires Serial communication betwee desktop and computer
+#AUTO - this is no simulation at all and will run on control board
+#############################################################
+
+######DO NOT CHANGE THIS
+CPPDIR=../
+########################
+
+###################RENDER????#################################
+#Either OpenGL or nothing
+#RENDER=
+#OPENGLSOURCES=
+RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
+################################################################
 
 #################DO NOT CHANGE ANYTHING BELOW HERE###########
 
@@ -68,6 +65,7 @@ HPATH=/home/carlos/Git_Repos/Github/HIL
 
 CC=g++
 EXECUTABLE=FASTSim.exe
+MODELPATH=$(MODEL)/src
 CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/RK4/RK4.cpp)
 IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
 GPSSOURCES=$(wildcard ${HPATH}/GPS/*.cpp)
@@ -84,12 +82,11 @@ LIB=-L/usr/local/lib
 INCLUDE=-I${MODELPATH} -I../ -I${HPATH}
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
-
 all: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 .cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(CONTROLLER) $(HARDWARE) $(EXETYPE) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(ARGS) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 clean:
 	echo ' ' > logs/d.txt
 	rm logs/*.txt
@@ -129,3 +126,19 @@ clean:
 rebuild:
 	make clean
 	make
+what:
+	##########FROM NOW ON RUN YOUR MAKE FILE LIKE THIS###
+	# For AUTO Mode on Pi for Airplane
+	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL"
+	# For SIMONLY on Desktop for Tank
+	# make rebuild ARGS="-DRCTECT -DDESKTOP -DSIMONLY" MODEL="Tank" HPATH="/home/carlos/Git_Repos/HIL"
+	# Your choices for models are:
+	# PortalCube
+	# Airplane
+	# Quadcopter
+	# Tank 
+	# X8
+	# Note you can always default back to just
+	# make rebuild
+	# provided you set ARGS, MODEL, and HPATH on the first 3 lines of code
+	####################################################

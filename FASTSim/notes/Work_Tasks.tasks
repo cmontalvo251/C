@@ -66,7 +66,7 @@ FASTSim:
 
  ✔ Complete the controller (PID) for the A/C #@done (21-10-31 22:14)
 
- ☐ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY
+ ✔ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY #@done (21-11-07 03:58)
 
  ☐ Add Keyboard inputs to RCIO so that you can control things with a keyboard
 
