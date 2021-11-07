@@ -17,6 +17,9 @@ private:
 	GPS satellites;
 	IMU orientation;
 	ADC analog;
+	double gps_heading=-99;
+	double IMUbias = 0;
+	double compassFilterConstant = 0.2;
 public:
 	Rotation3 ine2bod321;
 	MATLAB ptp,ptpdot,latlonalt,pqr,q0123,xyz,uvw,errstate,errstatedot,pqrdot;
@@ -31,7 +34,8 @@ public:
 	void readSensors(MATLAB state,MATLAB statedot,double time); //overloaded function for onboard sensors
 	void initSensorErr(MATLAB sensordata);
 	void initSensors(int);
-	void getCompassHeading(double,double);
+	void computeCompassHeading(double,double);
+	double getHeading();
 	//constructor
 	sensors();
 };

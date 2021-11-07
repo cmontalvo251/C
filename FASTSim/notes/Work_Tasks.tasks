@@ -50,9 +50,9 @@ FASTSim:
 
   ✔ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly. Ok actually I have a better idea. The filter doesn't need to be outside the filter parameter needs to change from s to....wait. The whole point of the filter is to use it when in SIL/SIMONLY mode so it's not that it needs to be outside the IMU routine it just needs to be it's own function set by a parameter that is not 's' but 'ComplimentaryFilterConstant' or something like that #@done (21-10-26 08:26)
 
-  ✔ In that regard the GPS needs a heading angle estimator using the computeSpeed() routine but the function name needs to change and be overloaded so that old functions still work properly. I'm thinking GPSGroundTrack() would be appropriate and absorb all new functionality. @done (21-11-06 12:42)
+  ✔ In that regard the GPS needs a heading angle estimator using the computeSpeed() routine but the function name needs to change and be overloaded so that old functions still work properly. I'm thinking GPSGroundTrack() would be appropriate and absorb all new functionality. #@done (21-11-06 12:42)
 
-  ☐ I'd like a function in the Sensor routine to take the IMU heading and the GPS heading and filter them together. I did something like this on the Arduino I just don't quite remember where it is but I'm sure I'll find it.
+  ✔ I'd like a function in the Sensor routine to take the IMU heading and the GPS heading and filter them together. I did something like this on the Arduino I just don't quite remember where it is but I'm sure I'll find it. #@done (21-11-07 03:23)
 
  ☐ Run AUTO mode on RPI on IrisClone
 

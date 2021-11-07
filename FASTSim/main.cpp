@@ -190,6 +190,8 @@ int main(int argc,char** argv) {
   ///////////COMPUTE NUMBER OF VARIABLES TO LOG/////////////
   //Number of states to log
   vehicle.NUMLOGS = 1; //Always log time
+  //AND gps heading and compass heading
+  vehicle.NUMLOGS+=2;
   //If RK4 is on we log....
   #ifdef RK4_H
   //All the states including the actuator states
@@ -315,6 +317,17 @@ void runMainLoop() {
     if (LOG<=t) {
       logvars.set(1,1,t);
       int ctr = 2;
+      //GPS always on and 4 states (L,L,H,heading)
+      //vehicle.satellites.latitude - I think LL are redundant
+      //vehicle.satellites.longitude - because you can recover those from X,Y
+      //vehicle.satellites.altitude - same with this one it's just -Z
+      //vehicle.satellites.heading - so we just want heading and 
+      logvars.set(ctr,1,vehicle.err.getHeading());
+      ctr++;
+      //Sensors has compass as well
+      //vehicle.sensors.compass - the fused compass measurement
+      logvars.set(ctr,1,vehicle.err.compass);
+      ctr++;
       //Error States (Sensor Measurements) - Always on and always 12 states
       for (int i = 0;i<12;i++) {
         logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
@@ -412,7 +425,7 @@ void runMainLoop() {
         printf("%lf ",vehicle.err.errstate.get(4+idx,1));
       }
       printf("\n");
-      PRINT+=PRINTRATE;
+      PRINT+=(1*PRINTRATE);
       //PAUSE();
     }
     /////////////////////////////////////////////////

@@ -18,14 +18,14 @@
 #define REARTH_EQ       6378100. //##this is equatorial radius
 #define RAD2DEG ((double)180/PI)
 #define DEG2RAD (PI/(double)180)
-#define ANGULAREARTH (PI)/(12.0*3600) //Angular velocity of earth rad/s
+#define ANGULAREARTH ((PI)/(12.0*3600)) //Angular velocity of earth rad/s
 #define METERS2FT 3.28
 #define KG2LBF 2.2
 #define GEARTHENG 32.2
 #define GEARTH 9.80665 //graviational acceleration
 #define NM2FT 6076.115485560000
 #define FT2M 0.3048
-#define GPSVAL 60.0*NM2FT*FT2M
+#define GPSVAL (60.0*NM2FT*FT2M)
 #define GRAVITYENG 32.2
 #define GRAVITYSI 9.81
 #define RHOSLSI 1.225

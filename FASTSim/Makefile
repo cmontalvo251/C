@@ -8,8 +8,8 @@ CPPDIR=../
 #SIL - this is software in the loop running in realtime
 #HIL - this is in real time and also requires Serial communication betwee desktop and computer
 #AUTO - this is no simulation at all and will run on control board
-#EXETYPE=-DSIMONLY
-EXETYPE=-DSIL
+EXETYPE=-DSIMONLY
+#EXETYPE=-DSIL
 #EXETYPE=-DAUTO
 #############################################################
 
@@ -43,8 +43,8 @@ CONTROLLER=-DXBOX
 #MODELPATH=PortalCube/src
 #MODELPATH=Quadcopter/src
 #MODELPATH=Tank/src
-MODELPATH=X8/src
-#MODELPATH=Airplane/src
+#MODELPATH=X8/src
+MODELPATH=Airplane/src
 ###########################################
 
 #####################WHERE IS HIL LOCATED?#####################

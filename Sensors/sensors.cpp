@@ -18,6 +18,14 @@ sensors::sensors() {
 	pqrdot.zeros(3,1,"pqrdot");
 	errstate.zeros(12,1,"Full State From Sensors");
 	errstatedot.zeros(12,1,"Full Statedot From Sensors");
+
+	//Check bounds on Compass Filter Constant
+	if (compassFilterConstant > 1.0) {
+		compassFilterConstant = 1.0;
+	}
+	if (compassFilterConstant < 0) {
+		compassFilterConstant = 0;
+	}
 }
 
 //This only gets called if you have Navio plugged in
@@ -25,8 +33,23 @@ void sensors::initSensors(int IMUTYPE) {
   orientation.init(IMUTYPE); //0 for MPU and 1 for LSM
 }
 
-void sensors::getCompassHeading(double imu_yaw,double gps_yaw) {
-	compass = imu_yaw*0.5 + gps_yaw*0.5; 
+double sensors::getHeading() {
+	return compass;
+}
+
+void sensors::computeCompassHeading(double imu_yaw,double gps_yaw) {
+	if (gps_yaw != gps_heading) {
+		//Use GPS as heading update
+		printf("New Heading from GPS received \n");
+		gps_heading = gps_yaw;
+		//Assume that gps is more accurate and use it to update your compass
+		compass = (1-compassFilterConstant)*gps_heading + compassFilterConstant*compass;
+		//Also zero out the IMU bias
+		IMUbias = (imu_yaw - compass);
+	} else {
+		//Use the IMU for now again with a filter
+		compass = (1-compassFilterConstant)*(imu_yaw - IMUbias) + compassFilterConstant*compass;
+	}
 	printf("IMU = %lf, GPS = %lf, COMPASS = %lf \n",imu_yaw,gps_yaw,compass);
 }
 
@@ -45,7 +68,7 @@ void sensors::readSensors(double time,double dt) {
 
   //At this point the imu has heading and the gps has heading. I'd like to filter the two
   //to get a combined heading estimate
-  getCompassHeading(orientation.yaw,satellites.heading);
+  computeCompassHeading(orientation.yaw,satellites.heading);
 
   //barotemp.poll(time);
   //analog.get_results();
@@ -210,7 +233,7 @@ void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 	orientation.roll = ptp.get(1,1);
 	orientation.pitch = ptp.get(2,1);
 	orientation.yaw = ptp.get(3,1);
-	getCompassHeading(orientation.yaw,satellites.heading);	
+	computeCompassHeading(orientation.yaw,satellites.heading);	
 
 }
 
