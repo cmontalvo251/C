@@ -68,7 +68,7 @@ FASTSim:
 
  ✔ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY #@done (21-11-07 03:58)
 
- ☐ Add Keyboard inputs to RCIO so that you can control things with a keyboard
+ ✔ Add Keyboard inputs to RCIO so that you can control things with a keyboard #@done (21-11-07 04:56)
 
 HIL:
 

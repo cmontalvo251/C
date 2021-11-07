@@ -401,10 +401,10 @@ void runMainLoop() {
     #endif
     ////////////////////////////////////////////
 
-    //////////////IF RENDERING//////////////////
-    ////Send state vector to OpenGL
+    //////////////IF RENDERING//////////////////    
     #ifdef OPENGL_H
-    glhandle_g.state.UpdateRender(t,vehicle.cg,vehicle.ptp,1);
+    ////Send state vector to OpenGL and Grab Keyboard State
+    glhandle_g.state.UpdateRender(t,vehicle.cg,vehicle.ptp,1,vehicle.rcin.keyboard);
     #endif
 
     /////////////////Print to STDOUT////////////////

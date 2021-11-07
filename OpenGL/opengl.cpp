@@ -46,6 +46,7 @@ using namespace boost;
 OPENGL glhandle_g;
 boost::mutex statemutex; //this is so we can access the glhandle_g.state variables externally and internally
 boost::mutex timemutex;
+boost::mutex controlmutex;
 
 /////////Define Letters/////
 /////Numbers and Special characters///
@@ -184,8 +185,57 @@ void KeyPressed(unsigned char key,int x,int y)
 {
   usleep(100);
 
+  //printf("%u \n",key);
+  if ((key == 'u') || (key == 'j') || (key == 'h') || (key == 'k') || (key == 't') || (key == 'g') || (key == 'm') || (key == 'n')) {
+    controlmutex.lock();    
+  }
+  //TAER
+  //u is pull up
+  if (key == 'u') {
+    glhandle_g.state.control[2]-=0.1;
+  }
+  //j is push down
+  if (key == 'j') {
+    glhandle_g.state.control[2]+=0.1;
+  }
+  //h is roll left
+  if (key == 'h') {
+    glhandle_g.state.control[1]-=0.1;
+  }
+  //k is roll right
+  if (key == 'k') {
+    glhandle_g.state.control[1]+=0.1;
+  }
+  //t is increase thrust
+  if (key == 't') {
+   glhandle_g.state.control[0]+=0.1; 
+  }
+  if (key == 'g') {
+   glhandle_g.state.control[0]-=0.1; 
+  }
+  //m is yaw right
+  if (key == 'm') {
+   glhandle_g.state.control[3]+=0.1;  
+  }
+  //n is yaw left
+  if (key == 'n') {
+   glhandle_g.state.control[3]-=0.1;   
+  }
+  //Check for saturation
+  for (int i = 0;i<NUMCONTROLS;i++) {
+    if (abs(glhandle_g.state.control[i]) > 1.0) {
+      glhandle_g.state.control[i] = copysign(1.0,glhandle_g.state.control[i]);
+    }
+    //printf("%lf ",glhandle_g.state.control[i]);
+  }
+  //printf("\n");
+  if ((key == 'u') || (key == 'j') || (key == 'h') || (key == 'k') || (key == 't') || (key == 'g') || (key == 'm') || (key == 'n')) {
+    controlmutex.unlock();    
+  }
+
   if ((key == 27) || (key == 'q'))
     {
+      printf("Quitting OpenGL \n");
       glutDestroyWindow(glhandle_g.figure);
     }
   if (key == 'c')
@@ -328,7 +378,7 @@ void DrawGLScene()
 
 ///////////////////STATEHISTORY/////////////////////////
 
-void StateHistory::Initialize (int NumberofObjects) 
+void StateHistory::Initialize(int NumberofObjects) 
 {
   ok = 0;
 
@@ -341,6 +391,13 @@ void StateHistory::Initialize (int NumberofObjects)
   //Initialize cg and ptp variables
   cg.zeros(3,numobjects_,"state.cg");
   ptp.zeros(3,numobjects_,"state.ptp");
+
+  //Initialize Controls
+  controlmutex.lock();
+  for (int i = 0;i<NUMCONTROLS;i++) {
+    control[i] = 0;
+  }
+  controlmutex.unlock();
 
   //Initialize Position Scale variable
   positionscale.zeros(numobjects_,1,"positionscale");
@@ -360,16 +417,25 @@ void StateHistory::setTime(double simtime)
   timemutex.unlock();
 }
 
-void StateHistory::UpdateRender(double time,MATLAB cgin,MATLAB ptpin,int objectnumber) {
+void StateHistory::UpdateRender(double time,MATLAB cgin,MATLAB ptpin,int objectnumber,double keyboardOut[]) {
 
+  //?Set Time
   setTime(time);
   
+  //Set Position of All Objects  
   statemutex.lock();
   for (int idx = 1;idx<=3;idx++) {
     cg.set(idx,objectnumber,positionscale.get(objectnumber,1)*cgin.get(idx,1));
     ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
   statemutex.unlock();
+
+  //Set Keyboard state
+  controlmutex.lock();
+  for (int i = 0;i<NUMCONTROLS;i++) {
+    keyboardOut[i] = control[i];
+  }
+  controlmutex.unlock();
 }
 
 void StateHistory::getState(MATLAB cgout,MATLAB ptpout)

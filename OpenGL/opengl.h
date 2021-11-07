@@ -28,6 +28,7 @@
 //You need boost to run opengl because opengl must run in a separate loop from the main integration loop
 #include <boost/thread.hpp> 
 using namespace boost;
+#define NUMCONTROLS 4
 
 #include <MATLAB/MATLAB.h> 
 #include <Timer/timer.h>
@@ -114,10 +115,11 @@ public:
   double freq,maxval,**data,T,scale,timestep,**finaldata;
   MATLAB positionscale;
   MATLAB cg,ptp;
+  double control[NUMCONTROLS]; //u,j h,k t,g and m,n
   void Initialize(int);
   void setTime(double);
   void getState(MATLAB,MATLAB);
-  void UpdateRender(double,MATLAB,MATLAB,int);
+  void UpdateRender(double,MATLAB,MATLAB,int,double[]);
   double getTime();
  private:
   int numobjects_;
@@ -211,6 +213,7 @@ class OPENGL {
 //Create OPENGL variable but make it extern so it isn't created more than once */
 extern OPENGL glhandle_g;
 extern boost::mutex statemutex;
+extern boost::mutex controlmutex;
 extern boost::mutex timemutex;
 //Create OPENGL static member functions
 void DrawGLScene();

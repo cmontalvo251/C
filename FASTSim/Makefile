@@ -18,7 +18,8 @@ MODEL=Tank
 ###########################################
 
 #####################ARGS#######################
-ARGS=-DRCTECH -DDESKTOP -DSIL
+#ARGS=-DRCTECH -DDESKTOP -DSIL
+ARGS=-DKEYBOARD -DDESKTOP -DSIL
 
 ###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
 #RCTECH - USB Controller in FASTLab

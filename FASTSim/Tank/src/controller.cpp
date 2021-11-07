@@ -42,7 +42,7 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
-	  printf("Auto ON \n");
+	  //printf("Auto ON \n");
 	  motor1_us = STICK_MID + (STICK_MID - elevator) + DIFFERENTIAL*(aileron - STICK_MID);
 	  if (motor1_us < STICK_MIN) {
 	    motor1_us = STICK_MIN;

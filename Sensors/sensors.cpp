@@ -50,7 +50,7 @@ void sensors::computeCompassHeading(double imu_yaw,double gps_yaw) {
 		//Use the IMU for now again with a filter
 		compass = (1-compassFilterConstant)*(imu_yaw - IMUbias) + compassFilterConstant*compass;
 	}
-	printf("IMU = %lf, GPS = %lf, COMPASS = %lf \n",imu_yaw,gps_yaw,compass);
+	//printf("IMU = %lf, GPS = %lf, COMPASS = %lf \n",imu_yaw,gps_yaw,compass);
 }
 
 ///Overloaded sensor routine that reads 
