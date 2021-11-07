@@ -25,6 +25,11 @@ void sensors::initSensors(int IMUTYPE) {
   orientation.init(IMUTYPE); //0 for MPU and 1 for LSM
 }
 
+void sensors::getCompassHeading(double imu_yaw,double gps_yaw) {
+	compass = imu_yaw*0.5 + gps_yaw*0.5; 
+	printf("IMU = %lf, GPS = %lf, COMPASS = %lf \n",imu_yaw,gps_yaw,compass);
+}
+
 ///Overloaded sensor routine that reads 
 ///sensors on board Navio
 void sensors::readSensors(double time,double dt) {
@@ -37,6 +42,10 @@ void sensors::readSensors(double time,double dt) {
   //Read the GPS
   satellites.poll(time,1); //This will compute XYZ as well. For now we are using 
   //hardcoded GPS coordinates
+
+  //At this point the imu has heading and the gps has heading. I'd like to filter the two
+  //to get a combined heading estimate
+  getCompassHeading(orientation.yaw,satellites.heading);
 
   //barotemp.poll(time);
   //analog.get_results();
@@ -92,7 +101,7 @@ void sensors::readSensors(double time,double dt) {
   
 }
 
-void sensors::readSensors(MATLAB state,MATLAB statedot) {
+void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 	//This is an overloaded function. In here we don't need to read the states from
 	//onboard sensors. We just need to copy over the state vector for now.
 	//eventually we will add sensor errors but for now we just need to convert the 
@@ -111,6 +120,12 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 
 	//Extract xyz,uvw,pqr
 	xyz.vecset(1,3,state,1);
+
+	//Send xyz to GPS
+	satellites.setXYZ(xyz.get(1,1),xyz.get(2,1),xyz.get(3,1));
+	//Then "poll" the GPS - this will also give us the gps heading
+	satellites.poll(time,1);
+
 	uvw.vecset(1,3,state,8);
 	pqr.vecset(1,3,state,11);
 
@@ -184,12 +199,18 @@ void sensors::readSensors(MATLAB state,MATLAB statedot) {
 	errstatedot.vecset(4,6,ptpdot,1);
 	errstatedot.vecset(7,9,uvwdot,1);
 	errstatedot.vecset(10,12,pqrdot,1);
-	
+
 	//state.disp();
 	//statedot.disp();
 	//errstate.disp();
 	//errstatedot.disp();
 	//PAUSE();
+
+	//Put the yaw of the imu into the orientation class
+	orientation.roll = ptp.get(1,1);
+	orientation.pitch = ptp.get(2,1);
+	orientation.yaw = ptp.get(3,1);
+	getCompassHeading(orientation.yaw,satellites.heading);	
 
 }
 

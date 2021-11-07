@@ -200,7 +200,7 @@ void Dynamics::loop(double t,double dt) {
   err.readSensors(t,dt); //this calls onboard sensors on the Navio
   #else
   //state.disp();
-  err.readSensors(state,statedot); //this simulates sensors
+  err.readSensors(state,statedot,t); //this simulates sensors
   #endif
   ///////////////////////////////////////////////////////////////////
   
