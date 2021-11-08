@@ -11,7 +11,7 @@ import numpy as np
 #MODELPATH='PortalCube/'
 #MODELPATH='Quadcopter/'
 #MODELPATH='Tank/'
-MODELPATH='Airplane/'
+#MODELPATH='Airplane/'
 #MODELPATH='X8/'
 PLOTEVERYTHING = 0
 
@@ -22,11 +22,13 @@ except:
     print('You need pdf and sixdof from Python.git This is on my Github just git clone that repo and put pdf.py and sixdof.py in this root or add to pythonpath')
     sys.exit()
 
-if len(sys.argv) > 1:
+if len(sys.argv) > 2:
     print(sys.argv)
     SIMULATE = int(sys.argv[1])
+    MODELPATH=sys.argv[2]+'/'
 else:
     SIMULATE = 1
+    MODELPATH = 'PortalCube/'
 
 if SIMULATE == 1:
     #Clean Logs
@@ -230,7 +232,7 @@ if RK4 == 1:
 for x in range(0,12):
     plt.figure()
     plt.plot(time,sensor_states[:,x],label='Measurement')
-    plt.xlabel('Time (sec')
+    plt.xlabel('Time (sec)')
     plt.grid()
     LEGEND=0
     if RK4 == 1:

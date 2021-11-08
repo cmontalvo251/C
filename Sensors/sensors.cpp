@@ -216,6 +216,7 @@ void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 	//Copy everything over
 	errstate.vecset(1,3,xyz,1);
 	errstate.vecset(4,6,ptp,1);
+	//uvw.disp();
 	errstate.vecset(7,9,uvw,1);
 	errstate.vecset(10,12,pqr,1);
 	errstatedot.vecset(1,3,xyzdot,1);
