@@ -56,7 +56,7 @@ FASTSim:
 
   ✔ I'd like a function in the Sensor routine to take the IMU heading and the GPS heading and filter them together. I did something like this on the Arduino I just don't quite remember where it is but I'm sure I'll find it. #@done (21-11-07 03:23)
 
- ☐ Run AUTO mode on RPI on Bumblebee
+ ✔ Run AUTO mode on RPI on Bumblebee @done (21-11-17 13:14)
 
  ☐ Add telemetry to send data to ground station
 
