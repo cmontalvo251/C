@@ -40,7 +40,7 @@ double sensors::getHeading() {
 void sensors::computeCompassHeading(double imu_yaw,double gps_yaw) {
 	if (gps_yaw != gps_heading) {
 		//Use GPS as heading update
-		printf("New Heading from GPS received \n");
+		//printf("New Heading from GPS received \n");
 		gps_heading = gps_yaw;
 		//Assume that gps is more accurate and use it to update your compass
 		compass = (1-compassFilterConstant)*gps_heading + compassFilterConstant*compass;
