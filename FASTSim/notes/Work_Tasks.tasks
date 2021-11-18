@@ -144,6 +144,8 @@ ANTX:
  
  ☐ Market our entire setup as an independent contractor if needed
 
+ ☐ Publish another paper?
+
 FASTPILOT:
 
  ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git - To do this just put the MODELS in FASTPilot. So all you need to do is edit the MakeFile to reference that FASTPilot folder but main.cpp will still be in github
@@ -155,6 +157,14 @@ SPEEDING UP FASTSim ON PI:
   ☐ Another option is we write our own embedded software for the Pi
   
   ☐ We can also upgrade from the Pi3 to the Pi4 with lots of RAM
+
+META:
+
+  ☐ Meta flying waypoints to compare efficiency - Maxwell Cobar
+
+  ☐ Disconnecting and reconnecting - this would be insane.
+
+  ☐ Way point control and run performance metrics on it.
 
 BDE DJI Flights:
 
@@ -212,6 +222,16 @@ BDE FASTSim:
 
   ☐ Perform another robustness trade study on motor effectiveness by adding in 10% variation in motor thrust
 
+  ☐ Create sig1-8 which are all unknown such that T1 = sig1*T1desired
+
+  ☐ Create an online parameter estimation block using a self tuning controller to estimate sig1-8.
+
+  ☐ If current BDE controller cannot handle very much variation I suggest adding an adaptive controller to the simulation like an MRAC or ST controller. Maxwell coded this in python and is in the Python.git/nonlinear_controls folder
+
+  ☐ If sig < 50% turn it off and reconfigure
+
+  ☐ Potentially use ML from Dr. Fahimi and Brian from UAH
+
   ☐ Run BDE FASTSim in SIL mode
 
   ☐ Run BDE FASTSim in HIL mode
@@ -243,6 +263,10 @@ BDE FASTPilot:
   ☐ If first flight test is 90% of the way there determined by the PIC the next flight test must be performed at irvington
 
   ☐ Fly at irvington and perform any last minute tweaks to software
+
+  ☐ Write a paper
+
+  ☐ Add Fault tolerant control?
 
 RENDERING:
 
