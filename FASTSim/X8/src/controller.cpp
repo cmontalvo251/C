@@ -43,6 +43,8 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	double elevator = rxcomms[2];
 	double rudder = rxcomms[3];
 	double autopilot = rxcomms[4];
+
+	//printf("TAER = %lf %lf %lf %lf \n",throttle,aileron,elevator,rudder,autopilot);
 	//printf("autopilot = %lf \n",autopilot);
 
 	//Determine if the user wants the controller on or not
@@ -55,7 +57,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
 		//STABILIZE MODE
-		//printf(" STAB ");
+		printf(" STAB ");
 		double roll_command = (aileron-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double pitch_command = -(elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double yaw_rate_command = (rudder-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
@@ -68,7 +70,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		//printf("PQR Rate in Controller %lf %lf %lf \n",roll_rate,pitch_rate,yaw_rate);
 		double kp = 10.0;
 		double kd = 2.0;
-		double kyaw = 5.0;
+		double kyaw = 0.2;
 		double droll = kp*(roll-roll_command) + kd*(roll_rate);
 		droll = CONSTRAIN(droll,-500,500);
 		double dpitch = kp*(pitch-pitch_command) + kd*(pitch_rate);
@@ -82,31 +84,34 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		motor_upper_right_top = throttle + droll - dpitch + dyaw;
 		motor_lower_left_top = throttle - droll + dpitch + dyaw;
 		motor_lower_right_top = throttle + droll + dpitch - dyaw;
-		motor_upper_left_bottom = throttle - droll - dpitch - dyaw;
-		motor_upper_right_bottom = throttle + droll - dpitch + dyaw;
-		motor_lower_left_bottom = throttle - droll + dpitch + dyaw;
-		motor_lower_right_bottom = throttle + droll + dpitch - dyaw;
+
+		motor_upper_left_bottom = throttle - droll - dpitch + dyaw;
+		motor_upper_right_bottom = throttle + droll - dpitch - dyaw;
+		motor_lower_left_bottom = throttle - droll + dpitch - dyaw;
+		motor_lower_right_bottom = throttle + droll + dpitch + dyaw;
 
 	} else {
 		//ACRO MODE
-		motor_upper_left_top = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
-		motor_upper_right_top = throttle - (aileron-STICK_MID) - (elevator-STICK_MID) - (rudder-STICK_MID);
-		motor_lower_left_top = throttle + (aileron-STICK_MID) + (elevator-STICK_MID) - (rudder-STICK_MID);
-		motor_lower_right_top = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);
 		motor_upper_left_bottom = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
 		motor_upper_right_bottom = throttle - (aileron-STICK_MID) - (elevator-STICK_MID) - (rudder-STICK_MID);
+		motor_lower_right_bottom = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);
 		motor_lower_left_bottom = throttle + (aileron-STICK_MID) + (elevator-STICK_MID) - (rudder-STICK_MID);
-		motor_lower_right_bottom = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);		
+		motor_upper_left_top = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) - (rudder-STICK_MID);
+		motor_upper_right_top = throttle - (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
+		motor_lower_right_top = throttle - (aileron-STICK_MID) + (elevator-STICK_MID) - (rudder-STICK_MID);
+		motor_lower_left_top = throttle + (aileron-STICK_MID) + (elevator-STICK_MID) + (rudder-STICK_MID);		
 	}
 
 	//Send the motor commands to the ctlcomms values
-	ctlcomms.set(1,1,motor_upper_left_top);
-	ctlcomms.set(2,1,motor_upper_right_top);
-	ctlcomms.set(3,1,motor_lower_left_top);
-	ctlcomms.set(4,1,motor_lower_right_top);
-	ctlcomms.set(5,1,motor_upper_left_bottom);
-	ctlcomms.set(6,1,motor_upper_right_bottom);
-	ctlcomms.set(7,1,motor_lower_left_bottom);
-	ctlcomms.set(8,1,motor_lower_right_bottom);
+	//ctlcomms.mult_eq(0);
+	//ctlcomms.plus_eq(STICK_MIN);
+	ctlcomms.set(1,1,motor_upper_left_bottom);
+	ctlcomms.set(2,1,motor_upper_right_bottom);
+       	ctlcomms.set(3,1,motor_lower_right_bottom);
+	ctlcomms.set(4,1,motor_lower_left_bottom);
+	ctlcomms.set(5,1,motor_upper_left_top);
+	ctlcomms.set(6,1,motor_upper_right_top);
+	ctlcomms.set(7,1,motor_lower_right_top);
+	ctlcomms.set(8,1,motor_lower_left_top);
 	//ctlcomms.disp();
 }

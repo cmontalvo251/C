@@ -130,14 +130,14 @@ rebuild:
 what:
 	##########FROM NOW ON RUN YOUR MAKE FILE LIKE THIS###
 	# For AUTO Mode on Pi for Airplane
-	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL"
+	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL" RENDER="" OPENGLSOURCES=""
 	# For SIMONLY on Desktop for Tank
 	# make rebuild ARGS="-DRCTECT -DDESKTOP -DSIMONLY" MODEL="Tank" HPATH="/home/carlos/Git_Repos/HIL"
 	# Your choices for models are:
 	# PortalCube
 	# Airplane
 	# Quadcopter
-	# Tank 
+	# Tank
 	# X8
 	# Note you can always default back to just
 	# make rebuild

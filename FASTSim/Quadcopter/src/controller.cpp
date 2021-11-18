@@ -73,12 +73,28 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double dyaw = kyaw*(yaw_rate-yaw_rate_command);
 		//printf("YAW RATE = %lf YAW RATE COMMAND = %lf DYAW = %lf \n",yaw_rate,yaw_rate_command,dyaw);
 		dyaw = CONSTRAIN(dyaw,-500,500);
+
+		//Throttle controller on climb rate
+		/*double climb_rate_command = (throttle-STICK_MID)*10/((STICK_MAX-STICK_MIN/2.0));
+		//printf("Climb Rate Command = %lf \n",climb_rate_command);
+		double climb_rate = state.get(9,1);
+		double kpt = 100.0;
+		double dthrottle = -kpt*(climb_rate_command - climb_rate);*/
+		//printf("dthrottle = %lf zdot = %lf \n",dthrottle,climb_rate);
+
+		double altitude_command = -100.0;
+		double z = state.get(3,1);
+		double zdot = state.get(9,1);
+		double kpt = 10.0;
+		double kdt = 50.0;
+		double dthrottle = kpt*(z-altitude_command) + kdt*(zdot);
+
 		//printf("d = %lf %lf %lf ",droll,dpitch,dyaw);
 		//printf(" Roll Command = %lf ",roll_command);
-		motor_upper_left = throttle - droll - dpitch - dyaw;
-		motor_upper_right = throttle + droll - dpitch + dyaw;
-		motor_lower_left = throttle - droll + dpitch + dyaw;
-		motor_lower_right = throttle + droll + dpitch - dyaw;
+		motor_upper_left = throttle + dthrottle - droll - dpitch - dyaw;
+		motor_upper_right = throttle + dthrottle + droll - dpitch + dyaw;
+		motor_lower_left = throttle + dthrottle - droll + dpitch + dyaw;
+		motor_lower_right = throttle + dthrottle + droll + dpitch - dyaw;
 	} else {
 		//ACRO MODE
 		motor_upper_left = throttle + (aileron-STICK_MID) - (elevator-STICK_MID) + (rudder-STICK_MID);
