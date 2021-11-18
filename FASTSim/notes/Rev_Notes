@@ -1,3 +1,10 @@
+============================11/17/2021========================
+
+FASTSim works on Tank, Quadcopter and X8 now in AUTO mode and SIMONLY/SIL
+I could test it on the plane but that seems superfluous since we're 
+going to fly the quads/X8 first. I guess if ANTX comes out of nowhere
+we can run FASTSim on the BatWing
+
 ============================9/30/2021======================
 
 Alot has changed in the code. Simpilot is almost fully operational
