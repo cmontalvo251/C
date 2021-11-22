@@ -2,11 +2,20 @@
 
 FASTSim SysML:
 
-  ☐ Create a SysML diagram of FASTsim
-
+   ☐ SysML diagrams for everything below to make sure everything works as intended
+      ☐ Do it in such a way that HIL works for SIM and SAT
+      ☐ I think the HIL send should be in Dynamics (that’s the only place you need to send)
+      ☐ The HIL receive should be in Sensors (only place you need to receive)
+      ☐ I want the main.cpp for all the below routines to never have to be edited. 
+         ☐ LOGGER - move from FASTSensors to here
+         ☐ DEMO - this is SimPilot
+         ☐ SIM  - This is FASTsim
+         ☐ SAT - deprecate Orbit++ from Aerospace folder - add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot.
+      ☐ Rename C++.git to FAST.git
+      ☐ Move HIL into C++ directory and delete HIL
+      ☐ Save FASTPilot.git on Gitlab for proprietary software 
+      ☐ Put the Makefile in FAST that way you can do - make Demo or make Logger find a way to do this
   ☐ Make the software look like the SysML diagram. This will probably break everything
-
-  ☐ Check out FASTsim notes on Google Docs
 
   ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form: 
     ☐ Inner Loop 
@@ -21,56 +30,6 @@ FASTSim SysML:
     ☐ Bumblebee
     ☐ Meta 1 and 2
     ☐ Batwing
-
-FASTSim:
-
-  ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
-
-  ✔ The sensor errors are no longer working. why? that needs to be fixed done (21-09-03 20:58)
-
-  ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? done (21-08-20 11:36) 
-
- ✔ Finish the actuator dynamics. There are alot of subtasks for this one #@done (21-09-12 22:24)
-   ✔ Integrate the state vector to produce State. done (21-09-06 08:31)
-   ✔ Send STate to the sensor routine and receive the polluted state done (21-09-06 08:33)
-   ✔ Send pollutted state to controller built by the user to produce ctlcomms #@done (21-09-06 08:34)
-   ✔ Send ctlcomms to actuator dynamics to produce actuators values #@done (21-09-07 21:42)
-   ✔ Pollute actuator values with ACTUATOR ERRORS by some percentage #@done (21-09-07 21:42)
-   ✔ Send actuator values to aerodynamics routine written by user to produce Forces and moments #@done (21-09-07 21:43)
-
- ✔ Complete the controller.cpp/.h file for the quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-15 22:17)
-
- ✔ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-21 11:00)
-
- ✔ Create the minimum viable rcout class for SIMONLY and SIL #@done (21-09-25 21:54) This was kind of easy because in SIMONLY and SIL mode the RCOutput does not do anything
-
- ✔ Run SIL on RPI - This mode should run in realtime but not with openGL #@done (21-10-15 11:25)
-
- ✔ Run SIMONLY only on RPI #@done (21-10-15 11:25)
-
- ✔ Finish writing sensor class for FASTsim #@done (21-10-15 11:26)
-
-  ✔ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly. Ok actually I have a better idea. The filter doesn't need to be outside the filter parameter needs to change from s to....wait. The whole point of the filter is to use it when in SIL/SIMONLY mode so it's not that it needs to be outside the IMU routine it just needs to be it's own function set by a parameter that is not 's' but 'ComplimentaryFilterConstant' or something like that #@done (21-10-26 08:26)
-
-  ✔ In that regard the GPS needs a heading angle estimator using the computeSpeed() routine but the function name needs to change and be overloaded so that old functions still work properly. I'm thinking GPSGroundTrack() would be appropriate and absorb all new functionality. #@done (21-11-06 12:42)
-
-  ✔ I'd like a function in the Sensor routine to take the IMU heading and the GPS heading and filter them together. I did something like this on the Arduino I just don't quite remember where it is but I'm sure I'll find it. #@done (21-11-07 03:23)
-
- ✔ Run AUTO mode on RPI on Bumblebee @done (21-11-17 13:14)
-
- ☐ Add telemetry to send data to ground station
-
- ✔ Complete aerodynamics for X8 @done (21-11-02 16:04)
-
- ✔ Complete the PID controller for the X8 @done (21-11-02 16:04)
-
- ✔ Complete aerodynamics for Aircraft #@done (21-10-31 22:14)
-
- ✔ Complete the controller (PID) for the A/C #@done (21-10-31 22:14)
-
- ✔ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY #@done (21-11-07 03:58)
-
- ✔ Add Keyboard inputs to RCIO so that you can control things with a keyboard #@done (21-11-07 04:56)
 
 HIL:
 
@@ -294,6 +253,56 @@ You can also use mavlink to send and receive parameters (such as controller gain
 Most of this work was guided by this blog post (https://discuss.ardupilot.org/t/mavlink-and-arduino-step-by-step/25566) so I suggest at least a quick read of that will help the students out in understanding how everything fits together.  The parameter stuff was an internal development which I hope to get written up properly one day and into a blog post to more-widely share the technique.
 Hopefully that all helps and let me know if you have any other questions.  Good luck!
 matt
+
+FASTSim:
+
+  ✔ Have someone else walk through README and ensure they can compile code in SIMONLY mode and run process logs to plot done (21-08-24 14:46) #Running on Laptop but not Desktop - MJC
+
+  ✔ The sensor errors are no longer working. why? that needs to be fixed done (21-09-03 20:58)
+
+  ✔ SIL model does not work on a clean install of ubuntu 20.04. Need to figure out why? done (21-08-20 11:36) 
+
+ ✔ Finish the actuator dynamics. There are alot of subtasks for this one #@done (21-09-12 22:24)
+   ✔ Integrate the state vector to produce State. done (21-09-06 08:31)
+   ✔ Send STate to the sensor routine and receive the polluted state done (21-09-06 08:33)
+   ✔ Send pollutted state to controller built by the user to produce ctlcomms #@done (21-09-06 08:34)
+   ✔ Send ctlcomms to actuator dynamics to produce actuators values #@done (21-09-07 21:42)
+   ✔ Pollute actuator values with ACTUATOR ERRORS by some percentage #@done (21-09-07 21:42)
+   ✔ Send actuator values to aerodynamics routine written by user to produce Forces and moments #@done (21-09-07 21:43)
+
+ ✔ Complete the controller.cpp/.h file for the quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-15 22:17)
+
+ ✔ Complete the aerodynamics.cpp/.h file for the Quadcopter folder. This can be open source since these equations are publicly available #@done (21-09-21 11:00)
+
+ ✔ Create the minimum viable rcout class for SIMONLY and SIL #@done (21-09-25 21:54) This was kind of easy because in SIMONLY and SIL mode the RCOutput does not do anything
+
+ ✔ Run SIL on RPI - This mode should run in realtime but not with openGL #@done (21-10-15 11:25)
+
+ ✔ Run SIMONLY only on RPI #@done (21-10-15 11:25)
+
+ ✔ Finish writing sensor class for FASTsim #@done (21-10-15 11:26)
+
+  ✔ The filter for the IMU needs to run all the time and needs to be an input to the simulation so you can change that on the fly. Ok actually I have a better idea. The filter doesn't need to be outside the filter parameter needs to change from s to....wait. The whole point of the filter is to use it when in SIL/SIMONLY mode so it's not that it needs to be outside the IMU routine it just needs to be it's own function set by a parameter that is not 's' but 'ComplimentaryFilterConstant' or something like that #@done (21-10-26 08:26)
+
+  ✔ In that regard the GPS needs a heading angle estimator using the computeSpeed() routine but the function name needs to change and be overloaded so that old functions still work properly. I'm thinking GPSGroundTrack() would be appropriate and absorb all new functionality. #@done (21-11-06 12:42)
+
+  ✔ I'd like a function in the Sensor routine to take the IMU heading and the GPS heading and filter them together. I did something like this on the Arduino I just don't quite remember where it is but I'm sure I'll find it. #@done (21-11-07 03:23)
+
+ ✔ Run AUTO mode on RPI on Bumblebee @done (21-11-17 13:14)
+
+ ✔ Add telemetry to send data to ground station @done (21-11-22 11:19)
+
+ ✔ Complete aerodynamics for X8 @done (21-11-02 16:04)
+
+ ✔ Complete the PID controller for the X8 @done (21-11-02 16:04)
+
+ ✔ Complete aerodynamics for Aircraft #@done (21-10-31 22:14)
+
+ ✔ Complete the controller (PID) for the A/C #@done (21-10-31 22:14)
+
+ ✔ Edit the Makefile so you don't have to edit it everytime you compile differently. Would be cool to do make rebuild DESKTOP SIL RCTECH or make rebuild PI AUTO FLYSKY #@done (21-11-07 03:58)
+
+ ✔ Add Keyboard inputs to RCIO so that you can control things with a keyboard #@done (21-11-07 04:56)
 
 BattleBot:
 
