@@ -1,8 +1,5 @@
-Here are the cpp and h files necessary to use the MATLAB class.
+This has a lot of my C++ utilities. Right now I'm working on FASTsim 
 
-There is a file called test_MATLAB_class.cpp.test that you can remane to 
-extension .cpp and compile to try and test the class however it is old
-and therefore does not really work. 
+I realize this readme is terrible but this software is a work in progress so just bare with me.
 
-There is also a testtimer.cpp.test which is used to test the timer
-class 
+
