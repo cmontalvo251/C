@@ -52,6 +52,12 @@ RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-ge
 OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
 ################################################################
 
+####################TELEMETRY###########################
+#WIRINGPI=-lwiringpi
+WIRINGPI=
+##########################################
+
+
 #################DO NOT CHANGE ANYTHING BELOW HERE###########
 
 ##NON USER FLAGS
@@ -74,7 +80,8 @@ BAROSOURCES=$(wildcard ${HPATH}/Baro/*.cpp)
 ADCSOURCES=$(wildcard ${HPATH}/ADC/*.cpp)
 RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp ${HPATH}/Util/Util.cpp)
 MODELSOURCES=$(wildcard ${MODELPATH}/*.cpp)
-SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES} ${OPENGLSOURCES} ${GPSSOURCES} ${BAROSOURCES} ${ADCSOURCES}
+TELEMETRYSOURCES=$(wildcard ${HPATH}/Serial/Telemetry.cpp)
+SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES} ${OPENGLSOURCES} ${GPSSOURCES} ${BAROSOURCES} ${ADCSOURCES} $(TELEMETRYSOURCES)
 OBJECTS=$(SOURCES:.cpp=.o)
 #COMPILE=-c -w -O3 #MIGHT NEED THIS LATER FOR SIL AND SIMONLY
 COMPILE=-c -w -std=c++11 -Wno-psabi
@@ -85,9 +92,9 @@ THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using t
 
 all: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
+	$(CC) $(OBJECTS) -o $@ $(LIB) $(WIRINGPI) $(INCLUDE) $(RENDER) $(THREAD)
 .cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(ARGS) $< -o $@ $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
+	$(CC) $(COMPILE) $(FLAGS) $(ARGS) $< -o $@ $(WIRINGPI) $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 clean:
 	echo ' ' > logs/d.txt
 	rm logs/*.txt
@@ -124,13 +131,15 @@ clean:
 	rm ${HPATH}/GPS/*.o
 	echo ' ' > ${HPATH}/ADC/d.o
 	rm ${HPATH}/ADC/*.o
+	echo ' '> ${HPATH}/Serial/d.o
+	rm ${HPATH}/Serial/*.o
 rebuild:
 	make clean
 	make
 what:
 	##########FROM NOW ON RUN YOUR MAKE FILE LIKE THIS###
 	# For AUTO Mode on Pi for Airplane
-	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL" RENDER="" OPENGLSOURCES=""
+	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL" RENDER="" OPENGLSOURCES="" WIRINGPI="-lwiringPi"
 	# For SIMONLY on Desktop for Tank
 	# make rebuild ARGS="-DRCTECT -DDESKTOP -DSIMONLY" MODEL="Tank" HPATH="/home/carlos/Git_Repos/HIL"
 	# Your choices for models are:

@@ -53,6 +53,17 @@ void sensors::computeCompassHeading(double imu_yaw,double gps_yaw) {
 	//printf("IMU = %lf, GPS = %lf, COMPASS = %lf \n",imu_yaw,gps_yaw,compass);
 }
 
+double sensors::getLatitude(){
+  return satellites.latitude;
+}
+double sensors::getLongitude(){
+  return satellites.longitude;
+}
+double sensors::getAltitude(){
+  return satellites.altitude;
+}
+
+
 ///Overloaded sensor routine that reads 
 ///sensors on board Navio
 void sensors::readSensors(double time,double dt) {

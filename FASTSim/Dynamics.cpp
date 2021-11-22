@@ -26,11 +26,22 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
+
+  //////////////////////////TELEMETRY SETUP/////////////////////////////
+  #ifdef TELEMETRY
+  printf("Opening Serial Port ttyAMA0 \n");
+  serial.SerialInit("/dev/ttyAMA0",57600);
+  printf("If no errors present, serial port is open \n");
+  #endif
+  //////////////////////////////////////////////////////////////////////
+
+  
 }
   
-void Dynamics::setRates(double RCRATE,double CTLRATE) {
+void Dynamics::setRates(double RCRATE,double CTLRATE,double TELEMRATE) {
   tRC = RCRATE;
   tCTL = CTLRATE;
+  serial.period = TELEMRATE;
 }
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
@@ -178,6 +189,23 @@ void Dynamics::loop(double t,double dt) {
     tlastRCread = t;
   }
   ////////////////////////////////////////////////////////////////////
+
+  ////////////////SEND TELEMETRY DATA////////////////////////////////
+  #ifdef TELEMETRY
+  if ((t - serial.lastTime) > serial.period) {
+    number_array[0] = err.errstate.get(4,1);
+    number_array[1] = err.errstate.get(5,1);
+    number_array[2] = err.errstate.get(6,1);
+    number_array[3] = err.getLongitude();
+    number_array[4] = err.getLatitude();
+    number_array[5] = err.getAltitude();
+    number_array[6] = t;
+    serial.SerialSendArray(number_array,number_Telemetry_vars,1); //the trailing zero is to turn off echo
+    serial.lastTime = t;
+  }
+  #endif
+  //////////////////////////////////////////////////////////////////////
+
 
   ////////////////////////////////////////////////////////////////////////
   /*If you're running in SIMONLY. The Input_Files/Simulation_Flags.txt

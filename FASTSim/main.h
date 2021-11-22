@@ -34,14 +34,6 @@ using namespace std;
 #define REALTIME
 #endif
 
-#ifdef RPI
-#ifndef SIMONLY
-#define TELEMETRY
-//Import telemetry class
-#include <Serial/Telemetry.h>
-#endif
-#endif
-
 ///Functions
 void runMainLoop();
 void runRenderLoop(int argc,char** argv);

@@ -27,6 +27,14 @@ Only in AUTO will we call the onboard sensors
 */
 #include <Sensors/sensors.h>
 
+#ifdef RPI
+#ifndef SIMONLY
+#define TELEMETRY
+//Import telemetry class
+#include <Serial/Telemetry.h>
+#endif
+#endif
+
 class environment {
  private:
   int GRAVITY_FLAG;
@@ -42,7 +50,13 @@ class environment {
 
 class Dynamics {
  private:
-  //Private functions and vars
+  //Private functions and var
+  /////TELEMETRY IF RPI AND NOT SIMONLY
+  #ifdef TELEMETRY
+  Telemetry serial;
+  float number_array[MAXFLOATS]; //MAXFLOATS is set to 10 in Telemetry.h as of 7/16/2021
+  int number_Telemetry_vars = 7;
+  #endif
   MATLAB State,k,I,pqr,cgdotI,cgdotB,ptpdot,FTOTALI,FTOTALB,FGNDB,MGNDB,MTOTALI,MTOTALB;
   MATLAB pqrdot,Iinv,q0123,I_pqr,uvwdot,pqrskew_I_pqr,Kuvw_pqr,state,statedot;
   MATLAB actuatorState,actuatorStatedot,actuatorErrorPercentage;
@@ -69,7 +83,7 @@ class Dynamics {
   void initErrModel(MATLAB sensordata);
   void loop(double time,double dt);
   void printRC(int all);
-  void setRates(double,double);
+  void setRates(double,double,double);
   void initActuators(MATLAB);
   void initActuators(int);
   void initController(int);

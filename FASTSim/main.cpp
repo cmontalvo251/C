@@ -8,10 +8,9 @@
 double t = 0;
 double PRINT = 0;
 double LOG = 0;
-double TELEM = 0;
 double startTime,current_time,prev_time;
 double tfinal,INTEGRATIONRATE,PRINTRATE;
-double LOGRATE,TELEMRATE;
+double LOGRATE;
 
 ///REALTIME VARS
 #ifdef REALTIME
@@ -32,12 +31,6 @@ Dynamics vehicle;
 ///DATALOGGER IS ALWAYS RUNNING
 Datalogger logger;
 MATLAB logvars;
-
-/////TELEMETRY IF RPI AND NOT SIMONLY
-#ifdef TELEMETRY
-Telemetry serial;
-#endif
-
 
 ///Global Variable for Fileroot? Can I do this safely?
 char fileroot[256];
@@ -91,8 +84,8 @@ int main(int argc,char** argv) {
   LOGRATE = simdata.get(4,1); 
   double RCRATE = simdata.get(5,1);
   double CTLRATE = simdata.get(6,1);
-  TELEMRATE = simdata.get(7,1);
-  vehicle.setRates(RCRATE,CTLRATE);
+  double TELEMRATE = simdata.get(7,1);
+  vehicle.setRates(RCRATE,CTLRATE,TELEMRATE);
   //These are extras that we only need if we are integrating the but it doesn't
   //Require any computation time except on startup to read them so just keep
   //them here for all different scenarios
@@ -103,17 +96,6 @@ int main(int argc,char** argv) {
   int ACTUATOR_FLAG = simdata.get(12,1);
   //////////////////////////////////////////////////////////////////////////////
   
-  //////////////////////////TELEMETRY SETUP/////////////////////////////
-  #ifdef TELEMETRY
-  printf("Opening Serial Port ttyAMA0 \n");
-  serial.SerialInit("/dev/ttyAMA0",57600);
-  printf("If no errors present, serial port is open \n");
-  float number_array[MAXFLOATS]; //MAXFLOATS is set to 10 in Telemetry.h as of 7/16/2021
-  int number_Telemetry_vars = 7;
-  serial.period = TELEMRATE;
-  #endif
-  //////////////////////////////////////////////////////////////////////
-
   /////////////////////////////MASS DATA/////////////////////////////
   ////////////////////////THIS IS GOING TO IMPORT EVERYTIME//////////
   /////////////////////IN THE EVENT YOU NEED MASS AND INERTIA///////
@@ -331,22 +313,6 @@ void runMainLoop() {
     vehicle.loop(t,INTEGRATIONRATE);
     #endif
     ///////////////////////////////////////////////////////////////////
-
-    ////////////////SEND TELEMETRY DATA////////////////////////////////
-    #ifdef TELEMETRY
-    if ((t - serial.lastTime) > serial.period) {
-      number_array[0] = orientation.roll;
-      number_array[1] = orientation.pitch;
-      number_array[2] = orientation.yaw;
-      number_array[3] = satellites.longitude;
-      number_array[4] = satellites.latitude;
-      number_array[5] = satellites.altitude;
-      number_array[6] = t;
-      serial.SerialSendArray(number_array,number_Telemetry_vars,1); //the trailing zero is to turn off echo
-      serial.lastTime = t;
-    }
-    #endif
-    //////////////////////////////////////////////////////////////////////
 
     ////////////////LOG DATA////////////////////////
     if (LOG<=t) {
