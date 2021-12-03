@@ -1,5 +1,10 @@
                                      WORK TASKS:
 
+FASTSim Extra Sensors:
+
+ ☐ Add barometer 
+ ☐ Add ADC
+
 FASTSim SysML:
 
    ☐ SysML diagrams for everything below to make sure everything works as intended
@@ -10,12 +15,12 @@ FASTSim SysML:
          ☐ LOGGER - move from FASTSensors to here
          ☐ DEMO - this is SimPilot
          ☐ SIM  - This is FASTsim
-         ☐ SAT - deprecate Orbit++ from Aerospace folder - add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot.
+         ☐ SAT - deprecate Orbit++ from Aerospace folder - add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot. 
       ☐ Rename C++.git to FAST.git
       ☐ Move HIL into C++ directory and delete HIL
       ☐ Save FASTPilot.git on Gitlab for proprietary software 
       ☐ Put the Makefile in FAST that way you can do - make Demo or make Logger find a way to do this
-  ☐ Make the software look like the SysML diagram. This will probably break everything
+      ☐ Make the software look like the SysML diagram. This will probably break everything
 
   ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form: 
     ☐ Inner Loop 
@@ -33,9 +38,19 @@ FASTSim SysML:
 
 HIL:
 
+  ☐ For HIL - use the HIL code from MultiSAT++ for FASTsim
+  
   ☐ Create a script that sends data back and forth
   
   ☐ Add hooks to FASTSim that compile DESKTOP + HIL and RPI/Arduino HIL that sends sensor data and control commands back and forth. The RPI/HIL version will accept a polluted state vector from the computer and run that through the control algorithm and then pass back the control commands to the integrator. So serialListens and SerialResponds etc will need to be written to send data back and forth
+
+SPEEDING UP FASTSim ON PI:
+
+  ☐ We can try systemd which is apparently what Arducopter uses
+
+  ☐ Another option is we write our own embedded software for the Pi
+  
+  ☐ We can also upgrade from the Pi3 to the Pi4 with lots of RAM
 
 COMPLEX AUTOPILOT LOOP:
     
@@ -72,6 +87,20 @@ COMPLEX AUTOPILOT LOOP:
 
   ☐ some telemetry debugging scripts to make things are working right 
 
+  FASTPILOT:
+
+ ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git - To do this just put the MODELS in FASTPilot. So all you need to do is edit the MakeFile to reference that FASTPilot folder but main.cpp will still be in github
+
+ ☐ Only fork code to FASTPilot in the event you are developing code that does not already exist in print
+
+META:
+
+  ☐ Meta flying waypoints to compare efficiency - Maxwell Cobar
+
+  ☐ Disconnecting and reconnecting - this would be insane.
+
+  ☐ Way point control and run performance metrics on it.
+
 WOODEN DRONE:
 
  ☐ From here I'd like to start editing the sensor routines to include Arduino hooks. The sensor.h file should work at the moment on both desktop and Rpi so it's time to get it to work on Arduino hooks. Edit the Sensor routine to use the newly formed folders. Think a bit more on how you want to have this sensor block. I'm assuming you'll just be importing all the sensors? Pitot, IMU, GPS, etc??? What if those sensors are not connected? Is there a way for the controller to ignore erroneous data? Or maybe just turn them on and off in the controller?
@@ -106,26 +135,6 @@ ANTX:
  ☐ Market our entire setup as an independent contractor if needed
 
  ☐ Publish another paper?
-
-FASTPILOT:
-
- ☐ Fork code to www.gitlab.com:Montalvo/FASTPilot.git - To do this just put the MODELS in FASTPilot. So all you need to do is edit the MakeFile to reference that FASTPilot folder but main.cpp will still be in github
-
-SPEEDING UP FASTSim ON PI:
-
-  ☐ We can try systemd which is apparently what Arducopter uses
-
-  ☐ Another option is we write our own embedded software for the Pi
-  
-  ☐ We can also upgrade from the Pi3 to the Pi4 with lots of RAM
-
-META:
-
-  ☐ Meta flying waypoints to compare efficiency - Maxwell Cobar
-
-  ☐ Disconnecting and reconnecting - this would be insane.
-
-  ☐ Way point control and run performance metrics on it.
 
 BDE DJI Flights:
 
