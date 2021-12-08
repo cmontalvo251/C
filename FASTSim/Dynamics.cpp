@@ -41,7 +41,9 @@ Dynamics::Dynamics() {
 void Dynamics::setRates(double RCRATE,double CTLRATE,double TELEMRATE) {
   tRC = RCRATE;
   tCTL = CTLRATE;
+  #ifdef TELEMETRY
   serial.period = TELEMRATE;
+  #endif
 }
 
 void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {

@@ -141,7 +141,7 @@ what:
 	# For AUTO Mode on Pi for Airplane
 	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL" RENDER="" OPENGLSOURCES="" WIRINGPI="-lwiringPi"
 	# For SIMONLY on Desktop for Tank
-	# make rebuild ARGS="-DRCTECT -DDESKTOP -DSIMONLY" MODEL="Tank" HPATH="/home/carlos/Git_Repos/HIL"
+	# make rebuild ARGS="-DRCTECH -DDESKTOP -DSIMONLY" MODEL="Tank" HPATH="/home/carlos/Git_Repos/Github/HIL"
 	# Your choices for models are:
 	# PortalCube
 	# Airplane
