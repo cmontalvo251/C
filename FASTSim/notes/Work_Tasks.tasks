@@ -4,6 +4,7 @@ FASTSim Extra Sensors:
 
  ☐ Add barometer 
  ☐ Add ADC
+ ☐ Fix Datalogger to output a heading when you start (like one row)
 
 FASTSim SysML:
 
