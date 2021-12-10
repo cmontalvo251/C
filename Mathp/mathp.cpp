@@ -18,7 +18,7 @@ double sat(double input,double epsilon,double scalefactor)
     return -scalefactor;
   } else {
     //Inside the boundary so interpolate
-    return scalefactor*input;
+    return scalefactor*input/epsilon;
   }
 }
 
