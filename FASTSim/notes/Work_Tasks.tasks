@@ -4,7 +4,8 @@ FASTSim Extra Sensors:
 
  ☐ Add barometer 
  ☐ Add ADC
- ☐ Fix Datalogger to output a heading when you start (like one row)
+ ☐ Fix Datalogger to output a headers when you start (like one row)
+ ☐ For telemetry think about writing a groundstation in python using a GUI. That might a lot easier to plot given the fact that you can use matplotlib
 
 FASTSim SysML:
 
