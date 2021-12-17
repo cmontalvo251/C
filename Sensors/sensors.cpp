@@ -81,11 +81,17 @@ void sensors::readSensors(double time,double dt) {
   //to get a combined heading estimate
   computeCompassHeading(orientation.yaw,satellites.heading);
 
-  //barotemp.poll(time);
-  //analog.get_results();
+  //Read the barometer
+	barotemp.poll(time);
+	//Can eventually use pressure to get altitude if needed 
   //barotemp.pressure
   //barotemp.temperature
-  //analog.results is an array of length analog.channel_count
+
+	//Read the ADC Port
+  analog.get_results();
+  //analog.results is a MATLAB array of length analog.channel_count
+  //If you would just like to print the results you can write
+  //analog.print_results();
 
   /////////////////////////////////////////////////////////////////
 
