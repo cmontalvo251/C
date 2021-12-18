@@ -65,6 +65,7 @@ int main(int argc,char** argv) {
   //////////////////////////////////////////////////////////
 
   //////////////////////////Initialize Datalogger//////////////////////////////
+  logger.filetype = 1;
   logger.findfile("logs/");
   logger.open();
   //////////////////////////////////////////////////////////////////////////////
@@ -394,6 +395,21 @@ void runMainLoop() {
       #ifdef RK4_H
       //Integrator States which includes 6DOF states (13) and
       //actuators if there are any
+      if (logger.IsHeader == 0) {
+        logger.logheader[ctr-1] = "X RK4 Position (m)";
+        logger.logheader[ctr] = "Y RK4 Position (m)";
+        logger.logheader[ctr+1] = "Z RK4 Position (m)";
+        logger.logheader[ctr+2] = "RK4 Quaternion 0";
+        logger.logheader[ctr+3] = "RK4 Quaternion 1";
+        logger.logheader[ctr+4] = "RK4 Quaternion 2";
+        logger.logheader[ctr+5] = "RK4 Quaternion 3";
+        logger.logheader[ctr+6] = "U RK4 (m/s)";
+        logger.logheader[ctr+7] = "V RK4 (m/s)";
+        logger.logheader[ctr+8] = "W RK4 (m/s)";
+        logger.logheader[ctr+9] = "P RK4 (rad/s)";
+        logger.logheader[ctr+10] = "Q RK4 (rad/s)";
+        logger.logheader[ctr+11] = "R RK4 (rad/s)";
+      }
       for (int i = 0;i<integrator.NUMVARS;i++) {
         logger.logvars.set(ctr,1,integrator.State.get(i+1,1));
         ctr++;
@@ -403,14 +419,29 @@ void runMainLoop() {
       //pointless to log
       if (vehicle.NUMACTUATORS > 0) {
         for (int i = 0;i<vehicle.NUMACTUATORS;i++) {
+          if (logger.IsHeader==0) {
+            rc = new char[12];
+            sprintf(rc,"%s%d","Actuator ",i+1);
+            logger.logheader[ctr-1] = rc;
+          }
           logger.logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
           ctr++;
         }
       }
       //Forces and Moments
+      if (logger.IsHeader == 0){
+        logger.logheader[ctr-1] = "Aero Force X (N)";
+        logger.logheader[ctr] = "Aero Force Y (N)";
+        logger.logheader[ctr+1] = "Aero Force Z (N)";
+      }
       for (int i = 0;i<3;i++) {
         logger.logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
         ctr++;
+      }
+      if (logger.IsHeader == 0){
+        logger.logheader[ctr-1] = "Aero Moment X (N)";
+        logger.logheader[ctr] = "Aero Moment Y (N)";
+        logger.logheader[ctr+1] = "Aero Moment Z (N)";
       }
       for (int i = 0;i<3;i++) {
         logger.logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));

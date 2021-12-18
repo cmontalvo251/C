@@ -9,7 +9,11 @@ void Datalogger::findfile(char* directory) {
   //char filename[256];
   FILE* fileout;
   while (!found) {
-    sprintf(filename,"%s%d%s",directory,number,".txt");
+    if (filetype == 0) {
+      sprintf(filename,"%s%d%s",directory,number,".txt");
+    } else {
+      sprintf(filename,"%s%d%s",directory,number,".csv");
+    }
     printf("%s%s \n","Attempting to check for file: ",filename);
     fileout = fopen(filename,"r");
     if (!fileout) {
@@ -51,32 +55,39 @@ void Datalogger::printheaders() {
   }
   fprintf(outfile,"%s ","\n");
   IsHeader = 1;
+  flush();
 }
 
 //Print function
 void Datalogger::print(MATLAB out) {
   out.vecfprintf(outfile);
+  flush();
 }
 
 void Datalogger::print() {
   logvars.vecfprintf(outfile);
+  flush();
 }
 
 void Datalogger::println(MATLAB out) {
   out.vecfprintfln(outfile);
+  flush();
 }
 
 void Datalogger::println() {
   logvars.vecfprintfln(outfile);
+  flush();
 }
 
 //Print char*
 void Datalogger::printchar(char* msg) {
   fprintf(outfile,"%s ",msg);
+  flush();
 }
 
 //Close function
 void Datalogger::close() {
+  flush();
   printf("Closing File \n");
   fclose(outfile);
   printf("File closed \n");

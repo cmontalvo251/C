@@ -25,6 +25,7 @@ class Datalogger {
   //Contructor
   Datalogger();
   int IsHeader = 0;
+  int filetype = 0;
   MATLAB logvars;
   char** logheader;
   void setLogVars(int);
