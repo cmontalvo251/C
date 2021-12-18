@@ -63,6 +63,22 @@ double sensors::getAltitude(){
   return satellites.altitude;
 }
 
+double sensors::getPressure() {
+	return barotemp.pressure;
+}
+
+double sensors::getTemp() {
+	return barotemp.temperature;
+}
+
+int sensors::adc_channels() {
+	return analog.channel_count;
+}
+
+double sensors::getAnalog(int index) {
+	return analog.results.get(index,1);
+}
+
 
 ///Overloaded sensor routine that reads 
 ///sensors on board Navio

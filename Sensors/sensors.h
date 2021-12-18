@@ -36,9 +36,13 @@ public:
 	void initSensors(int);
 	void computeCompassHeading(double,double);
 	double getHeading();
-        double getLatitude();
-        double getLongitude();
-        double getAltitude();
+    double getLatitude();
+    double getLongitude();
+    double getAltitude();
+    double getPressure();
+    double getTemp();
+    int adc_channels();
+    double getAnalog(int);
 	//constructor
 	sensors();
 };

@@ -210,8 +210,12 @@ int main(int argc,char** argv) {
   //We also log all of the receiver signals - also output num of axis
   vehicle.NUMLOGS+=(vehicle.rcin.num_of_axis+1);
   //We also log the control signals
-  //Also output the numsignals variable
+  //and the number of output signals variable
   vehicle.NUMLOGS+=(vehicle.ctl.NUMSIGNALS+1);
+  //Finally we log pressure and temperature
+  vehicle.NUMLOGS+=2;
+  //And we log all the analog signals from the ADC
+  vehicle.NUMLOGS+=vehicle.err.adc_channels();
   logger.setLogVars(vehicle.NUMLOGS);
   ///////////////////////////////////////////////////////
 
@@ -448,6 +452,23 @@ void runMainLoop() {
         ctr++;
       }
       #endif
+      if (logger.IsHeader == 0){
+        logger.logheader[ctr-1] = "Baro Pressure (mbar)";
+        logger.logheader[ctr] = "Temperature (C)";
+      }
+      logger.logvars.set(ctr,1,vehicle.err.getPressure());
+      ctr++;
+      logger.logvars.set(ctr,1,vehicle.err.getTemp());
+      ctr++;
+      for (int i = 0;i<vehicle.err.adc_channels();i++) {
+        if (logger.IsHeader == 0) {
+          rc = new char[12];
+          sprintf(rc,"%s%d","ADC ",i+1);
+          logger.logheader[ctr-1] = rc;
+        }
+        logger.logvars.set(ctr,1,vehicle.err.getAnalog(i+1));
+        ctr++;
+      }
       if (logger.IsHeader == 0) {
         logger.printheaders();
       }
