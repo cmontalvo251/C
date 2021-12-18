@@ -1,12 +1,5 @@
                                      WORK TASKS:
 
-FASTSim Extra Sensors:
-
- ✔ Add barometer @done (21-12-17 16:21)
- ✔ Add ADC @done (21-12-17 16:21)
- ☐ Fix Datalogger to output a headers when you start (like one row)
- ☐ For telemetry think about writing a groundstation in python using a GUI. That might a lot easier to plot given the fact that you can use matplotlib
-
 FASTSim SysML:
 
    ☐ SysML diagrams for everything below to make sure everything works as intended
@@ -39,6 +32,8 @@ FASTSim SysML:
     ☐ Batwing
 
 HIL:
+
+ ☐ For telemetry think about writing a groundstation in python using a GUI. That might a lot easier to plot given the fact that you can use matplotlib
 
   ☐ For HIL - use the HIL code from MultiSAT++ for FASTsim
   
@@ -356,3 +351,9 @@ SIMPILOT:
  ✔ As a final check make sure both SimPilot SIMONLY,SIL and AUTO work #@done (21-10-01 11:54)
 
  ✔ Do the same for FASTsim SIMONLY, SIL #@done (21-10-01 12:39)
+
+ FASTSim Extra Sensors:
+
+ ✔ Add barometer @done (21-12-17 16:21)
+ ✔ Add ADC @done (21-12-17 16:21)
+ ✔ Fix Datalogger to output a headers when you start (like one row) @done (21-12-17 19:00)
