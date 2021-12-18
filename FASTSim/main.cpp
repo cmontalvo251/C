@@ -30,7 +30,6 @@ Dynamics vehicle;
 
 ///DATALOGGER IS ALWAYS RUNNING
 Datalogger logger;
-MATLAB logvars;
 
 ///Global Variable for Fileroot? Can I do this safely?
 char fileroot[256];
@@ -212,7 +211,7 @@ int main(int argc,char** argv) {
   //We also log the control signals
   //Also output the numsignals variable
   vehicle.NUMLOGS+=(vehicle.ctl.NUMSIGNALS+1);
-  logvars.zeros(vehicle.NUMLOGS,1,"Vars to Log");
+  logger.setLogVars(vehicle.NUMLOGS);
   ///////////////////////////////////////////////////////
 
   //////////////////Start Rendering Environment Must be done in a boost thread/////////////////
@@ -316,43 +315,87 @@ void runMainLoop() {
 
     ////////////////LOG DATA////////////////////////
     if (LOG<=t) {
-      logvars.set(1,1,t);
+      if (logger.IsHeader == 0) {
+        logger.logheader[0] = "Time (sec)";
+      }
+      logger.logvars.set(1,1,t);
       int ctr = 2;
       //GPS always on and 4 states (L,L,H,heading)
       //vehicle.satellites.latitude - I think LL are redundant
       //vehicle.satellites.longitude - because you can recover those from X,Y
       //vehicle.satellites.altitude - same with this one it's just -Z
       //vehicle.satellites.heading - so we just want heading and 
-      logvars.set(ctr,1,vehicle.err.getHeading());
+      if (logger.IsHeader == 0) {
+        logger.logheader[1] = "GPS Heading (deg)";
+        logger.logheader[2] = "Fused GPS+IMU Heading (deg)";
+      }
+      logger.logvars.set(ctr,1,vehicle.err.getHeading());
       ctr++;
       //Sensors has compass as well
       //vehicle.sensors.compass - the fused compass measurement
-      logvars.set(ctr,1,vehicle.err.compass);
+      logger.logvars.set(ctr,1,vehicle.err.compass);
       ctr++;
       //Error States (Sensor Measurements) - Always on and always 12 states
+      if (logger.IsHeader == 0) {
+        logger.logheader[3] = "X Position (m)";
+        logger.logheader[4] = "Y Position (m)";
+        logger.logheader[5] = "Z Position (m)";
+        logger.logheader[6] = "Roll (deg)";
+        logger.logheader[7] = "Pitch (deg)";
+        logger.logheader[8] = "Yaw (deg)";
+        logger.logheader[9] = "U (m/s)";
+        logger.logheader[10] = "V (m/s)";
+        logger.logheader[11] = "W (m/s)";
+        logger.logheader[12] = "P (deg/s)";
+        logger.logheader[13] = "Q (deg/s)";
+        logger.logheader[14] = "R (deg/s)";
+      }
       for (int i = 0;i<12;i++) {
-        logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
+        logger.logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
         ctr++;
       }       
       //Receiver Commands - always on
-      logvars.set(ctr,1,vehicle.rcin.num_of_axis);
+      if (logger.IsHeader == 0) {
+        logger.logheader[15] = "Number of RC Signals";
+        logger.logheader[16] = "Throttle RX (us)";
+        logger.logheader[17] = "Aileron RX (us)";
+        logger.logheader[18] = "Elevator RX (us)";
+        logger.logheader[19] = "Rudder RX (us)";
+      }
+      logger.logvars.set(ctr,1,vehicle.rcin.num_of_axis);
       ctr++;
+      char*rc;
       for (int i = 0;i<vehicle.rcin.num_of_axis;i++) {
-        logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
+        if (logger.IsHeader == 0) {
+          if (i+1>4) {
+            rc = new char[12];
+            sprintf(rc,"%s%d","Aux ",i+1-4);
+            logger.logheader[ctr-1] = rc;
+          }
+        }
+        logger.logvars.set(ctr,1,vehicle.rcin.rxcomm[i]);
         ctr++;
       }
       //PWM Commands - always on
-      logvars.set(ctr,1,vehicle.rcout.NUMSIGNALS);
+      if (logger.IsHeader == 0) {
+        logger.logheader[ctr-1] = "Number of PWM Signals";
+      }
+      logger.logvars.set(ctr,1,vehicle.rcout.NUMSIGNALS);
       ctr++;
       for (int i = 0;i<vehicle.rcout.NUMSIGNALS;i++) {
-        logvars.set(ctr,1,vehicle.rcout.pwmcomms[i]);
+        if (logger.IsHeader == 0) {
+          rc = new char[12];
+          sprintf(rc,"%s%d","PWM ",i+1);
+          logger.logheader[ctr-1] = rc;
+        }
+        logger.logvars.set(ctr,1,vehicle.rcout.pwmcomms[i]);
         ctr++;
       }
       #ifdef RK4_H
       //Integrator States which includes 6DOF states (13) and
       //actuators if there are any
       for (int i = 0;i<integrator.NUMVARS;i++) {
-        logvars.set(ctr,1,integrator.State.get(i+1,1));
+        logger.logvars.set(ctr,1,integrator.State.get(i+1,1));
         ctr++;
       }
       ///Actuator Error Values but only if the user added actuators though
@@ -360,21 +403,24 @@ void runMainLoop() {
       //pointless to log
       if (vehicle.NUMACTUATORS > 0) {
         for (int i = 0;i<vehicle.NUMACTUATORS;i++) {
-          logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
+          logger.logvars.set(ctr,1,vehicle.actuatorError.get(i+1,1));
           ctr++;
         }
       }
       //Forces and Moments
       for (int i = 0;i<3;i++) {
-        logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
+        logger.logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
         ctr++;
       }
       for (int i = 0;i<3;i++) {
-        logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
+        logger.logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
         ctr++;
       }
       #endif
-      logger.println(logvars);
+      if (logger.IsHeader == 0) {
+        logger.printheaders();
+      }
+      logger.println();
       LOG+=LOGRATE;
     }
     ////////////////////////////////////////////////

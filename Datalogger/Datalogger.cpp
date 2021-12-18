@@ -35,13 +35,39 @@ void Datalogger::open() {
    }
 }
 
+void Datalogger::setLogVars(int num) {
+  logvars.zeros(num,1,"Vars to Log");
+  logheader = (char**)malloc(num*sizeof(char*));
+  length = num;
+}
+
+void Datalogger::printheaders() {
+  for (int i = 0;i<length;i++) {
+    fprintf(outfile,"%s ",logheader[i]);
+    //printf("%s ",logheader[i]);
+    if (i < length - 1) {
+      fprintf(outfile,"%s",",");
+    }
+  }
+  fprintf(outfile,"%s ","\n");
+  IsHeader = 1;
+}
+
 //Print function
 void Datalogger::print(MATLAB out) {
   out.vecfprintf(outfile);
 }
 
+void Datalogger::print() {
+  logvars.vecfprintf(outfile);
+}
+
 void Datalogger::println(MATLAB out) {
   out.vecfprintfln(outfile);
+}
+
+void Datalogger::println() {
+  logvars.vecfprintfln(outfile);
 }
 
 //Print char*
