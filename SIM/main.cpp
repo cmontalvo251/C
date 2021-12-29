@@ -268,7 +268,7 @@ void runRenderLoop(int argc,char** argv) {
 ///////////////////////////////MAIN LOOP/////////////////////////////////////////////
 void runMainLoop() {
   #ifdef DEBUG
-  printf("Running MainLoop \n");
+  printf("Running MainLoop.... \n");
   #endif
 
   //////////////////Initialize timer if code running realtime////////////////////
@@ -283,11 +283,14 @@ void runMainLoop() {
   //Kick off main while loop
   while (t < tfinal) {
 
+    //printf("WHILE LOOP\n");
+
     /////////////WAIT LOOP//////////////////////////////////
     #if defined (SIL) || (HIL)
     //Wait loop to make sure we run in realtime
     //Don't do in AUTO or SIMONLY because we want to run as fast as possible
     //Get current time 
+    printf("WAIT LOOP \n");
     while (current_time < t) {
       current_time = timer.getTimeSinceStart()-startTime;   
     }

@@ -1,11 +1,9 @@
 #########FAST MAKEFILE##########
-
-##DEFAULTS
 MODEL=PortalCube
 RX=KEYBOARD
 PLATFORM=DESKTOP
 TYPE=SIMONLY
-EXECUTABLE=simonly
+EXECUTABLE=simonly.exe
 MAIN=SIM/main.o
 
 ###COMPILER AND OTHER FLAGS
@@ -30,27 +28,25 @@ SOURCES=$(COMMONSOURCES) $(HARDWARESOURCES) $(MODELSOURCES)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ##First target is default if you just type make
-
-##Target Simonly is default so just run make all
-simonly: 
+simonly:
 	#MAKING SIMONLY
 	make all
 
 #Target SIL needs type to be SIL
 sil:
-	#MAKIN SIL
-	make all TYPE="SIL" EXECUTABLE="sil"
+	#MAKING SIL
+	make all TYPE="SIL" EXECUTABLE="sil.exe"
 
-##Target to make all depends on the SOURCES
-all: $(SOURCES)
+##Target to make all depends on the MAIN, OBJECTS and the EXECUTABLE
+all: $(OBJECTS) $(MAIN) $(EXECUTABLE) 
 
-##Target EXECUTABLE depends on the OBJECTS and the Main o file
+##Rule for executable depends on the OBJECTS and MAIN
 $(EXECUTABLE): $(OBJECTS) $(MAIN)
 	$(CC) $(OBJECTS) $(MAIN) -o $(EXECUTABLE)
 
 ##Target MAIN depends on it's respective cpp and h file
 $(MAIN): $(MAIN:.o=.cpp) $(MAIN:.o=.h)
-	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) SIM/main.cpp -o SIM/main.o
+	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) -D$(RX) -D$(PLATFORM) -D$(TYPE) $(MAIN:.o=.cpp) -o $(MAIN)
 
 ##The rule for the objects depends on the sources
 .cpp.o: $(SOURCES)
@@ -58,13 +54,13 @@ $(MAIN): $(MAIN:.o=.cpp) $(MAIN:.o=.h)
 
 ##Rebuild function
 rebuild:
-	echo ' ' > simonly
-	rm simonly
 	make clean
 	make simonly
 
 ##Clean function
 clean:
+	echo ' ' > simonly
+	rm simonly
 	echo ' ' > SIM/d.o
 	rm SIM/*.o
 	echo ' ' > $(COMMON)/Datalogger/*.o
@@ -79,3 +75,8 @@ help:
 	## RX=RCTECH or KEYBOARD or FLYSKY or XBOX
 	## PLATFORM=DESKTOP or RPI or ARDUINO
 	## If you select nothing the defaults will be used
+	## Defaults are PortalCube, KEYBOARD, DEKSTOP
+	## The type of simulation is dictated by what follows after make
+	## Type include: simonly, sil, hil and auto
+	## Here's an example for sil on DESKTOP
+	## make sil MODEL="Airplane"
