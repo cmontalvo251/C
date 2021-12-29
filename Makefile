@@ -1,27 +1,17 @@
 #############UNCOMMENT HPATH, ARGS and MODEL IF YOU WANT TO DO 
 ##############THIS THE OLD FASHIONED WAY
 
-#####################WHERE IS HIL LOCATED?#####################
-#HPATH=/home/mjcobar13/Documents/GIT/CMontalvo251/HIL
-HPATH=/home/carlos/Git_Repos/Github/HIL
-#HPATH=/home/carlos/Files/Git_Repos/Github/HIL
-#HPATH=/home/pi/HIL
-##########################################################
-
 #########WHAT MODEL DO YOU WANT??##############
 #This needs to point to a source folder with aerodynamics.* and controller.*
 #MODEL=PortalCube
 #MODEL=Quadcopter
-MODEL=Tank
+#MODEL=Tank
 #MODEL=X8
 #MODEL=Airplane
 ###########################################
 
-#####################ARGS#######################
-#ARGS=-DRCTECH -DDESKTOP -DSIL
-ARGS=-DKEYBOARD -DDESKTOP -DSIL
-
 ###################WHAT TYPE OF TRANSMITTER ARE YOU USING?#########
+#SET THE RX VAR
 #RCTECH - USB Controller in FASTLab
 #XBOX - USB XBOX controller at home
 #FLYSKY - Iris+ transmitter in FASTLab for Iris+ drones
@@ -40,24 +30,6 @@ ARGS=-DKEYBOARD -DDESKTOP -DSIL
 #AUTO - this is no simulation at all and will run on control board
 #############################################################
 
-######DO NOT CHANGE THIS
-CPPDIR=../
-########################
-
-###################RENDER????#################################
-#Either OpenGL or nothing
-#RENDER=
-#OPENGLSOURCES=
-RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
-OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
-################################################################
-
-####################TELEMETRY###########################
-#WIRINGPI=-lwiringpi
-WIRINGPI=
-##########################################
-
-
 #################DO NOT CHANGE ANYTHING BELOW HERE###########
 
 ##NON USER FLAGS
@@ -70,10 +42,33 @@ WIRINGPI=
 ##SENSOR TYPES - SENSORBLOCK, IMURPI
 ##OTHER - REALTIME (for HIL)
 
+all:
+	### DEFAULT MAKE ALL
+	make $(OBJECTS) TYPE="SIMONLY" RX="KEYBOARD" MODEL="Tank" PLATFORM="DESKTOP"
+	make $(EXECUTABLE) TYPE="SIMONLY" RX="KEYBOARD" MODEL="Tank" PLATFORM="DESKTOP"
+simonly: $(SOURCES) $(EXECUTABLE)
+sil: $(SOURCES) $(EXECUTABLE)
+hil_server: $(SOURCES) $(EXECUTABLE)
+hil_client: $(SOURCES) $(EXECUTABLE)
+auto: $(SOURCES) $(EXECUTABLE)
+logger: $(SOURCES) $(EXECUTABLE)
+
+
+ifeq ($(TYPE),AUTO)
+	RENDER=-lGL -lGLU -lglut #you need these if you're compiling OpenGL #sudo apt-get install freeglut3-dev
+	OPENGLSOURCES=${CPPDIR}/OpenGL/opengl.cpp
+	WIRINGPI=-lwiringpi
+else
+	RENDER=
+	OPENGLSOURCES=
+	WIRINGPI=
+endif	
 CC=g++
-EXECUTABLE=FASTSim.exe
-MODELPATH=$(MODEL)/src
-CPPSOURCES=$(wildcard *.cpp ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/RK4/RK4.cpp)
+HPATH=Hardware/
+CPPDIR=Common/
+EXECUTABLE=FAST.exe
+MODELPATH=Models/$(MODEL)/src
+CPPSOURCES=$(wildcard ${CPPDIR}Timer/timer.cpp ${CPPDIR}MATLAB/MATLAB.cpp ${CPPDIR}Mathp/mathp.cpp ${CPPDIR}/Datalogger/Datalogger.cpp ${CPPDIR}/6DOF/Rotation3.cpp ${CPPDIR}/Sensors/sensors.cpp ${CPPDIR}/RK4/RK4.cpp ${CPPDIR}Dynamics/Dynamics.cpp)
 IMUSOURCES=$(wildcard ${HPATH}/IMU/*.cpp)
 GPSSOURCES=$(wildcard ${HPATH}/GPS/*.cpp)
 BAROSOURCES=$(wildcard ${HPATH}/Baro/*.cpp)
@@ -81,48 +76,57 @@ ADCSOURCES=$(wildcard ${HPATH}/ADC/*.cpp)
 RCIOSOURCES=$(wildcard ${HPATH}/RCIO/*.cpp ${HPATH}/Util/Util.cpp)
 MODELSOURCES=$(wildcard ${MODELPATH}/*.cpp)
 TELEMETRYSOURCES=$(wildcard ${HPATH}/Serial/Telemetry.cpp)
-SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES} ${OPENGLSOURCES} ${GPSSOURCES} ${BAROSOURCES} ${ADCSOURCES} $(TELEMETRYSOURCES)
+SOURCES=${CPPSOURCES} ${IMUSOURCES} ${RCIOSOURCES} ${MODELSOURCES} ${OPENGLSOURCES} ${GPSSOURCES} ${BAROSOURCES} ${ADCSOURCES} ${TELEMETRYSOURCES}
 OBJECTS=$(SOURCES:.cpp=.o)
 #COMPILE=-c -w -O3 #MIGHT NEED THIS LATER FOR SIL AND SIMONLY
 COMPILE=-c -w -std=c++11 -Wno-psabi
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib
-INCLUDE=-I${MODELPATH} -I../ -I${HPATH}
+INCLUDE=-I${MODELPATH} -I${CPPDIR} -I${HPATH}
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 
-all: $(SOURCES) $(EXECUTABLE)
-$(EXECUTABLE): $(OBJECTS)
+$(EXECUTABLE):
 	$(CC) $(OBJECTS) -o $@ $(LIB) $(WIRINGPI) $(INCLUDE) $(RENDER) $(THREAD)
-.cpp.o:
-	$(CC) $(COMPILE) $(FLAGS) $(ARGS) $< -o $@ $(WIRINGPI) $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
+$(OBJECTS): $(SOURCES)
+	$(CC) $(COMPILE) $(FLAGS) -D$(RX) -D$(PLATFORM) -D$(TYPE) $< -o $@ $(WIRINGPI) $(LIB) $(INCLUDE) $(RENDER) $(THREAD)
 clean:
 	echo ' ' > logs/d.txt
 	rm logs/*.txt
 	echo ' ' > d.exe
 	echo ' ' > d.o
 	rm *.exe *.o
-	echo ' ' > ../MATLAB/d.o
-	rm ../MATLAB/*.o
-	echo ' ' > ../Datalogger/d.o
-	rm ../Datalogger/*.o
-	echo ' ' > ../Mathp/d.o
-	rm ../Mathp/*.o
-	echo ' ' > ../6DOF/d.o
-	rm ../6DOF/*.o
+	echo ' ' > ${CPPDIR}MATLAB/d.o
+	rm ${CPPDIR}MATLAB/*.o
+	echo ' ' > ${CPPDIR}Datalogger/d.o
+	rm ${CPPDIR}Datalogger/*.o
+	echo ' ' > ${CPPDIR}Mathp/d.o
+	rm ${CPPDIR}Mathp/*.o
+	echo ' ' > ${CPPDIR}Rotation/d.o
+	rm ${CPPDIR}Rotation/*.o
+	echo ' ' > ${CPPDIR}Dynamics/d.o
+	rm ${CPPDIR}Dynamics/*.o
 	echo ' ' > ${HPATH}/Util/d.o
 	rm ${HPATH}/Util/*.o
 	echo ' ' > ${HPATH}/RCIO/d.o
 	rm ${HPATH}/RCIO/*.o
-	echo ' ' > ${MODELPATH}/d.o
-	rm ${MODELPATH}/*.o
-	echo ' ' > ../Timer/d.o
-	rm ../Timer/*.o
-	echo ' ' > ../Sensors/d.o
-	rm ../Sensors/*.o
-	echo ' ' > ../RK4/d.o
-	rm ../RK4/*.o
-	echo ' ' > ../OpenGL/d.o
-	rm ../OpenGL/*.o
+	echo ' ' > Models/Airplane/d.o
+	rm Models/Airplane/*.o
+	echo ' ' > Models/PortalCube/d.o
+	rm Models/PortalCube/*.o
+	echo ' ' > Models/Quadcopter/d.o
+	rm Models/Quadcopter/*.o	
+	echo ' ' > Models/Tank/d.o
+	rm Models/Tank/*.o
+	echo ' ' > Models/X8/d.o
+	rm Models/X8/*.o
+	echo ' ' > ${CPPDIR}Timer/d.o
+	rm ${CPPDIR}Timer/*.o
+	echo ' ' > ${HPATH}Sensors/d.o
+	rm ${HPATH}Sensors/*.o
+	echo ' ' > ${CPPDIR}RK4/d.o
+	rm ${CPPDIR}RK4/*.o
+	echo ' ' > ${CPPDIR}OpenGL/d.o
+	rm ${CPPDIR}OpenGL/*.o
 	echo ' ' > ${HPATH}/IMU/d.o
 	rm ${HPATH}/IMU/*.o
 	echo ' ' > ${HPATH}/Baro/d.o
@@ -136,7 +140,7 @@ clean:
 rebuild:
 	make clean
 	make
-what:
+help:
 	##########FROM NOW ON RUN YOUR MAKE FILE LIKE THIS###
 	# For AUTO Mode on Pi for Airplane
 	# make rebuild ARGS="-DFLYSKY -DRPI -DAUTO" MODEL="Airplane" HPATH="/home/pi/HIL" RENDER="" OPENGLSOURCES="" WIRINGPI="-lwiringPi"
