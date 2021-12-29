@@ -290,7 +290,7 @@ void runMainLoop() {
     //Wait loop to make sure we run in realtime
     //Don't do in AUTO or SIMONLY because we want to run as fast as possible
     //Get current time 
-    printf("WAIT LOOP \n");
+    //printf("WAIT LOOP \n");
     while (current_time < t) {
       current_time = timer.getTimeSinceStart()-startTime;   
     }

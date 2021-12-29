@@ -84,8 +84,10 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	//You can do whatever you want in here but you must create those two vectors.
 	FAEROB.mult_eq(0); //Zero these out just to make sure something is in here
 	MAEROB.mult_eq(0);
+	//return;
 
 	//ctlcomms.disp();
+	//PAUSE();
 
 	//First we need to convert the microsecond pulse to Newtons
 	compute_thrust_and_torque(ctlcomms);
@@ -96,33 +98,47 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	FAEROB.set(3,1,-thrust);
 
 	//Torque is a bit more complex
-	//First we add up all the torques in a specific way
-	double yaw_torque_top = torque_motors.get(1,1) - torque_motors.get(2,1) - torque_motors.get(3,1) + torque_motors.get(4,1);
-	double yaw_torque_bottom = torque_motors.get(5,1) - torque_motors.get(6,1) - torque_motors.get(7,1) + torque_motors.get(8,1);
-	MAEROB.set(3,1,yaw_torque_top+yaw_torque_bottom);
-
+	//First we need to make sure we understand the right order
 	//Then we extract the four forces
     //From the controller - us signals
-	//ctlcomms.set(1,1,motor_upper_left);
-	//ctlcomms.set(2,1,motor_upper_right);
-	//ctlcomms.set(3,1,motor_lower_left);
-	//ctlcomms.set(4,1,motor_lower_right);
+	//ctlcomms.set(1,1,motor_upper_left_bottom);
+	//ctlcomms.set(2,1,motor_upper_right_bottom);
+    //ctlcomms.set(3,1,motor_lower_right_bottom);
+	//ctlcomms.set(4,1,motor_lower_left_bottom);
+	//ctlcomms.set(5,1,motor_upper_left_top);
+	//ctlcomms.set(6,1,motor_upper_right_top);
+	//ctlcomms.set(7,1,motor_lower_right_top);
+	//ctlcomms.set(8,1,motor_lower_left_top);
 	//thrust_motors.disp();
 
-	//TOP MOTORS
-	double motor_upper_left_top = thrust_motors.get(1,1);
-	double motor_upper_right_top = thrust_motors.get(2,1);
-	double motor_lower_left_top = thrust_motors.get(3,1);
-	double motor_lower_right_top = thrust_motors.get(4,1);
+	//We then extract the motors
+	double motor_upper_left_bottom = thrust_motors.get(1,1);
+	double motor_upper_right_bottom = thrust_motors.get(2,1);
+	double motor_lower_right_bottom = thrust_motors.get(3,1);
+	double motor_lower_left_bottom = thrust_motors.get(4,1);
+	double motor_upper_left_top = thrust_motors.get(5,1);
+	double motor_upper_right_top = thrust_motors.get(6,1);
+	double motor_lower_right_top = thrust_motors.get(7,1);
+	double motor_lower_left_top = thrust_motors.get(8,1);
+
+	//then we add up all the torques in a specific way
+	//note the commands from the controller
+	//motor_upper_left_top = throttle - droll - dpitch - dyaw;
+	//motor_upper_right_top = throttle + droll - dpitch + dyaw;
+	//motor_lower_left_top = throttle - droll + dpitch + dyaw;
+	//motor_lower_right_top = throttle + droll + dpitch - dyaw;
+
+	//motor_upper_left_bottom = throttle - droll - dpitch + dyaw;
+	//motor_upper_right_bottom = throttle + droll - dpitch - dyaw;
+	//motor_lower_left_bottom = throttle - droll + dpitch - dyaw;
+	//motor_lower_right_bottom = throttle + droll + dpitch + dyaw;
+	double yaw_torque_top = motor_upper_left_top - motor_upper_right_top - motor_lower_left_top + motor_lower_right_top;
+	double yaw_torque_bottom = -motor_upper_left_bottom + motor_upper_right_bottom + motor_lower_left_bottom - motor_lower_right_bottom;
+	MAEROB.set(3,1,yaw_torque_top+yaw_torque_bottom);
 
 	//Now we compute torque on roll and pitch
 	double roll_torque_top = (motor_upper_left_top+motor_lower_left_top)*ry - (motor_upper_right_top+motor_lower_right_top)*ry;
 	double pitch_torque_top = (motor_upper_left_top+motor_upper_right_top)*rx - (motor_lower_right_top+motor_lower_left_top)*rx;
-
-	double motor_upper_left_bottom = thrust_motors.get(5,1);
-	double motor_upper_right_bottom = thrust_motors.get(6,1);
-	double motor_lower_left_bottom = thrust_motors.get(7,1);
-	double motor_lower_right_bottom = thrust_motors.get(8,1);
 
 	//Now we compute torque on roll and pitch
 	double roll_torque_bottom = (motor_upper_left_bottom+motor_lower_left_bottom)*ry - (motor_upper_right_bottom+motor_lower_right_bottom)*ry;

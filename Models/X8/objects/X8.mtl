@@ -1,4 +1,4 @@
-# Blender MTL File: 'x8.blend'
+# Blender MTL File: 'X8.blend'
 # Material Count: 1
 
 newmtl None
@@ -8,4 +8,4 @@ Kd 0.8 0.8 0.8
 Ks 0.8 0.8 0.8
 d 1
 illum 2
-map_Kd textures/MM_ARMYCAMO.bmp
+map_Kd MM_ARMYCAMO.bmp

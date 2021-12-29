@@ -187,7 +187,7 @@ void Dynamics::loop(double t,double dt) {
   if (t > tlastRCread + tRC) {
     //printf("Reading RC State \n");
     rcin.readRCstate();
-    //rcin.printRCstate(0);    
+    //rcin.printRCstate(-4);    
     tlastRCread = t;
   }
   ////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ void Dynamics::loop(double t,double dt) {
   #if defined (SIMONLY) || (SIL)
   if ((CONTROLLER_FLAG_INITIAL == 1) && (rcin.joy_fd == -1)) {
     rcin.rxcomm[4] = STICK_MAX; //This automatically turns on the autopilot
-    rcin.rxcomm[0] = STICK_MID; //This will put throttle in the center
+    //rcin.rxcomm[0] = STICK_MID; //This will put throttle in the center
   }
   #endif
   //////////////////////////////////////////////////////////////////////

@@ -134,6 +134,10 @@ void RCInput::readRCstate()
   #endif
 
   LostCommCheck();
+
+  //printf("TTTT ");
+  //printRCstate(-4);
+  //printf("FFFF ");
 }
 
 int RCInput::invert(int val) {

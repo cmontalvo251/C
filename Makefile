@@ -5,6 +5,10 @@ PLATFORM=DESKTOP
 TYPE=SIMONLY
 EXECUTABLE=simonly.exe
 MAIN=SIM/main.o
+OPENGLSOURCES=
+RENDER=
+THREAD=
+WIRINGPI=
 
 ###COMPILER AND OTHER FLAGS
 CC=g++
@@ -12,10 +16,10 @@ COMMON=Common
 HARDWARE=Hardware
 COMPILE=-c -w -std=c++11 -Wno-psabi
 FLAGS=-DDEBUG
-LIB=-L/usr/local/lib
+LIB=-L/usr/local/lib -L./
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 MODELPATH=Models/$(MODEL)/src
-INCLUDE=-I${COMMON} -I${HARDWARE} -I${MODELPATH}
+INCLUDE=-I${COMMON} -I${HARDWARE} -I${MODELPATH} -I./
 ###COMMON
 COMMONSOURCES=$(wildcard $(COMMON)/*/*.cpp)
 ###HARDWARE
@@ -24,7 +28,7 @@ HARDWARESOURCES=$(wildcard $(HARDWARE)/*/*.cpp)
 MODELSOURCES=$(wildcard Models/$(MODEL)/src/*.cpp)
 
 ###COMBINE ALL SOURCES
-SOURCES=$(COMMONSOURCES) $(HARDWARESOURCES) $(MODELSOURCES)
+SOURCES=$(COMMONSOURCES) $(HARDWARESOURCES) $(MODELSOURCES) $(OPENGLSOURCES)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ##First target is default if you just type make
@@ -35,22 +39,44 @@ simonly:
 #Target SIL needs type to be SIL
 sil:
 	#MAKING SIL
-	make all TYPE="SIL" EXECUTABLE="sil.exe"
+	#You need these if you're compiling OpenGL 
+	#sudo apt-get install freeglut3-dev
+    #We are also using boost for the rendering pipeline 
+    #sudo apt-get install libboost-all-dev
+	make all TYPE="SIL" EXECUTABLE="sil.exe" RENDER="-lGL -lGLU -lglut" OPENGLSOURCES="OpenGL/opengl.cpp" THREAD="-lpthread -lboost_system -lboost_thread -lboost_date_time"
+
+#Target HIL has two different options on PI and DESKTOP need to make sure you pick one
+#or the other
+#This is going to be somewhat difficult because on the pi you need wiringpi
+hil: 
+	make all TYPE="HIL" EXECUTABLE="hil.exe"
+
+#Target auto is always on Rpi with the FLYSKY transmitter you also need wiring pi
+auto:
+	make all TYPE="AUTO" EXECUTABLE="auto.exe" PLATFORM="RPI" RX="FLYSKY" WIRINGPI="-lwiringpi"
+
+#Demo is in auto mode on RPI but main is DEMO/demo.cpp
+demo:
+	make all TYPE="AUTO" EXECUTABLE="demo.exe" PLATFORM="RPI" RX="FLYSKY" MAIN="DEMO/demo.o" WIRINGPI="-lwiringpi"
+
+##Logger is on RPI but all it does is take data
+logger:
+	make all TYPE="AUTO" EXECUTABLE="logger.cpp" PLATFORM="RPI" MAIN="LOGGER/logger.cpp" WIRINGPI="-lwiringpi"
 
 ##Target to make all depends on the MAIN, OBJECTS and the EXECUTABLE
 all: $(OBJECTS) $(MAIN) $(EXECUTABLE) 
 
 ##Rule for executable depends on the OBJECTS and MAIN
 $(EXECUTABLE): $(OBJECTS) $(MAIN)
-	$(CC) $(OBJECTS) $(MAIN) -o $(EXECUTABLE)
+	$(CC) $(OBJECTS) $(MAIN) -o $(EXECUTABLE) $(LIB) $(INCLUDE) $(RENDER) $(THREAD) $(WIRINGPI)
 
 ##Target MAIN depends on it's respective cpp and h file
 $(MAIN): $(MAIN:.o=.cpp) $(MAIN:.o=.h)
-	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) -D$(RX) -D$(PLATFORM) -D$(TYPE) $(MAIN:.o=.cpp) -o $(MAIN)
+	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) -D$(RX) -D$(PLATFORM) -D$(TYPE) $(MAIN:.o=.cpp) -o $(MAIN) $(WIRINGPI)
 
 ##The rule for the objects depends on the sources
 .cpp.o: $(SOURCES)
-	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) -D$(RX) -D$(PLATFORM) -D$(TYPE) $< -o $@
+	$(CC) $(COMPILE) $(FLAGS) $(INCLUDE) -D$(RX) -D$(PLATFORM) -D$(TYPE) $(LIB) $(WIRINGPI) $< -o $@
 
 ##Rebuild function
 rebuild:
@@ -59,14 +85,20 @@ rebuild:
 
 ##Clean function
 clean:
-	echo ' ' > simonly
-	rm simonly
+	echo ' ' > d.exe
+	rm *.exe
 	echo ' ' > SIM/d.o
 	rm SIM/*.o
+	echo ' ' > LOGGER/d.o
+	rm LOGGER/*.o
+	echo ' ' > DEMO/d.o
+	rm DEMO/*.o
 	echo ' ' > $(COMMON)/Datalogger/*.o
 	rm $(COMMON)/*/*.o
 	echo ' ' > $(HARDWARE)/Serial/*.o
 	rm $(HARDWARE)/*/*.o
+	echo ' ' > OpenGL/*.o
+	rm OpenGL/*.o
 
 ###Help function
 help:

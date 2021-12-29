@@ -34,6 +34,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	double motor_lower_right_bottom = STICK_MIN;
 
 	//First extract the relavent commands from the receiver.
+	//printf("HERE: ");
 	//for (int i = 0;i<4;i++) {
 	//	printf("%d ",rxcomms[i]);
 	//}
@@ -67,6 +68,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 		double roll_rate = state.get(10,1); //For SIL/SIMONLY see Sensors.cpp
 		double pitch_rate = state.get(11,1); //These are already in deg/s
 		double yaw_rate = state.get(12,1); //Check IMU.cpp to see for HIL
+		//state.disp();
 		//printf("PQR Rate in Controller %lf %lf %lf \n",roll_rate,pitch_rate,yaw_rate);
 		double kp = 10.0;
 		double kd = 2.0;
@@ -107,7 +109,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//ctlcomms.plus_eq(STICK_MIN);
 	ctlcomms.set(1,1,motor_upper_left_bottom);
 	ctlcomms.set(2,1,motor_upper_right_bottom);
-       	ctlcomms.set(3,1,motor_lower_right_bottom);
+    ctlcomms.set(3,1,motor_lower_right_bottom);
 	ctlcomms.set(4,1,motor_lower_left_bottom);
 	ctlcomms.set(5,1,motor_upper_left_top);
 	ctlcomms.set(6,1,motor_upper_right_top);

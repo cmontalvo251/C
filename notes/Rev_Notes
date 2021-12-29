@@ -1,3 +1,14 @@
+===========================12/29/2021=========================
+
+I have started breaking the code. I have moved a lot of files 
+all over the place. Right now I have folders for SIM, DEMO and LOGGER
+but I cannot test DEMO or LOGGER nor can I test AUTO or HIL because I
+do not have the hardware. I will just have to cross that bridge next 
+week. Everything I want to do with the make file is done though so it's
+time to move on to the next task in the main .tasks file
+
+Next task is to rename all the aerodynamics.cpp files to forces.cpp
+
 ============================11/17/2021========================
 
 FASTSim works on Tank, Quadcopter and X8 now in AUTO mode and SIMONLY/SIL

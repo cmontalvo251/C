@@ -208,7 +208,8 @@ void KeyPressed(unsigned char key,int x,int y)
   }
   //t is increase thrust
   if (key == 't') {
-   glhandle_g.state.control[0]+=0.1; 
+   glhandle_g.state.control[0]+=0.1;
+   //printf("Increasing thrust %lf \n",glhandle_g.state.control[0]);
   }
   if (key == 'g') {
    glhandle_g.state.control[0]-=0.1; 
