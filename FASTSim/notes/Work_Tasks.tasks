@@ -2,24 +2,17 @@
 
 FASTSim SysML:
 
+   ☐ I think to make sure you have a simple transition you need to move all the C++ and HIL repos into MultiSAT as well. The reason being because HIL the simulation does not work right now in FASTSim. I think eventually you can deprecate the HIL simulation but just to make sure things still work properly you need to put a running copy into MultiSAT so it still works during the transition
+   ☐ Move HIL into C++ directory and delete HIL (call folder Hardware or something)
+   ☐ Rename all the aerodynamics.cpp routines to forces.cpp
+   ☐ Move all vehicles to a Model Folder
+   ☐ Re-org all folders in C++.git (Make C++ routines called Basic or something like that maybe Util? or COmmon? yea Common)
+   ☐ Code Orbit++ and add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot. 
+   ☐ deprecate Orbit++ from Aerospace folder
    ☐ SysML diagrams for everything below to make sure everything works as intended
-      ☐ Do it in such a way that HIL works for SIM and SAT
-      ☐ I think the HIL send should be in Dynamics (that’s the only place you need to send)
-      ☐ The HIL receive should be in Sensors (only place you need to receive)
-      ☐ I want the main.cpp for all the below routines to never have to be edited. 
-         ☐ LOGGER - move from FASTSensors to here
-         ☐ DEMO - this is SimPilot
-         ☐ SIM  - This is FASTsim
-         ☐ SAT - deprecate Orbit++ from Aerospace folder - add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot. 
-         ☐ I think to make sure you have a simple transition you need to move all the C++ and HIL repos into MultiSAT as well. The reason being because HIL the simulation does not work right now in FASTSim. I think eventually you can deprecate the HIL simulation but just to make sure things still work properly you need to put a running copy into MultiSAT so it still works during the transition
-      ☐ Rename C++.git to FAST.git
-      ☐ Rename all the aerodynamics.cpp routines to forces.cpp
-      ☐ Move HIL into C++ directory and delete HIL
-      ☐ Save FASTPilot.git on Gitlab for proprietary software 
-      ☐ Put the Makefile in FAST that way you can do - make Demo or make Logger find a way to do this
-      ☐ Make the software look like the SysML diagram. This will probably break everything
-
-  ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form: 
+   ☐ I think the HIL send should be in Dynamics (that’s the only place you need to send)
+   ☐ The HIL receive should be in Sensors (only place you need to receive)
+    ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form: 
     ☐ Inner Loop 
       ☐ Inputs: Roll, pitch, yaw commands 
       ☐ Outputs: ctlcomms - us signals to RCIO class
@@ -32,6 +25,15 @@ FASTSim SysML:
     ☐ Bumblebee
     ☐ Meta 1 and 2
     ☐ Batwing
+   ☐ First Video is your struggle with something new
+   ☐ Second Video is on SysML diagrams
+   ☐ Make the software look like the SysML diagram. This will probably break everything
+   ☐ Put the Makefile in FAST that way you can do - make Demo or make Logger find a way to do this
+   ☐ I want the main.cpp for all the below routines to never have to be edited. 
+      ☐ LOGGER - move from FASTSensors to here
+      ☐ DEMO - this is SimPilot
+      ☐ SIM  - This is FASTsim
+   ☐ Save FASTPilot.git on Gitlab for proprietary software 
 
 HIL:
 
@@ -39,9 +41,9 @@ HIL:
 
   ☐ For HIL - use the HIL code from MultiSAT++ for FASTsim
 
-  ☐ Once HIL mode works for SAT you can deprecate the HIL simulation in MultiSAT++
+  ☐ Once HIL mode works for SIM Model=SAT you can deprecate the HIL simulation in MultiSAT++
   
-  ☐ MultiSAT++ simulation will still need copies of the C++ repo but as you make the SAT mode more like MultiSAT++ you can deprecate this simulation. Still I would like to make sure I still have a running version of MultiSAT++ to work with in the event I do E-Sail simulations.
+  ☐ MultiSAT++ simulation will still need copies of the C++ repo but as you make the Model=SAT mode more like MultiSAT++ you can deprecate this simulation. Still I would like to make sure I still have a running version of MultiSAT++ to work with in the event I do E-Sail simulations.
   
   ☐ Create a script that sends data back and forth
   
@@ -75,8 +77,8 @@ COMPLEX AUTOPILOT LOOP:
 
   ☐ Test autopilot on real systems - RCIO needs to be able to handle where to send ESC signals depending on #define in Makefile
     ☐ GraveDigger - The Remote control car in the lab
-    ☐ Wooden Drone - Can focus on outerloop control laws
-      ☐ Attempt to code altitude hold for drone using deltaP and Az - REV 6
+    ☐ Wooden Drone - Can focus on outerloop control laws (Make sure to update blog for this one)
+      ☐ Attempt to code altitude hold for drone using deltaP and Az - REV 6 
       ☐ Station keeping
       ☐ Point to a desired attitude
       ☐ Waypoint controller
