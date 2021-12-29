@@ -38,7 +38,7 @@ void get_fileroot(int argc,char** argv,char fileroot[]) {
   printf("Number of Input Arguments = %d \n",argc);
   if (argc == 1) {
     //This means there are no input arguments and we must default to PortalCube
-    sprintf(fileroot,"%s","PortalCube/");
+    sprintf(fileroot,"%s","Models/PortalCube/");
     printf("%s \n","No Input Arguments given....defaulting to:");
   } else {
     //this means some input arguments were provided

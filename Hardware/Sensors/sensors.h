@@ -2,7 +2,7 @@
 #define SENSORS_H
 
 #include <MATLAB/MATLAB.h>
-#include <6DOF/Rotation3.h>
+#include <Rotation/Rotation3.h>
 #include <Timer/timer.h>
 
 #include <Baro/BaroTemp.h>

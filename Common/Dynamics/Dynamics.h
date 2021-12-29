@@ -2,7 +2,7 @@
 #define DYNAMICS_H
 
 #include <MATLAB/MATLAB.h>
-#include <6DOF/Rotation3.h>
+#include <Rotation/Rotation3.h>
 //No matter what we need a way to receive commands from the PIC
 //The rcin class can handle anything we throw at it. 
 //Joystick commands or even a receiver on the raspberry pi or an Arduino

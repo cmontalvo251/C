@@ -5,7 +5,7 @@ using namespace std;
 //using namespace boost;
 
 #include <Datalogger/Datalogger.h> //Always need a data logger
-#include "Dynamics.h"; //Always need vehicle dynamics
+#include <Dynamics/Dynamics.h>; //Always need vehicle dynamics
 //Always need timer for the pause function and the error function. 
 //May not need to create a TIMER class but still need the built-in functions
 #include <Timer/timer.h>
