@@ -1,6 +1,6 @@
-/* Aerodynamics Template 2021
+/* Forces Template 2021
 
-This aerodynamics file is a template for a fictitious portalcube
+This forces file is a template for a fictitious portalcube
 with thrusters and a simple aero model. The Dynamics.cpp module
 will call a few candidate functions. If you make your own aero
 file with header and cpp file you must conform to the following
@@ -8,13 +8,13 @@ functions otherwise the software will completely break.
 
 */
 
-#include "aerodynamics.h"
+#include "forces.h"
 
 //Constructor
-aerodynamics::aerodynamics() {
+forces::forces() {
 	//The constructor must create these 3x1 vectors
-	FAEROB.zeros(3,1,"Force Aero in Body Frame");
-	MAEROB.zeros(3,1,"Moment Aero in Body Frame");
+	FB.zeros(3,1,"Force in Body Frame");
+	MB.zeros(3,1,"Moment in Body Frame");
 	thrust_motors.zeros(4,1,"Force Motors");
 	torque_motors.zeros(4,1,"Torque Motors");
 
@@ -59,15 +59,15 @@ aerodynamics::aerodynamics() {
 	rz = 0.0;
 }
 
-void aerodynamics::setup(MATLAB var) {
+void forces::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
-	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
+	FORCES_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
 	#ifdef DEBUG
-	printf("Aerodynamics Initialized \n");
+	printf("forces Initialized \n");
 	#endif
 }
 
-void aerodynamics::compute_thrust_and_torque(MATLAB ctlcomms) {
+void forces::compute_thrust_and_torque(MATLAB ctlcomms) {
 	for (int i = 1;i<=4;i++) {
 		double omega = spin_slope*(ctlcomms.get(i,1) - STICK_MIN);
 		double thrust = 0.5*RHOSLSI*AREA*pow(omega*Rrotor,2.0)*ct;
@@ -79,11 +79,11 @@ void aerodynamics::compute_thrust_and_torque(MATLAB ctlcomms) {
 	//torque_motors.disp();
 }
 
-void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB ctlcomms) {
-	//The only thing this function needs to do is populate FAEROB and MAEROB. 
+void forces::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB ctlcomms) {
+	//The only thing this function needs to do is populate FB and MB. 
 	//You can do whatever you want in here but you must create those two vectors.
-	FAEROB.mult_eq(0); //Zero these out just to make sure something is in here
-	MAEROB.mult_eq(0);
+	FB.mult_eq(0); //Zero these out just to make sure something is in here
+	MB.mult_eq(0);
 
 	//ctlcomms.disp();
 
@@ -93,12 +93,12 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	//Thrust on the body is simply the total thrust
 	double thrust = thrust_motors.sum();
 	//printf("thrust = %lf \n",thrust);
-	FAEROB.set(3,1,-thrust);
+	FB.set(3,1,-thrust);
 
 	//Torque is a bit more complex
 	//First we add up all the torques in a specific way
 	double yaw_torque = torque_motors.get(1,1) - torque_motors.get(2,1) - torque_motors.get(3,1) + torque_motors.get(4,1);
-	MAEROB.set(3,1,yaw_torque);
+	MB.set(3,1,yaw_torque);
 
 	//Then we extract the four forces
     //From the controller - us signals
@@ -115,8 +115,8 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB c
 	//Now we compute torque on roll and pitch
 	double roll_torque = (motor_upper_left+motor_lower_left)*ry - (motor_upper_right+motor_lower_right)*ry;
 	double pitch_torque = (motor_upper_left+motor_upper_right)*rx - (motor_lower_right+motor_lower_left)*rx;
-	MAEROB.set(1,1,roll_torque);
-	MAEROB.set(2,1,pitch_torque);	
+	MB.set(1,1,roll_torque);
+	MB.set(2,1,pitch_torque);	
 	//MAEROB.disp();
 }
 
