@@ -27,6 +27,8 @@ Only in AUTO will we call the onboard sensors
 */
 #include <Sensors/sensors.h>
 
+///If we're running on the PI not in SIMONLY and we want TELEMETRY
+///Which basically means realtime on the pi we turn on telemetry
 #ifdef RPI
 #ifndef SIMONLY
 #define TELEMETRY
@@ -35,18 +37,8 @@ Only in AUTO will we call the onboard sensors
 #endif
 #endif
 
-class environment {
- private:
-  int GRAVITY_FLAG;
-  double mass;
- public:
-   MATLAB FGRAVI,FGNDI,MGNDI;
-   void init(int G);
-   void gravitymodel(MATLAB State);
-   void groundcontactmodel(MATLAB,MATLAB);
-   void setMass(double);
-   environment(); //constructor   
-};
+///Need the environment no matter what
+#include <Environment/environment.h>
 
 class Dynamics {
  private:
@@ -77,7 +69,7 @@ class Dynamics {
   int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0,NUMVARS;
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
-  void initExtModels(int G);
+  void initEnvironment(char*);
   void initExtForces(int F);
   void setMassProps(MATLAB massdata);
   void initErrModel(MATLAB sensordata);

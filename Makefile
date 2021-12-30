@@ -104,6 +104,18 @@ clean:
 	rm ${GEO}/*.o
 	echo ' ' > OpenGL/*.o
 	rm OpenGL/*.o
+	echo ' ' > Models/Airplane/src/d.o
+	rm Models/Airplane/src/*.o
+	echo ' ' > Models/Quadcopter/src/d.o
+	rm Models/Quadcopter/src/*.o
+	echo ' ' > Models/X8/src/d.o
+	rm Models/X8/src/*.o
+	echo ' ' > Models/Satellite/src/d.o
+	rm Models/Satellite/src/*.o
+	echo ' ' > Models/PortalCube/src/d.o
+	rm Models/PortalCube/src/*.o
+	echo ' ' > Models/Tank/src/d.o
+	rm Models/Tank/src/*.o
 
 ###Help function
 help:

@@ -1,0 +1,8 @@
+0		!Gravity Flag (-1=off,0=point mass, 1=egm2008,2=point mass + sun,3=flat earth)
+1		!Magnetic Field Model (0=off, 1=emm2015)
+1		!Update Rate of Magnetic Field Model (sec) (-99=update once,0=everytimestep)
+2018	!Year
+0		!Constant Solar Wind Model
+0		!Xhat
+0		!Yhat
+1		!Zhat

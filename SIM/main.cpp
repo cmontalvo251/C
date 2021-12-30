@@ -179,9 +179,12 @@ int main(int argc,char** argv) {
   ////Init Forces
   vehicle.initExtForces(FORCES_FLAG);
   printf("External Forces Model Online \n");
-  //Init Extra Models
-  vehicle.initExtModels(GRAVITY_FLAG);
-  printf("Earth Environment is Flat as of Version 0.9 \n");
+  //Init External Environment
+  char envfile[256]={NULL};
+  strcat(envfile,fileroot);
+  strcat(envfile,"Input_Files/Environment_Flags.txt");
+  vehicle.initEnvironment(envfile);
+  printf("Environment Model is Online \n");
   //Initialize the Error Model 
   if (ERROR_FLAG) {
     MATLAB sensordata;
