@@ -316,9 +316,10 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   //Send the external forces model the actuator_state instead of the ctlcomms
   extforces.ForceMoment(t,State,k,actuatorError);
 
-  //Gravity Model
+  //Gravity Model and Magnetic Field model
   env.gravitymodel(State);
-  env.groundcontactmodel(State,k);  
+  env.groundcontactmodel(State,k);
+  env.getCurrentMagnetic(t,State); 
 
   //Add Up Forces and Moments
   FTOTALI.overwrite(env.FGRAVI); //add gravity 

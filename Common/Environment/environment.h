@@ -43,12 +43,12 @@ class environment {
   double getSOLARWINDMODEL(MATLAB,MATLAB,double,MATLAB); //overloaded function for confluence point
  public:
    MATLAB FGRAVI,FGNDI,MGNDI;
-   MATLAB BVECINE,BVECSPH;
+   MATLAB BVECINE,BVECSPH,BVECINE_Tesla;
    void init(char*);
    void gravitymodel(MATLAB State);
    void groundcontactmodel(MATLAB,MATLAB);
    void setMass(double);
-   double getCurrentMagnetic(double,double,MATLAB);
+   void getCurrentMagnetic(double,MATLAB);
    double getCurrentDensity(); //For now put this in here. Probably need an aero routine later
    void EarthEphemeris(MATLAB);
    void EarthEphemeris(MATLAB,double);

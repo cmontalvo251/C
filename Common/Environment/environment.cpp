@@ -26,6 +26,7 @@ void environment::setMass(double m) {
 }
 
 void environment::gravitymodel(MATLAB State) {
+  FGRAVI.mult_eq(0); //zero out gravity
   gSun.mult_eq(0); //zero out sun gravity as well
 
   double gx=0, gy=0, gz=0;
@@ -40,62 +41,68 @@ void environment::gravitymodel(MATLAB State) {
   if (Gravity_Flag == 1)
     {
       if (rSat > REARTH) { //Make sure you're outside the earth otherwise this routine will return a nan
-	egm2008->W(x, y, z, gx, gy, gz);
+        egm2008->W(x, y, z, gx, gy, gz);
       } else {
-	gx = 0;
-	gy = 0;
-	gz = 0;
+      	gx = 0;
+        gy = 0;
+        gz = 0;
       }
     }
   //Use the point mass model
   else if ((Gravity_Flag == 0) || (Gravity_Flag == 2)) //This is the point mass model here
     {
       if (rSat > REARTH) { //Make sure you're outside the earth
-	gx = (mu / pow(rSat, 3))*x;
-	gy = (mu / pow(rSat, 3))*y;
-	gz = (mu / pow(rSat, 3))*z;
+        	gx = (mu / pow(rSat, 3))*x;
+        	gy = (mu / pow(rSat, 3))*y;
+        	gz = (mu / pow(rSat, 3))*z;
       } else {
-	//I don't really like this. I'm just going to kill the program if you land inside the Earth. I mean, at that point the simulation is invalid.
-	//Why continue?
-	//This environment.cpp is now part of FAST.git which means
-	//there is a ground contact model now
-	//printf("Gravity model is on and running but a part of your spacecraft is inside the Earth.....sooooo....\n");
-	//printf("the simulation is going to get killed. Hope you are having an ok day. \n");
-	//printf("X,Y,Z = %lf %lf %lf \n",x,y,z);
-	//printf("rSat = %lf REARTH = %lf delx = %lf \n",rSat,REARTH,rSat-REARTH);
-	//exit(1);
-	gx = 0;
-	gy = 0;
-	gz = 0;
+      	//I don't really like this. I'm just going to kill the program if you land inside the Earth. I mean, at that point the simulation is invalid.
+      	//Why continue?
+      	//This environment.cpp is now part of FAST.git which means
+      	//there is a ground contact model now
+      	//printf("Gravity model is on and running but a part of your spacecraft is inside the Earth.....sooooo....\n");
+      	//printf("the simulation is going to get killed. Hope you are having an ok day. \n");
+      	//printf("X,Y,Z = %lf %lf %lf \n",x,y,z);
+      	//printf("rSat = %lf REARTH = %lf delx = %lf \n",rSat,REARTH,rSat-REARTH);
+      	//exit(1);
+      	gx = 0;
+      	gy = 0;
+      	gz = 0;
       }
       if (Gravity_Flag == 2) {
-	//Need to add Sun gravity
-	//First get the location of the satellite
-	for (int i = 1;i<=3;i++) {
-	  //plus(rSun2EarthToday,XYZ_current);
-	  rSun2Sat.set(i,1,rSun2EarthToday.get(i,1)+State.get(i,1));
-	}
-	//Then compute gSun
-	gSun.overwrite(rSun2EarthToday);
-	gSun.mult_eq(muSun/pow(rSun2Sat.norm(),3));
+      	//Need to add Sun gravity
+      	//First get the location of the satellite
+      	for (int i = 1;i<=3;i++) {
+      	  //plus(rSun2EarthToday,XYZ_current);
+      	  rSun2Sat.set(i,1,rSun2EarthToday.get(i,1)+State.get(i,1));
+      	}
+      	//Then compute gSun
+      	gSun.overwrite(rSun2EarthToday);
+      	gSun.mult_eq(muSun/pow(rSun2Sat.norm(),3));
       }
     }
-  else if (Gravity_Flag == -1) { //Gravity is off
-    gx = 0;
-    gy = 0;
-    gz = 0;
+      else if (Gravity_Flag == -1) { //Gravity is off
+        gx = 0;
+        gy = 0;
+        gz = 0;
+      }
+      else if (Gravity_Flag == 3) { //Constant Gravity
+        gx = 0;
+        gy = 0;
+        gz = GEARTH;
   }
-  else if (Gravity_Flag == 3) { //Constant Gravity
-    gx = 0;
-    gy = 0;
-    gz = GEARTH;
-  }
+
+  //printf("GX,GY,GZ = %lf %lf %lf \n",gx,gy,gz);
 
   //Add Sun gravity
   FGRAVI.plus_eq(gSun);
+  //Add Earth Gravity
   FGRAVI.plus_eq1(1,1,gx);
   FGRAVI.plus_eq1(2,1,gy);
   FGRAVI.plus_eq1(3,1,gz);
+  //Multiply by Mass
+  FGRAVI.mult_eq(mass);
+  //FGRAVI.disp();
 }
 
 void environment::groundcontactmodel(MATLAB State,MATLAB k) {
@@ -143,6 +150,7 @@ void environment::init(char ENVIRONMENTFILENAME[]) {
   FGNDI.zeros(3,1,"Ground Forces Inertial Frame");
   MGNDI.zeros(3,1,"Ground Moments Inertial Frame");
   BVECINE.zeros(3,1,"Inertial Frame Vectors of Magnetic Field");
+  BVECINE_Tesla.zeros(3,1,"Magnetic Field Inertial Frame in Teslas");
   BVECSPH.zeros(3,1,"Speherical Frame Vectors of Magnetic Field");
 
   fstream envfile;
@@ -494,8 +502,7 @@ double environment::getSOLARWINDMODEL(MATLAB SOLAR_DIRECTIONin,MATLAB XYZ,double
   return SOLARWINDMAGNITUDE;
 }
 
-double environment::getCurrentMagnetic(double simtime,double time_magnet,MATLAB State)
-{
+void environment::getCurrentMagnetic(double simtime,MATLAB State) {
   
   //This routine will only update the magnetic field once
   if (time_magnet_next == -99 && BVECINE.get(1,1) != 0) { 
@@ -508,7 +515,7 @@ double environment::getCurrentMagnetic(double simtime,double time_magnet,MATLAB 
     time_magnet += time_magnet_next;
   } else {
     //otherwise return prematurely
-    return time_magnet;
+    return;
   }
   
   if (Magnetic_Flag == 1)
@@ -525,38 +532,39 @@ double environment::getCurrentMagnetic(double simtime,double time_magnet,MATLAB 
       double rho = sqrt((pow(x, 2) + pow(y, 2) + pow(z, 2)));
       double phi;
       if (rho > 0) {
-	phi = (acos(z / rho));
+        phi = (acos(z / rho));
       } else {
-	phi = 0;
+        phi = 0;
       }
       double the = atan2(y , x);
       double lat = 90 - phi*(180 / PI);
       double lon = the*(180/PI);
       double h = rho-REARTH; //need to send the model the height above the earth's surface
+      //printf("x,y,z,rho,H = %lf,%lf,%lf,%lf,%lf \n",x,y,z,rho,h);
       if (h > 0) {
-	/**
-	 * Evaluate the components of the geomagnetic field.
-	 *
-	 * @param[in] t the time (years).
-	 * @param[in] lat latitude of the point (degrees).
-	 * @param[in] lon longitude of the point (degrees).
-	 * @param[in] h the height of the point above the ellipsoid (meters).
-	 * @param[out] Bx the easterly component of the magnetic field (nanotesla).
-	 * @param[out] By the northerly component of the magnetic field (nanotesla).
-	 * @param[out] Bz the vertical (up) component of the magnetic field (nanotesla).
-	 **********************************************************************/
-	emm2015->operator()(yr, lat, lon, h, b_east, b_north, b_vertical);
+      	/**
+      	 * Evaluate the components of the geomagnetic field.
+      	 *
+      	 * @param[in] t the time (years).
+      	 * @param[in] lat latitude of the point (degrees).
+      	 * @param[in] lon longitude of the point (degrees).
+      	 * @param[in] h the height of the point above the ellipsoid (meters).
+      	 * @param[out] Bx the easterly component of the magnetic field (nanotesla).
+      	 * @param[out] By the northerly component of the magnetic field (nanotesla).
+      	 * @param[out] Bz the vertical (up) component of the magnetic field (nanotesla).
+      	 **********************************************************************/
+      	emm2015->operator()(yr, lat, lon, h, b_east, b_north, b_vertical);
 
-	double b_down = -b_vertical; //vertical must be inverted to match NED
+      	double b_down = -b_vertical; //vertical must be inverted to match NED
 
-	//Our "spherical reference frame has the following coordinate system
-	bx = b_north;
-	by = b_east;
-	bz = b_down;
+      	//Our "spherical reference frame has the following coordinate system
+      	bx = b_north;
+      	by = b_east;
+      	bz = b_down;
       } else {
-	bx = 0;
-	by = 0;
-	bz = 0;
+      	bx = 0;
+      	by = 0;
+      	bz = 0;
       }
 
       BVECSPH.set(1, 1, bx); //Btdubs these are all in nT
@@ -587,14 +595,16 @@ double environment::getCurrentMagnetic(double simtime,double time_magnet,MATLAB 
       //With these "Euler" Angles defined we can convert the spherical
       //coordinates to inertial coordinates.
       sph2ine(phiE, thetaE, psiE);
+      //BVECINE_Tesla.disp();
     }
   else
     {
       //If the magnetic field model is off just set them to zero
       BVECSPH.mult_eq(0.0);
       BVECINE.mult_eq(0.0);
+      BVECINE_Tesla.mult_eq(0.0);
     }
-  return time_magnet;
+  return;
 }
 
 void environment::sph2ine(double phi, double the, double psi)
@@ -608,6 +618,8 @@ void environment::sph2ine(double phi, double the, double psi)
   //vecSPH.disp();
   sph2ine32.rotateBody2Inertial(BVECINE,BVECSPH);
   //vecI.disp();
+  BVECINE_Tesla.overwrite(BVECINE);
+  BVECINE_Tesla.mult_eq(1e-9); //convert to Teslas
 }
 
 double environment::getCurrentDensity() {
