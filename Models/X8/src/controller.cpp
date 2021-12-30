@@ -58,7 +58,7 @@ void controller::loop(double t,MATLAB state,MATLAB statedot,int* rxcomms) {
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
 		//STABILIZE MODE
-		printf(" STAB ");
+		//printf(" STAB ");
 		double roll_command = (aileron-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double pitch_command = -(elevator-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
 		double yaw_rate_command = (rudder-STICK_MID)*50.0/((STICK_MAX-STICK_MIN)/2.0);
