@@ -1,0 +1,4 @@
+3.0 !mass  //Point Mass
+0.005 !Ixx
+0.011 !Iyy
+0.011 !Izz

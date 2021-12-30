@@ -33,7 +33,14 @@ files and they are pretty self explanatory
 
 Finally the objects folder has all of the files necessary to render an object in openGL. In this case you need an obj file and a mtl file along with a texture file. 
 
-It's possible to made a CAD for an object in blender and save it as a *.blend. What you then need to do is add a texture to the UV tab. Then select all the vertices in edit mode of your object and hit U for unwrap. Once you do that you can export everything to an OBJ. If you did it right you can open the obj file in plain text and you will see v for vertices vn for normals vt for texture vertices and then f for face in the format f v/vt/vn. When you export as an OBJ just make sure you select "Triangulate Faces"
+It's possible to made a CAD for an object in blender and save it as a
+*.blend. What you then need to do is add a texture to the UV tab. Then
+select all the vertices in edit mode of your object and hit U for
+unwrap. Once you do that you can export everything to an OBJ. If you
+did it right you can open the obj file in plain text and you will see
+v for vertices vn for normals vt for texture vertices and then f for
+face in the format f v/vt/vn. When you export as an OBJ just make sure
+you select "Triangulate Faces"  
 
 You might need to open up the mtl file and make sure the path to the texture is correct.
 

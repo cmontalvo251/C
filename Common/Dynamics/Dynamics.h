@@ -42,7 +42,7 @@ class environment {
  public:
    MATLAB FGRAVI,FGNDI,MGNDI;
    void init(int G);
-   void gravitymodel();
+   void gravitymodel(MATLAB State);
    void groundcontactmodel(MATLAB,MATLAB);
    void setMass(double);
    environment(); //constructor   

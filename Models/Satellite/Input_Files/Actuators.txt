@@ -1,0 +1,8 @@
+1.0 !Actuator Error Percent (ACTUATOR_FLAG must be set in Simulation_Flags.txt)
+3	!Number of Actuators to Simulate (Must be the same as control signals)
+0.1	!Settling Time (sec) of first actuator
+0.1	!Settling Time (sec) of 2 actuator
+0.1	!Settling Time (sec) of 3 actuator
+0.0    !Initial Condition of Actuator 1 (MagTorquer1)
+0.0    !Initial Condition of Actuator 2 (MagTorquer2)
+0.0    !Initial Condition of Actuator 3 (MagTorquer3)

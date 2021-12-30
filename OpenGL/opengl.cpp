@@ -63,7 +63,7 @@ OPENGL::OPENGL() {
   counter = 0;
 }
 
-void OPENGL::loop(int argc,char** argv,char fileroot[],int inFarplane,int inWidth,int inHeight,int defaultcamera) {
+void OPENGL::loop(int argc,char** argv,char fileroot[],int inFarplane,int inWidth,int inHeight) {
   bool Full;
   int NumObjects,ii;
   char objectfile[256]={NULL};
@@ -104,6 +104,9 @@ void OPENGL::loop(int argc,char** argv,char fileroot[],int inFarplane,int inWidt
         //Initialize Camera
         getline(file,input);
         double camera_offset_zaxis = atof(input.c_str());
+        //Default Camera
+        getline(file,input);
+        int defaultcamera = atof(input.c_str());
         camera.Initialize(NumObjects,state.cg,state.ptp,defaultcamera,camera_offset_zaxis);
         //Initialize Window
         Farplane = inFarplane;
@@ -429,6 +432,7 @@ void StateHistory::UpdateRender(double time,MATLAB cgin,MATLAB ptpin,int objectn
     cg.set(idx,objectnumber,positionscale.get(objectnumber,1)*cgin.get(idx,1));
     ptp.set(idx,objectnumber,ptpin.get(idx,1));
   }
+  //cg.disp();
   statemutex.unlock();
 
   //Set Keyboard state

@@ -13,6 +13,7 @@
 #define MEARTH (5.972*pow(10,24)) //%%%Mass of the earth in kg
 #define MSUN (1.989*pow(10,30)) //%%%Mass of the Sun in kg
 #define GSPACE (6.6742*pow(10,-11)) //%%Gravitational constant - units?
+#define MUEARTH (GSPACE*MEARTH)
 #define REARTH          6371393. //Radius of earth - This is mean radius
 #define REARTH_POLAR    6357000. //##this is polar radius
 #define REARTH_EQ       6378100. //##this is equatorial radius

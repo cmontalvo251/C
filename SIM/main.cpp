@@ -15,6 +15,7 @@ double LOGRATE;
 ///REALTIME VARS
 #ifdef REALTIME
 TIMER timer;
+bool isREALTIME=1; //Default is to run in realtime for SIL
 #endif
 
 //Simulator
@@ -80,6 +81,13 @@ int main(int argc,char** argv) {
   tfinal = simdata.get(1,1);
   ////////RATES////////////////////////////////////////////
   INTEGRATIONRATE = simdata.get(2,1);
+  //Check for negative integration rate
+  if (INTEGRATIONRATE < 0) {
+    INTEGRATIONRATE = -INTEGRATIONRATE;
+    #ifdef SIL //In SIL mode negative timestep will turn off realtime
+    isREALTIME = 0; //Turn off realtime
+    #endif
+  }
   PRINTRATE = simdata.get(3,1); 
   LOGRATE = simdata.get(4,1); 
   double RCRATE = simdata.get(5,1);
@@ -254,13 +262,7 @@ void runRenderLoop(int argc,char** argv) {
   int Farplane = 10000;
   int width = 600;
   int height = 600;
-  int defaultcamera = 3; //This is where you set the default camera
-  //#camera 0-objects-1 = follow cameras
-  //#objects-objects*2 - origin cameras
-  //so a 0 will follow the first object
-  //if there are 3 objects (cube, sky, ground) then defcam = 3 would
-  //be an origin camera following the cube
-  glhandle_g.loop(argc,argv,fileroot,Farplane,width,height,defaultcamera);
+  glhandle_g.loop(argc,argv,fileroot,Farplane,width,height);
 }
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -291,8 +293,12 @@ void runMainLoop() {
     //Don't do in AUTO or SIMONLY because we want to run as fast as possible
     //Get current time 
     //printf("WAIT LOOP \n");
-    while (current_time < t) {
-      current_time = timer.getTimeSinceStart()-startTime;   
+    //This will only run though if the user wants to run in realtime 
+    //by setting a positive integration rate
+    if (isREALTIME) {
+      while (current_time < t) {
+        current_time = timer.getTimeSinceStart()-startTime;   
+      } 
     }
     #endif
 

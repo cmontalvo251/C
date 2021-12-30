@@ -1,0 +1,6 @@
+0.2		!Bias Angle (deg) (Bias + std + noise)
+0.0		!Std of Angle (deg)
+0.05	!Noise Angle (deg)
+0.0		!Bias Gyro (rad/s)
+0.0 	!Std of Gyro (rad/s)
+0.05 	!Noise Angle (rad/s)

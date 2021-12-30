@@ -315,7 +315,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   extforces.ForceMoment(t,State,k,actuatorError);
 
   //Gravity Model
-  env.gravitymodel();
+  env.gravitymodel(State);
   env.groundcontactmodel(State,k);  
 
   //Add Up Forces and Moments
@@ -390,7 +390,7 @@ void environment::init(int G){
   MGNDI.zeros(3,1,"Ground Moments Inertial Frame");
 }
 
-void environment::gravitymodel() {
+void environment::gravitymodel(MATLAB State) {
   FGRAVI.mult_eq(0); //zero out gravity
   //printf("GRAVITY FLAG == %d \n",GRAVITY_FLAG);
   //printf("mass = %lf \n",mass);
@@ -398,10 +398,27 @@ void environment::gravitymodel() {
     //Flat Earth model
     FGRAVI.set(3,1,GEARTH*mass);
   }
+  if (GRAVITY_FLAG==2) {
+    //Globe Model
+    //printf("GLOBE MODEL \n");
+    double x = State.get(1,1);
+    double y = State.get(2,1);
+    double z = State.get(3,1);
+    double rSat = sqrt(x*x + y*y + z*z);
+    double fx = -mass*(MUEARTH / pow(rSat, 3))*x;
+    double fy = -mass*(MUEARTH / pow(rSat, 3))*y;
+    double fz = -mass*(MUEARTH / pow(rSat, 3))*z;
+    FGRAVI.set(1, 1, fx);
+    FGRAVI.set(2, 1, fy);
+    FGRAVI.set(3, 1, fz);
+  }
 }
 
 void environment::groundcontactmodel(MATLAB State,MATLAB k) {
+  double x = State.get(1,1);
+  double y = State.get(2,1);
   double z = State.get(3,1);
+  double norm = sqrt(x*x + y*y + z*z);
   double xdot = k.get(1,1);
   double ydot = k.get(2,1);
   double zdot = k.get(3,1);
@@ -409,17 +426,30 @@ void environment::groundcontactmodel(MATLAB State,MATLAB k) {
   double v = State.get(9,1);
   double r = State.get(13,1);
   double N = mass*GRAVITYSI;
-  if ((z > 0)) {
+
+  //Check to see if we're inside Earth
+  bool insideEarth = 0;
+  //Flat Earth Model. Z is down so anything positive is under the surface
+  if ((GRAVITY_FLAG == 1) & (z>0)) {
+    insideEarth = 1;
+  }
+  //Globe Model
+  if ((GRAVITY_FLAG == 2) & (norm<REARTH)) {
+    insideEarth = 1;
+  }
+  if (insideEarth) {
+    printf("INSIDE EARTH! \n");
     FGNDI.set(1,1,-N*GNDCOEFF*sat(xdot,0.1,1.0));
     FGNDI.set(2,1,-N*GNDCOEFF*sat(ydot,0.1,1.0));
     FGNDI.set(3,1,-z*GNDSTIFF-zdot*GNDDAMP);
     //if (abs(r)>0.01) {
     //  MGNDI.set(3,1,-0.0001*N*GNDSTIFF*sat(r,0.01,1.0));
     //} else {
-      MGNDI.mult_eq(0);
+    MGNDI.mult_eq(0);
     //} 
   } else {
     FGNDI.mult_eq(0);
+    MGNDI.mult_eq(0);
   }
   //FGNDI.disp();
 }

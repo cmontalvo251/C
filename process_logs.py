@@ -36,10 +36,10 @@ if SIMULATE == 1:
     #Compile software
     os.system('make')
     #Run Software
-    os.system('./FASTSim.exe ' + MODELPATH)
+    os.system('./simonly.exe ' + MODELPATH)
 
 #Read Log File
-data = np.loadtxt('logs/0.txt',delimiter=',')
+data = np.loadtxt('logs/0.csv',delimiter=',',skiprows=1)
 r,c = np.shape(data)
 print('Size of Data Set = ',r,c)
 
@@ -249,6 +249,19 @@ for x in range(0,12):
     if LEGEND:
         plt.legend()
     pp.savefig()
+
+##Plot a 3D view of our vehicle
+fig = plt.figure()
+ax = fig.add_subplot(111,projection='3d')
+AU = 6371393.
+x = states[:,0]
+y = states[:,1]
+z = states[:,2]
+ax.plot(x/AU,y/AU,z/AU)
+ax.set_xlabel('X (AU)')
+ax.set_ylabel('Y (AU)')
+ax.set_zlabel('Z (AU)')
+pp.savefig()
 
 ##The RC Signals are plotted above 
 
