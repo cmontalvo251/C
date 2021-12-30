@@ -4,3 +4,6 @@
 0.3	!Bias Gyro (rad/s)
 0.1 !Std of Gyro (rad/s)
 0.2 !Noise Angle (rad/s)
+0.0	        !Bias Magnetometer (Tesla)
+0.0		!Std of Magnetometer (Tesla)
+0.0		!Noise of Magnetometer (Tesla)

@@ -454,6 +454,19 @@ double MATLAB::sum()
 
 }
 
+double MATLAB::abssum()
+{
+  double ans = 0;
+  int i;
+  for(i = 1;i<=row_;i++)
+    {
+      ans = ans + abs(get(i,1));
+    }
+
+  return ans;
+
+}
+
 
 void MATLAB::eye(int row,char name[]) {
   zeros(row,row,name);

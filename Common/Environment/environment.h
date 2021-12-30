@@ -43,7 +43,7 @@ class environment {
   double getSOLARWINDMODEL(MATLAB,MATLAB,double,MATLAB); //overloaded function for confluence point
  public:
    MATLAB FGRAVI,FGNDI,MGNDI;
-   MATLAB BVECINE,BVECSPH,BVECINE_Tesla;
+   MATLAB BVECINE,BVECSPH,BVECB_Tesla;
    void init(char*);
    void gravitymodel(MATLAB State);
    void groundcontactmodel(MATLAB,MATLAB);

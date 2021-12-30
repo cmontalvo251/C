@@ -9,6 +9,7 @@ sensors::sensors() {
 	ptp.zeros(3,1,"Roll Pitch Yaw");	
 	ptpdot.zeros(3,1,"Euler Angle Derivatives");
 	latlonalt.zeros(3,1,"Latitude Longitude Altitude");
+	mxyz.zeros(3,1,"Magnetic Field Readings");
 	pqr.zeros(3,1,"PQR");
 	q0123.zeros(4,1,"Quaternions");
 	xyz.zeros(3,1,"XYZ");
@@ -16,8 +17,8 @@ sensors::sensors() {
 	xyzdot.zeros(3,1,"xyzdot");
 	uvwdot.zeros(3,1,"uvwdot");
 	pqrdot.zeros(3,1,"pqrdot");
-	errstate.zeros(12,1,"Full State From Sensors");
-	errstatedot.zeros(12,1,"Full Statedot From Sensors");
+	errstate.zeros(15,1,"Full State From Sensors");
+	errstatedot.zeros(15,1,"Full Statedot From Sensors");
 
 	//Check bounds on Compass Filter Constant
 	if (compassFilterConstant > 1.0) {
@@ -98,12 +99,12 @@ void sensors::readSensors(double time,double dt) {
   computeCompassHeading(orientation.yaw,satellites.heading);
 
   //Read the barometer
-	barotemp.poll(time);
-	//Can eventually use pressure to get altitude if needed 
+  barotemp.poll(time);
+  //Can eventually use pressure to get altitude if needed 
   //barotemp.pressure
   //barotemp.temperature
 
-	//Read the ADC Port
+  //Read the ADC Port
   analog.get_results();
   //analog.results is a MATLAB array of length analog.channel_count
   //If you would just like to print the results you can write
@@ -140,6 +141,11 @@ void sensors::readSensors(double time,double dt) {
   errstate.set(11,1,orientation.pitch_rate);
   errstate.set(12,1,orientation.yaw_rate);
 
+  //MXYZ
+  errstate.set(13,1,orientation.mx);
+  errstate.set(14,1,orientation.my);
+  errstate.set(15,1,orientation.mz);
+
   //XYZDOT - Probably would need to run the GPS coordinates through a derivative
   //filter. If we really need these I can get them. 
   //???
@@ -157,7 +163,7 @@ void sensors::readSensors(double time,double dt) {
   
 }
 
-void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
+void sensors::readSensors(MATLAB state,MATLAB statedot, MATLAB BVECB,double time) {
 	//This is an overloaded function. In here we don't need to read the states from
 	//onboard sensors. We just need to copy over the state vector for now.
 	//eventually we will add sensor errors but for now we just need to convert the 
@@ -197,52 +203,59 @@ void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 
 	//printf("PTP BEFORE ERRORS \n");
 	//ptp.disp();
+	mxyz.overwrite(BVECB);
 
 	//if the flag is set in Simulation_Flags.txt
 	if (ADD_ERRORS == 1) {
-		//So what sensors are on board the vehicle?
-		double original,bias,noise,polluted;
-		for (int idx = 1;idx<=3;idx++) {
-			//The IMU which measures phi, theta and psi. So we need a bias term
-			//and a noise term for those angles
-			original = ptp.get(idx,1);
-			bias = bias_Angles.get(idx,1);
-			noise = randnum(-noise_Angle,noise_Angle);
-			polluted = original + bias + noise;
-			ptp.set(idx,1,polluted);
-			//The IMU also measure pqr - angular velocity - so we need another bias 
-			//value and noise term
-			original = pqr.get(idx,1);
-			bias = bias_Gyros.get(idx,1);
-			noise = randnum(-noise_Gyro,noise_Gyro);
-			polluted = original + bias + noise;
-			pqr.set(idx,1,polluted);
-		}
-
-		//So right here if we ADD_ERRORS I'm assuming we are going to run these
-		//through the IMU filter. Which is why I want the IMU filter to be it's own 
-		//function
-		orientation.FilterConstant = 0.0;
-		//Because of the way the filter works though we need to set a few things up
+	  //So what sensors are on board the vehicle?
+	  double original,bias,noise,polluted;
+	  for (int idx = 1;idx<=3;idx++) {
+	    //The IMU which measures phi, theta and psi. So we need a bias term
+	    //and a noise term for those angles
+	    original = ptp.get(idx,1);
+	    bias = bias_Angles.get(idx,1);
+	    noise = randnum(-noise_Angle,noise_Angle);
+	    polluted = original + bias + noise;
+	    ptp.set(idx,1,polluted);
+	    //The IMU also measure pqr - angular velocity - so we need another bias 
+	    //value and noise term
+	    original = pqr.get(idx,1);
+	    bias = bias_Gyros.get(idx,1);
+	    noise = randnum(-noise_Gyro,noise_Gyro);
+	    polluted = original + bias + noise;
+	    pqr.set(idx,1,polluted);
+	    //Then we do the magnetometer
+	    original = mxyz.get(idx,1);
+	    bias = bias_Mags.get(idx,1);
+	    noise = randnum(-noise_Mag,noise_Mag);
+	    polluted = original + bias + noise;
+	    mxyz.set(idx,1,polluted);
+	  }
+	  
+	  //So right here if we ADD_ERRORS I'm assuming we are going to run these
+	  //through the IMU filter. Which is why I want the IMU filter to be it's own 
+	  //function
+	  orientation.FilterConstant = 0.0;
+	  //Because of the way the filter works though we need to set a few things up
 	  //gx_filtered = gx_filtered*s + (1-s)*gy*RAD2DEG;
-  	//gy_filtered = gy_filtered*s + (1-s)*gx*RAD2DEG;
-  	//gz_filtered = gz_filtered*s + (1-s)*(-gz)*RAD2DEG;
-  	//roll_rate = gx_filtered; //NOTICE THAT I PUT RAD2DEG UP THERE
-  	//pitch_rate = gy_filtered; //THIS IS SO RPY IS IN DEG AND PQR
-  	//yaw_rate = gz_filtered; //IS IN DEG/S
-  	//So gy is the roll rate in rad/s
-  	orientation.gy = pqr.get(1,1)*PI/180.0;
-  	//gx is the pitch rate
-  	orientation.gx = pqr.get(2,1)*PI/180.0;
-  	//gz is the yaw rate but negative
-  	orientation.gz = -pqr.get(3,1)*PI/180.0;
-		orientation.filter();
-		//After we run the filter we just grab g*_filtered
-		pqr.set(1,1,orientation.roll_rate);
-		pqr.set(2,1,orientation.pitch_rate);
-		pqr.set(3,1,orientation.yaw_rate);
+	  //gy_filtered = gy_filtered*s + (1-s)*gx*RAD2DEG;
+	  //gz_filtered = gz_filtered*s + (1-s)*(-gz)*RAD2DEG;
+	  //roll_rate = gx_filtered; //NOTICE THAT I PUT RAD2DEG UP THERE
+	  //pitch_rate = gy_filtered; //THIS IS SO RPY IS IN DEG AND PQR
+	  //yaw_rate = gz_filtered; //IS IN DEG/S
+	  //So gy is the roll rate in rad/s
+	  orientation.gy = pqr.get(1,1)*PI/180.0;
+	  //gx is the pitch rate
+	  orientation.gx = pqr.get(2,1)*PI/180.0;
+	  //gz is the yaw rate but negative
+	  orientation.gz = -pqr.get(3,1)*PI/180.0;
+	  orientation.filter();
+	  //After we run the filter we just grab g*_filtered
+	  pqr.set(1,1,orientation.roll_rate);
+	  pqr.set(2,1,orientation.pitch_rate);
+	  pqr.set(3,1,orientation.yaw_rate);
 	}
-
+	
 	//printf("PTP AFTER ERRORS \n");
 	//ptp.disp();
 
@@ -252,6 +265,9 @@ void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 	//uvw.disp();
 	errstate.vecset(7,9,uvw,1);
 	errstate.vecset(10,12,pqr,1);
+	errstate.vecset(13,15,mxyz,1);
+	
+	//Derivatives
 	errstatedot.vecset(1,3,xyzdot,1);
 	errstatedot.vecset(4,6,ptpdot,1);
 	errstatedot.vecset(7,9,uvwdot,1);
@@ -267,8 +283,7 @@ void sensors::readSensors(MATLAB state,MATLAB statedot, double time) {
 	orientation.roll = ptp.get(1,1);
 	orientation.pitch = ptp.get(2,1);
 	orientation.yaw = ptp.get(3,1);
-	computeCompassHeading(orientation.yaw,satellites.heading);	
-
+	computeCompassHeading(orientation.yaw,satellites.heading);
 }
 
 void sensors::initSensorErr(MATLAB sensordata) {
@@ -284,17 +299,25 @@ void sensors::initSensorErr(MATLAB sensordata) {
 	bias_Gyro = sensordata.get(4,1);
 	std_bias_Gyro = sensordata.get(5,1);
 	noise_Gyro = sensordata.get(6,1);
+	//MAG
+	bias_Mag = sensordata.get(7,1);
+	std_bias_Mag = sensordata.get(8,1);
+	noise_Mag = sensordata.get(9,1);
 
 	//The bias is going to be different for the 3 axes
 	bias_Angles.zeros(3,1,"bias Angles");
 	bias_Gyros.zeros(3,1,"bias Gyros");
+	bias_Mags.zeros(3,1,"bias Mags");
 	double bias;
 	for (int idx = 1;idx<=3;idx++) {
-		//First set the bias of the angles
-		bias = bias_Angle + randnum(-std_bias_Angle,std_bias_Angle);
-		bias_Angles.set(idx,1,bias);
-		//Then the bias of the gyro
-		bias = bias_Gyro + randnum(-std_bias_Gyro,std_bias_Gyro);
-		bias_Gyros.set(idx,1,bias);
+	  //First set the bias of the angles
+	  bias = bias_Angle + randnum(-std_bias_Angle,std_bias_Angle);
+	  bias_Angles.set(idx,1,bias);
+	  //Then the bias of the gyro
+	  bias = bias_Gyro + randnum(-std_bias_Gyro,std_bias_Gyro);
+	  bias_Gyros.set(idx,1,bias);
+	  //Then bias of the magnetometer
+	  bias = bias_Mag + randnum(-std_bias_Mag,std_bias_Mag);
+	  bias_Mags.set(idx,1,bias);
 	}
 }

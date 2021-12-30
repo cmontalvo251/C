@@ -5,6 +5,9 @@
 
 controller::controller() {
 	ctlcomms.zeros(NUMSIGNALS,1,"PWM Control Signals"); //The standards must be TAERA1A2A3A4
+	pqr.zeros(3,1,"PQR");
+	mxyz.zeros(3,1,"MXYZ");
+	desired_moments.zeros(3,1,"desired moment");
 };
 
 void controller::setup(MATLAB var) {
@@ -41,13 +44,41 @@ void controller::loop(double t,MATLAB sensor_state,MATLAB sensor_statedot,int* r
 
 	//Determine if the user wants the controller on or not
 	if (autopilot > STICK_MID) {
-		CONTROLLER_FLAG = 1;
+	  CONTROLLER_FLAG = 1;
 	} else {
-		CONTROLLER_FLAG = 0;
+	  CONTROLLER_FLAG = 0;
 	}
 
 	//Then you can run any control loop you want.
 	if (CONTROLLER_FLAG == 1) {
+	  //printf("RUNNING DETUMBLING \n");
+	  //Extract PQR in (deg/s)
+	  pqr.vecset(1,3,sensor_state,10);
+	  //Convert to (rad/s)
+	  pqr.mult_eq(PI/180.0);
+	  //pqr.disp();
+	  //Extract Magnetomter Readings
+	  mxyz.vecset(1,3,sensor_state,13);
+	  //mxyz.disp();
+	  //mu_ideal = k*(omega cross B)
+	  desired_moments.cross(pqr,mxyz);
+	  desired_moments.mult_eq(KMAG);
+	  //Convert to currents
+	  desired_moments.mult_eq(1.0/(NUMTURNS*AREA));
+	  //send to ctlcomms (but might not be 3 actuators)
+	  for (int i = 0;i<NUMSIGNALS;i++) {
+	    ctlcomms.set(i+1,1,desired_moments.get(i+1,1));
+	  }
+	  //Saturation on current
+	  double sum = ctlcomms.abssum();
+	  if (sum > MAXCURRENT) {
+	    ctlcomms.mult_eq(MAXCURRENT/sum);
+	    // for (int i = 0;i<3;i++) {
+	    //   double val = ctlcomms.get(i+1,1);
+	    //   ctlcomms.set(i+1,val/sum*maxcurrent);
+	    // }
+	  }
 	} 
 	//ctlcomms.disp();
+	//printf("SUM = %lf \n",ctlcomms.abssum());
 }

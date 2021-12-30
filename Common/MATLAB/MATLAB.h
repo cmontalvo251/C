@@ -108,6 +108,7 @@ class MATLAB {
   void size();
 
   double sum();
+  double abssum();
 
   void euler2quat(MATLAB);
   void quat2euler(MATLAB);

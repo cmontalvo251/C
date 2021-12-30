@@ -1,5 +1,5 @@
 1.0 !Actuator Error Percent (ACTUATOR_FLAG must be set in Simulation_Flags.txt)
-3	!Number of Actuators to Simulate (Must be the same as control signals)
+2	!Number of Actuators to Simulate (Must be the same as control signals)
 0.1	!Settling Time (sec) of first actuator
 0.1	!Settling Time (sec) of 2 actuator
 0.1	!Settling Time (sec) of 3 actuator

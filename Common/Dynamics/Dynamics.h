@@ -59,7 +59,7 @@ class Dynamics {
   double ACTUATOR_ERROR_PERCENT;
  public:
   //Public Functions and vars
-  MATLAB cg,ptp;
+  MATLAB cg,ptp,BVECB,BVECB_Tesla;
   MATLAB actuatorICs,actuatorError;
   RCInput rcin;
   RCOutput rcout;

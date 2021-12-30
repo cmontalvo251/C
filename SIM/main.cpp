@@ -97,11 +97,10 @@ int main(int argc,char** argv) {
   //These are extras that we only need if we are integrating the but it doesn't
   //Require any computation time except on startup to read them so just keep
   //them here for all different scenarios
-  int GRAVITY_FLAG = simdata.get(8,1);
-  int FORCES_FLAG = simdata.get(9,1);
-  int CTL_FLAG = simdata.get(10,1);
-  int ERROR_FLAG = simdata.get(11,1);
-  int ACTUATOR_FLAG = simdata.get(12,1);
+  int FORCES_FLAG = simdata.get(8,1);
+  int CTL_FLAG = simdata.get(9,1);
+  int ERROR_FLAG = simdata.get(10,1);
+  int ACTUATOR_FLAG = simdata.get(11,1);
   //////////////////////////////////////////////////////////////////////////////
   
   /////////////////////////////MASS DATA/////////////////////////////
@@ -213,11 +212,13 @@ int main(int argc,char** argv) {
   //But only if this value is non-zero. Otherwise 
   //this value is just a pass through a worthless
   vehicle.NUMLOGS+=vehicle.NUMACTUATORS; 
+  //if the RK4_H is running we will have an extra 3 readings from the magnetometer
+  vehicle.NUMLOGS+=3;
   #endif 
   //No matter what we log the sensor measurements
-  //The error model only assumes a 12 state system
+  //The error model assumes a 15 state system (12 states + 3 magnetometer readings)
   //The control signals below will give you the commands sent
-  vehicle.NUMLOGS+=12;
+  vehicle.NUMLOGS+=15;
   //We also log all of the receiver signals - also output num of axis
   vehicle.NUMLOGS+=(vehicle.rcin.num_of_axis+1);
   //We also log the control signals
@@ -284,6 +285,9 @@ void runMainLoop() {
   PRINTRATE = 0.1;
   #endif
   ///////////////////////////////////////////////////////////////////////////////
+
+  ///////////////???CALL THE DERIVATIVES ROUTINE ONCE TO INIT VARS////////////
+  vehicle.Derivatives(0,integrator.StateDel,integrator.k);
 
   //Kick off main while loop
   while (t < tfinal) {
@@ -352,7 +356,7 @@ void runMainLoop() {
       //vehicle.sensors.compass - the fused compass measurement
       logger.logvars.set(ctr,1,vehicle.err.compass);
       ctr++;
-      //Error States (Sensor Measurements) - Always on and always 12 states
+      //Error States (Sensor Measurements) - Always on and always 15 states
       if (logger.IsHeader == 0) {
         logger.logheader[3] = "X Position (m)";
         logger.logheader[4] = "Y Position (m)";
@@ -366,18 +370,21 @@ void runMainLoop() {
         logger.logheader[12] = "P (deg/s)";
         logger.logheader[13] = "Q (deg/s)";
         logger.logheader[14] = "R (deg/s)";
+	logger.logheader[15] = "Magnetometer Reading Bx (Tesla)";
+	logger.logheader[16] = "Magnetometer Reading By (Tesla)";
+	logger.logheader[17] = "Magnetometer Reading Bz (Tesla)";
       }
-      for (int i = 0;i<12;i++) {
+      for (int i = 0;i<15;i++) {
         logger.logvars.set(ctr,1,vehicle.err.errstate.get(i+1,1));
         ctr++;
       }       
       //Receiver Commands - always on
       if (logger.IsHeader == 0) {
-        logger.logheader[15] = "Number of RC Signals";
-        logger.logheader[16] = "Throttle RX (us)";
-        logger.logheader[17] = "Aileron RX (us)";
-        logger.logheader[18] = "Elevator RX (us)";
-        logger.logheader[19] = "Rudder RX (us)";
+        logger.logheader[18] = "Number of RC Signals";
+        logger.logheader[19] = "Throttle RX (us)";
+        logger.logheader[20] = "Aileron RX (us)";
+        logger.logheader[21] = "Elevator RX (us)";
+        logger.logheader[22] = "Rudder RX (us)";
       }
       logger.logvars.set(ctr,1,vehicle.rcin.num_of_axis);
       ctr++;
@@ -463,6 +470,16 @@ void runMainLoop() {
         logger.logvars.set(ctr,1,vehicle.extforces.MB.get(i+1,1));
         ctr++;
       }
+      /////Magnetometer Values in the Body Frame
+      if (logger.IsHeader == 0){
+        logger.logheader[ctr-1] = "Bx Body Frame (Tesla)";
+        logger.logheader[ctr] = "By Body Frame (Tesla)";
+        logger.logheader[ctr+1] = "Bz Body Frame (Tesla)";
+      }
+      for (int i = 0;i<3;i++) {
+	logger.logvars.set(ctr,1,vehicle.BVECB_Tesla.get(i+1,1));
+	ctr++;
+      }
       #endif
       if (logger.IsHeader == 0){
         logger.logheader[ctr-1] = "Baro Pressure (mbar)";
@@ -532,8 +549,13 @@ void runMainLoop() {
       printf(" ::: ");
       vehicle.rcout.print(); //This prints the motor signals
       printf(" ::: ");
+      //THe next 4 are phi theta psi
       for (int idx = 0;idx<3;idx++){
         printf("%lf ",vehicle.err.errstate.get(4+idx,1));
+      }
+      //pqr
+      for (int idx = 0;idx<3;idx++){
+        printf("%lf ",vehicle.err.errstate.get(10+idx,1));
       }
       printf("\n");
       PRINT+=(1*PRINTRATE);

@@ -11,6 +11,8 @@ functions otherwise the software will completely break.
 
 */
 
+#include "params.h"
+#include <Environment/environment.h>
 #include <MATLAB/MATLAB.h> //This is needed for variable length arrays as inputs
 #include <Mathp/mathp.h> //this is for density at sea-level
 #include <Timer/timer.h> //for pause function
@@ -20,6 +22,7 @@ class forces {
 	private:
 		//You can put any private functions or vars in here that you like but it 
 		//must adhere to the standards below
+  MATLAB MMTVEC;
 	public:
 		//This variable turns the forces model on and off and is set in 
 		//Input_Files/Simulation_Flags.txt
@@ -35,7 +38,7 @@ class forces {
 		//time is in seconds
 		//state is a 13x1 using quaternions and using standard aerospace convention
 		//statedot is the derivatives of the state vector
-		void ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators); 
+		void ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators,environment env); 
 		//Constructor
 		forces();
 };

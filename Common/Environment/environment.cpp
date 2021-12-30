@@ -150,8 +150,8 @@ void environment::init(char ENVIRONMENTFILENAME[]) {
   FGNDI.zeros(3,1,"Ground Forces Inertial Frame");
   MGNDI.zeros(3,1,"Ground Moments Inertial Frame");
   BVECINE.zeros(3,1,"Inertial Frame Vectors of Magnetic Field");
-  BVECINE_Tesla.zeros(3,1,"Magnetic Field Inertial Frame in Teslas");
   BVECSPH.zeros(3,1,"Speherical Frame Vectors of Magnetic Field");
+  BVECB_Tesla.zeros(3,1,"Environment Magnetic Field Body Frame (Tesla)");
 
   fstream envfile;
   string input;
@@ -595,14 +595,12 @@ void environment::getCurrentMagnetic(double simtime,MATLAB State) {
       //With these "Euler" Angles defined we can convert the spherical
       //coordinates to inertial coordinates.
       sph2ine(phiE, thetaE, psiE);
-      //BVECINE_Tesla.disp();
     }
   else
     {
       //If the magnetic field model is off just set them to zero
       BVECSPH.mult_eq(0.0);
       BVECINE.mult_eq(0.0);
-      BVECINE_Tesla.mult_eq(0.0);
     }
   return;
 }
@@ -618,8 +616,6 @@ void environment::sph2ine(double phi, double the, double psi)
   //vecSPH.disp();
   sph2ine32.rotateBody2Inertial(BVECINE,BVECSPH);
   //vecI.disp();
-  BVECINE_Tesla.overwrite(BVECINE);
-  BVECINE_Tesla.mult_eq(1e-9); //convert to Teslas
 }
 
 double environment::getCurrentDensity() {

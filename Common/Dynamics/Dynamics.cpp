@@ -2,7 +2,7 @@
 
 //Constructor
 Dynamics::Dynamics() {
-  NUMSTATES = 13; //Using Quaternions
+  NUMSTATES = 13; //Using Quaternions + 3 for magnetometer
   //Always create these just because I don't want to think about
   //when we actually need them and it's really easy to create them
   cg.zeros(3,1,"Center of Mass");
@@ -26,6 +26,8 @@ Dynamics::Dynamics() {
   I_pqr.zeros(3,1,"I times pqr");
   pqrskew_I_pqr.zeros(3,1,"pqr cross I times pqr");
   Kuvw_pqr.zeros(3,1,"uvw cross pqr");
+  BVECB.zeros(3,1,"Body Frame Magnetic Field (nT)");
+  BVECB_Tesla.zeros(3,1,"Body Frame Magnetic Field (Teslas)");
 
   //////////////////////////TELEMETRY SETUP/////////////////////////////
   #ifdef TELEMETRY
@@ -65,8 +67,8 @@ void Dynamics::setState(MATLAB state_in,MATLAB statedot_in) {
   pqr.vecset(1,3,state,11);
   //The next N states are the actuators
   if (NUMACTUATORS > 0) {
-    actuatorState.vecset(1,NUMACTUATORS,state,14);
-    actuatorStatedot.vecset(1,NUMACTUATORS,statedot,14);
+    actuatorState.vecset(1,NUMACTUATORS,state,NUMSTATES+1);
+    actuatorStatedot.vecset(1,NUMACTUATORS,statedot,NUMSTATES+1);
   }
 }
 void Dynamics::setMassProps(MATLAB massdata) {
@@ -91,8 +93,8 @@ void Dynamics::initExtForces(int F) {
 }
 
 void Dynamics::initStateVector() {
-  state.zeros(NUMVARS,1,"Vehicle state vector (also includes actuators");
-  statedot.zeros(NUMVARS,1,"Vehicle statedot vector (also includes actuators");
+  state.zeros(NUMVARS,1,"Vehicle state vector (also includes magnetometer and actuators)");
+  statedot.zeros(NUMVARS,1,"Vehicle statedot vector (also includes magnetomter and actuators");
 }
 
 //?overloaded function to give us default actuators
@@ -232,7 +234,7 @@ void Dynamics::loop(double t,double dt) {
   err.readSensors(t,dt); //this calls onboard sensors on the Navio
   #else
   //state.disp();
-  err.readSensors(state,statedot,t); //this simulates sensors
+  err.readSensors(state,statedot,BVECB_Tesla,t); //this simulates sensors
   #endif
   ///////////////////////////////////////////////////////////////////
   
@@ -277,7 +279,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
     //Integrate Actuator Dynamics
     //input will be ctlcomms and the output will be actuator_state
     for (int i = 0;i<NUMACTUATORS;i++) {
-      k.set(i+14,1,actuatorTimeConstants.get(i+1,1)*(rcout.pwmcomms[i] - actuatorState.get(i+1,1)));
+      k.set(i+NUMSTATES+1,1,actuatorTimeConstants.get(i+1,1)*(rcout.pwmcomms[i] - actuatorState.get(i+1,1)));
     }
   } else {
     //Otherwise just pass through the ctlcomms
@@ -312,14 +314,22 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
-  //External Forces Model
-  //Send the external forces model the actuator_state instead of the ctlcomms
-  extforces.ForceMoment(t,State,k,actuatorError);
-
   //Gravity Model and Magnetic Field model
   env.gravitymodel(State);
   env.groundcontactmodel(State,k);
-  env.getCurrentMagnetic(t,State); 
+  env.getCurrentMagnetic(t,State);
+  //The getCurrentMagnetic routine populates env.BVECINE which is the magnetometer
+  //value in the inertial frame. we need to rotate this to the body frame and
+  //convert to teslas
+  ine2bod321.rotateInertial2Body(BVECB,env.BVECINE);
+  BVECB_Tesla.overwrite(BVECB);
+  BVECB_Tesla.mult_eq(1e-9);
+  //Send to environment model
+  env.BVECB_Tesla.overwrite(BVECB_Tesla);
+
+  //External Forces Model
+  //Send the external forces model the actuator_state instead of the ctlcomms
+  extforces.ForceMoment(t,State,k,actuatorError,env);
 
   //Add Up Forces and Moments
   FTOTALI.overwrite(env.FGRAVI); //add gravity 
