@@ -7,7 +7,7 @@ FASTSim SysML:
    ✔ Rename all the aerodynamics.cpp routines to forces.cpp @done (21-12-30 08:01)
    ✔ Move all vehicles to a Model Folder @done (21-12-28 22:34)
    ✔ Re-org all folders in C++.git (Make C++ routines called Basic or something like that maybe Util? or COmmon? yea Common) @done (21-12-28 22:34)
-   ☐ Code Orbit++ and add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from MultiSat++. 
+   ✔ Code Orbit++ and add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from MultiSat++. @done (21-12-30 16:47)
    ☐ deprecate Orbit++ from Aerospace folder
    ☐ SysML diagrams for everything below to make sure everything works as intended
    ☐ I think the HIL send should be in Dynamics (that’s the only place you need to send)

@@ -24,7 +24,7 @@ void forces::setup(MATLAB var) {
 
 }
 
-void forces::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
+void forces::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators,environment env) {
 	//The only thing this function needs to do is populate FAEROB and MAEROB. 
 	//You can do whatever you want in here but you must create those two vectors.
 	FB.mult_eq(0); //Zero these out just to make sure something is in here

@@ -11,6 +11,7 @@ functions otherwise the software will completely break.
 
 */
 
+#include <Environment/environment.h>
 #include <MATLAB/MATLAB.h> //This is needed for variable length arrays as inputs
 #include <Mathp/mathp.h> //this is for density at sea-level
 #include <Timer/timer.h> //for pause function
@@ -39,7 +40,7 @@ class forces {
 		//time is in seconds
 		//state is a 13x1 using quaternions and using standard aerospace convention
 		//statedot is the derivatives of the state vector
-		void ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB control); 
+		void ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB control,environment env); 
 		//Constructor
 		forces();
 };

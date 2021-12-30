@@ -4,6 +4,9 @@ Alright the aerodynamics model standard has been changed to external
 forces and moments for any vehicle. The next item on the agenda is to 
 code a CubeSAT in LEO and deprecate the Orbit++ model from aerospace.git
 
+Ok CubeSAT LEO model works. Just need to deprecate Orbit++ in aerospace
+Took all day man.
+
 ===========================12/29/2021=========================
 
 I have started breaking the code. I have moved a lot of files 

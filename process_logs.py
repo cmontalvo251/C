@@ -56,13 +56,13 @@ time = data[:,0]
 gps_heading = data[:,1]
 compass = data[:,2]
 
-#####The next 12 states are always the sensor states
+#####The next 15 states are always the sensor states
 #####################################################
-sensor_states = data[:,3:15]
-sensor_labels = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (deg/s)','Sensor q (deg/s)','Sensor r (deg/s)']
+sensor_states = data[:,3:18]
+sensor_labels = ['Sensor x (m)','Sensor y (m)', 'Sensor z (m)','Sensor Roll (deg)','Sensor Pitch (deg)','Sensor Yaw (deg)','Sensor u (m/s)','Sensor v (m/s)','Sensor w (m/s)','Sensor p (deg/s)','Sensor q (deg/s)','Sensor r (deg/s)','Mx (Tesla)','My (Tesla)','Mz (Tesla)']
 
 if PLOTEVERYTHING == 1:
-    for x in range(0,12):
+    for x in range(0,15):
         plt.figure()
         plt.plot(time,sensor_states[:,x])
         plt.xlabel('Time (sec)')
@@ -73,10 +73,10 @@ if PLOTEVERYTHING == 1:
 #######################################################
 
 ###############The Next N States are the RC Signals################
-rcin_num_of_axis = int(data[:,15][0])
+rcin_num_of_axis = int(data[:,18][0])
 print('RCIN Num of Axis = ',rcin_num_of_axis)
 rcin_labels = ['Throttle RX (us)','Aileron RX (us)','Elevator RX (us)','Rudder RX (us)','Aux1 RX','Aux2 RX','Aux3 RX','Aux4 RX']
-rcin_states = data[:,16:(16+rcin_num_of_axis)]
+rcin_states = data[:,19:(19+rcin_num_of_axis)]
 for x in range(0,rcin_num_of_axis):
     plt.figure()
     plt.plot(time,rcin_states[:,x])
@@ -92,9 +92,9 @@ for x in range(0,rcin_num_of_axis):
 ####################################################################
 
 ################THe next N states are the Control Signals###########
-ctl_numsignals = int(data[:,16+rcin_num_of_axis][0])
+ctl_numsignals = int(data[:,19+rcin_num_of_axis][0])
 print('Num Control Signals = ',ctl_numsignals)
-ctl_states = data[:,(17+rcin_num_of_axis):(17+rcin_num_of_axis+ctl_numsignals)]
+ctl_states = data[:,(20+rcin_num_of_axis):(20+rcin_num_of_axis+ctl_numsignals)]
 if PLOTEVERYTHING == 1:
     for x in range(0,ctl_numsignals):
         plt.figure()
@@ -118,7 +118,7 @@ else:
 
 ########################The next 13 states are the actual states
 if RK4 == 1:
-    states_raw = data[:,(17+rcin_num_of_axis+ctl_numsignals):(30+rcin_num_of_axis+ctl_numsignals)]
+    states_raw = data[:,(20+rcin_num_of_axis+ctl_numsignals):(33+rcin_num_of_axis+ctl_numsignals)]
     state_raw_labels = ['x (m)','y (m)', 'z (m)','q0','q1','q2','q3','u (m/s)','v (m/s)','w (m/s)','p (rad/s)','q (rad/s)','r (rad/s)']    
     if PLOTEVERYTHING == 1:
         ###Print All Vars Raw
@@ -184,8 +184,8 @@ if RK4 == 1:
     if NUMACTUATORS > 0:
         ##The next N*2 states are the actual states of the actuators and the Error States
         actuator_labels = ['Throttle Actuator (us)','Aileron Actuator (us)','Elevator Actuator (us)','Rudder Actuator (us)','Aux1 Actuator (us)','Aux2 Actuator (us)','Aux3 Actuator (us)','Aux4 Actuator (us)']
-        actuator_states = data[:,(30+rcin_num_of_axis+ctl_numsignals):(30+rcin_num_of_axis+ctl_numsignals+NUMACTUATORS)]
-        actuator_error_states = data[:,(30+rcin_num_of_axis+ctl_numsignals+NUMACTUATORS):(30+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS)]
+        actuator_states = data[:,(33+rcin_num_of_axis+ctl_numsignals):(33+rcin_num_of_axis+ctl_numsignals+NUMACTUATORS)]
+        actuator_error_states = data[:,(33+rcin_num_of_axis+ctl_numsignals+NUMACTUATORS):(33+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS)]
         if PLOTEVERYTHING == 1:
             ###Print All Vars Raw
             for x in range(0,NUMACTUATORS):
@@ -200,7 +200,7 @@ if RK4 == 1:
     #########################################################################
 
     #####################The Final 6 states are the Forces and moments on the Vehicle
-    forces_moments = data[:,(30+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS):(30+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS+6)]
+    forces_moments = data[:,(33+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS):(33+rcin_num_of_axis+ctl_numsignals+2*NUMACTUATORS+6)]
     force_moment_labels = ['X (N)','Y (N)','Z (N)','L (N-m)','M (N-m)','N (N-m)']
     ###Print All Vars Raw
     for x in range(0,6):
@@ -211,12 +211,18 @@ if RK4 == 1:
         print(force_moment_labels[x])
         plt.grid()
         pp.savefig()
+
+    ##The remaining states are the following   
+    ##3x1 - Actual Magnetometer readings in the body frame
+    ##Pressure reading
+    ##Temperature Reading
+    ##ADC Readings
 ##########################################################################3
 
 ##### VARIABLE REGISTRY ####################
 # time - DONE
 # gps_heading , compass
-# sensor_states and sensor_labels - 12x1 - DONE
+# sensor_states and sensor_labels - 15x1 - DONE
 # rcin_states and rcin_labels - rcin_num_of_axis x 1 - DONE
 # ctl_states and ctl_labels - ctl_numsignals x 1 - DONE
 # RK4 - 1 or 0 for on and off 
@@ -229,16 +235,19 @@ if RK4 == 1:
 # actuator_states,actuator_error_states and actuator_labels - NUMACTUATORS x 1 - DONE
 
 ###Ok Let's first plot all 12 states (sensors and actual if RK4)
-for x in range(0,12):
+for x in range(0,15):
     plt.figure()
     plt.plot(time,sensor_states[:,x],label='Measurement')
     plt.xlabel('Time (sec)')
     plt.grid()
     LEGEND=0
     if RK4 == 1:
-        plt.plot(time,states[:,x],'--',label='Actual')
-        plt.ylabel(state_labels[x])
-        LEGEND=1
+        if x < 12:
+            plt.plot(time,states[:,x],'--',label='Actual')
+            plt.ylabel(state_labels[x])
+            LEGEND=1
+        else:
+            plt.ylabel(sensor_labels[x])
     else:
         plt.ylabel(sensor_labels[x])
     if x == 5:
