@@ -7,6 +7,9 @@ code a CubeSAT in LEO and deprecate the Orbit++ model from aerospace.git
 Ok CubeSAT LEO model works. Just need to deprecate Orbit++ in aerospace
 Took all day man.
 
+Ok the Orbit++ model has been deprecated. Next step is SysML analysis.
+so you just need your notebook.
+
 ===========================12/29/2021=========================
 
 I have started breaking the code. I have moved a lot of files 
