@@ -1,6 +1,6 @@
-/* Aerodynamics Template 2021
+/* Forces Template 2021
 
-This aerodynamics file is a template for a fictitious portalcube
+This forces file is a template for a fictitious portalcube
 with thrusters and a simple aero model. The Dynamics.cpp module
 will call a few candidate functions. If you make your own aero
 file with header and cpp file you must conform to the following
@@ -8,29 +8,29 @@ functions otherwise the software will completely break.
 
 */
 
-#include "aerodynamics.h"
+#include "forces.h"
 
 //Constructor
-aerodynamics::aerodynamics() {
+forces::forces() {
 	//The constructor must create these 3x1 vectors
-	FAEROB.zeros(3,1,"Force Aero in Body Frame");
-	MAEROB.zeros(3,1,"Moment Aero in Body Frame");
+	FB.zeros(3,1,"Force in Body Frame");
+	MB.zeros(3,1,"Moment in Body Frame");
 }
 
-void aerodynamics::setup(MATLAB var) {
+void forces::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
-	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
-	printf("Aerodynamics Initialized \n");
+	FORCES_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
+	printf("forces Initialized \n");
 
 }
 
-void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
+void forces::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
 	//The only thing this function needs to do is populate FAEROB and MAEROB. 
 	//You can do whatever you want in here but you must create those two vectors.
-	FAEROB.mult_eq(0); //Zero these out just to make sure something is in here
-	MAEROB.mult_eq(0);
+	FB.mult_eq(0); //Zero these out just to make sure something is in here
+	MB.mult_eq(0);
 
-	if (AERODYNAMICS_FLAG == 1) {
+	if (FORCES_FLAG == 1) {
 		
 		//Get States
 		double z = state.get(3,1);
@@ -87,7 +87,7 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB a
 		//printf("Thrust = %lf \n",Thrust);
 		
 
-  		//Aerodynamics Coefficients
+  		//forces Coefficients
   		double CL = aeropack.CLzero + (aeropack.CLalpha*alpha) + (aeropack.CLq*qhat) + (aeropack.CLdele*dele); //#Equation 19: Coefficient of Lift
   		double CD = aeropack.CDzero + (aeropack.CDalpha*(alpha*alpha)); //#Equation 19: Coefficient of Drag
   		double CY = (aeropack.Cybeta*beta)+(aeropack.Cydelr*delr)+(aeropack.Cyp*phat)+(aeropack.Cyr*rhat);
@@ -97,18 +97,18 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB a
   		double Cn = (aeropack.Cnp*phat)+(aeropack.Cnbeta*beta)+(aeropack.Cnr*rhat)+(aeropack.Cndela*dela)+(aeropack.Cndelr*delr);
   
   		//Forces and Moments
-  		FAEROB.set(1,1,CL*sin(alpha)-(CD*cos(alpha)));
-  		FAEROB.set(2,1,CY);
-  		FAEROB.set(3,1,-CL*cos(alpha)-CD*sin(alpha)); //#Equation 18: Aerodynamic forces
-  		FAEROB.mult_eq(0.5*RHOSLSI*(vinf*vinf)*aeropack.S);
-  		FAEROB.plus_eq1(1,1,Thrust);
-		MAEROB.set(1,1,aeropack.bws*Cl);
-  		MAEROB.set(2,1,aeropack.cbar*Cm);
-  		MAEROB.set(3,1,aeropack.bws*Cn);
-  		MAEROB.mult_eq(0.5*RHOSLSI*(vinf*vinf)*aeropack.S);
+  		FB.set(1,1,CL*sin(alpha)-(CD*cos(alpha)));
+  		FB.set(2,1,CY);
+  		FB.set(3,1,-CL*cos(alpha)-CD*sin(alpha)); //#Equation 18: Aerodynamic forces
+  		FB.mult_eq(0.5*RHOSLSI*(vinf*vinf)*aeropack.S);
+  		FB.plus_eq1(1,1,Thrust);
+		MB.set(1,1,aeropack.bws*Cl);
+  		MB.set(2,1,aeropack.cbar*Cm);
+  		MB.set(3,1,aeropack.bws*Cn);
+  		MB.mult_eq(0.5*RHOSLSI*(vinf*vinf)*aeropack.S);
 
-  		//FAEROB.disp();
-  		//MAEROB.disp();
+  		//FB.disp();
+  		//MB.disp();
   		//PAUSE();
 	}
 }
