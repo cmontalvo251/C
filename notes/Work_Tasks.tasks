@@ -4,7 +4,7 @@ FASTSim SysML:
 
    ✔ I think to make sure you have a simple transition you need to move all the C++ and HIL repos into MultiSAT as well. The reason being because HIL the simulation does not work right now in FASTSim. I think eventually you can deprecate the HIL simulation but just to make sure things still work properly you need to put a running copy into MultiSAT so it still works during the transition @done (21-12-28 22:19)
    ✔ Move HIL into C++ directory and delete HIL (call folder Hardware or something) @done (21-12-28 22:33)
-   ☐ Rename all the aerodynamics.cpp routines to forces.cpp
+   ✔ Rename all the aerodynamics.cpp routines to forces.cpp @done (21-12-30 08:01)
    ✔ Move all vehicles to a Model Folder @done (21-12-28 22:34)
    ✔ Re-org all folders in C++.git (Make C++ routines called Basic or something like that maybe Util? or COmmon? yea Common) @done (21-12-28 22:34)
    ☐ Code Orbit++ and add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from Pilot. 
