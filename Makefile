@@ -14,21 +14,24 @@ WIRINGPI=
 CC=g++
 COMMON=Common
 HARDWARE=Hardware
+GEO=GeographicLib
 COMPILE=-c -w -std=c++11 -Wno-psabi
 FLAGS=-DDEBUG
 LIB=-L/usr/local/lib -L./
 THREAD=-lpthread -lboost_system -lboost_thread -lboost_date_time #We are using this for the rendering pipeline so yea #sudo apt-get install libboost-all-dev
 MODELPATH=Models/$(MODEL)/src
-INCLUDE=-I${COMMON} -I${HARDWARE} -I${MODELPATH} -I./
+INCLUDE=-I${COMMON} -I${HARDWARE} -I${MODELPATH} -I./ -I${GEO}
 ###COMMON
 COMMONSOURCES=$(wildcard $(COMMON)/*/*.cpp)
 ###HARDWARE
 HARDWARESOURCES=$(wildcard $(HARDWARE)/*/*.cpp)
 ###MODEL
 MODELSOURCES=$(wildcard Models/$(MODEL)/src/*.cpp)
+###GEOGRAPHIC LIB
+GEOSOURCES=$(wildcard ${GEO}/*.cpp)
 
 ###COMBINE ALL SOURCES
-SOURCES=$(COMMONSOURCES) $(HARDWARESOURCES) $(MODELSOURCES) $(OPENGLSOURCES)
+SOURCES=$(COMMONSOURCES) $(HARDWARESOURCES) $(MODELSOURCES) $(OPENGLSOURCES) $(GEOSOURCES)
 OBJECTS=$(SOURCES:.cpp=.o)
 
 ##First target is default if you just type make
@@ -93,10 +96,12 @@ clean:
 	rm LOGGER/*.o
 	echo ' ' > DEMO/d.o
 	rm DEMO/*.o
-	echo ' ' > $(COMMON)/Datalogger/*.o
+	echo ' ' > $(COMMON)/Datalogger/d.o
 	rm $(COMMON)/*/*.o
-	echo ' ' > $(HARDWARE)/Serial/*.o
+	echo ' ' > $(HARDWARE)/Serial/d.o
 	rm $(HARDWARE)/*/*.o
+	echo ' ' > ${GEO}/d.o
+	rm ${GEO}/*.o
 	echo ' ' > OpenGL/*.o
 	rm OpenGL/*.o
 
