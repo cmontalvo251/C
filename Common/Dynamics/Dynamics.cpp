@@ -80,13 +80,13 @@ void Dynamics::setMassProps(MATLAB massdata) {
   env.setMass(m);
 }
 
-void Dynamics::initAerodynamics(int A) {
+void Dynamics::initExtForces(int F) {
   //If the AERO Model is on we initialize the aero model
-  if (A) {
+  if (F) {
     MATLAB var;
-    var.zeros(2,1,"aero vars");
-    var.set(1,1,A); //Sending Aerodynamics Flag to this var 
-    aero.setup(var);
+    var.zeros(2,1,"external force vars");
+    var.set(1,1,F); //Sending Forces Flag to this var 
+    extforces.setup(var);
   }
 }
 
@@ -310,9 +310,9 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
 
   ////////////////FORCE AND MOMENT MODEL///////////////////////
 
-  //Aerodynamic Model
-  //Send the aero model the actuator_state instead of the ctlcomms
-  aero.ForceMoment(t,State,k,actuatorError);
+  //External Forces Model
+  //Send the external forces model the actuator_state instead of the ctlcomms
+  extforces.ForceMoment(t,State,k,actuatorError);
 
   //Gravity Model
   env.gravitymodel();
@@ -325,12 +325,12 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   ine2bod321.rotateInertial2Body(FGNDB,env.FGNDI);
   ine2bod321.rotateInertial2Body(FTOTALB,FTOTALI);
 
-  //Add Aero Forces and Moments
+  //Add External Forces and Moments
   //FTOTALB.disp();
   //env.FGRAVI.disp();
-  FTOTALB.plus_eq(aero.FAEROB);
+  FTOTALB.plus_eq(extforces.FB);
   FTOTALB.plus_eq(FGNDB);
-  //aero.FAEROB.disp();
+  //extforces.FB.disp();
   //FGNDB.disp();
   //FTOTALB.disp();  
   //if (FTOTALB.get(1,1) > 0) {
@@ -350,7 +350,7 @@ void Dynamics::Derivatives(double t,MATLAB State,MATLAB k) {
   //PAUSE();
 
   //Moments vector
-  MTOTALB.overwrite(aero.MAEROB);
+  MTOTALB.overwrite(extforces.MB);
   MTOTALB.plus_eq(MGNDB);
 
   ///Rotational Dynamics

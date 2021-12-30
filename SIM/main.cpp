@@ -90,7 +90,7 @@ int main(int argc,char** argv) {
   //Require any computation time except on startup to read them so just keep
   //them here for all different scenarios
   int GRAVITY_FLAG = simdata.get(8,1);
-  int AERO_FLAG = simdata.get(9,1);
+  int FORCES_FLAG = simdata.get(9,1);
   int CTL_FLAG = simdata.get(10,1);
   int ERROR_FLAG = simdata.get(11,1);
   int ACTUATOR_FLAG = simdata.get(12,1);
@@ -168,9 +168,9 @@ int main(int argc,char** argv) {
   //Set State of Vehicle since the integrator doesn't assume a 6DOF model or actuators
   vehicle.setState(integrator.State,integrator.k);
   printf("Vehicle State Set \n");
-  ////Init Aerodynamics
-  vehicle.initAerodynamics(AERO_FLAG);
-  printf("Aerodynamics is Windy \n");
+  ////Init Forces
+  vehicle.initExtForces(FORCES_FLAG);
+  printf("External Forces Model Online \n");
   //Init Extra Models
   vehicle.initExtModels(GRAVITY_FLAG);
   printf("Earth Environment is Flat as of Version 0.9 \n");
@@ -437,21 +437,21 @@ void runMainLoop() {
       }
       //Forces and Moments
       if (logger.IsHeader == 0){
-        logger.logheader[ctr-1] = "Aero Force X (N)";
-        logger.logheader[ctr] = "Aero Force Y (N)";
-        logger.logheader[ctr+1] = "Aero Force Z (N)";
+        logger.logheader[ctr-1] = "Ext Force X (N)";
+        logger.logheader[ctr] = "Ext Force Y (N)";
+        logger.logheader[ctr+1] = "Ext Force Z (N)";
       }
       for (int i = 0;i<3;i++) {
-        logger.logvars.set(ctr,1,vehicle.aero.FAEROB.get(i+1,1));
+        logger.logvars.set(ctr,1,vehicle.extforces.FB.get(i+1,1));
         ctr++;
       }
       if (logger.IsHeader == 0){
-        logger.logheader[ctr-1] = "Aero Moment X (N)";
-        logger.logheader[ctr] = "Aero Moment Y (N)";
-        logger.logheader[ctr+1] = "Aero Moment Z (N)";
+        logger.logheader[ctr-1] = "Ext Moment X (N)";
+        logger.logheader[ctr] = "Ext Moment Y (N)";
+        logger.logheader[ctr+1] = "Ext Moment Z (N)";
       }
       for (int i = 0;i<3;i++) {
-        logger.logvars.set(ctr,1,vehicle.aero.MAEROB.get(i+1,1));
+        logger.logvars.set(ctr,1,vehicle.extforces.MB.get(i+1,1));
         ctr++;
       }
       #endif

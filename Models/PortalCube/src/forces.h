@@ -1,9 +1,9 @@
-#ifndef AERODYNAMICS_H
-#define AERODYNAMICS_H
+#ifndef FORCES_H
+#define FORCES_H
 
-/* Aerodynamics Template 2021
+/* Forces Template 2021
 
-This aerodynamics file is a template for a fictitious portalcube
+This forces file is a template for a fictitious portalcube
 with thrusters and a simple aero model. The Dynamics.cpp module
 will call a few candidate functions. If you make your own aero
 file with header and cpp file you must conform to the following
@@ -16,17 +16,17 @@ functions otherwise the software will completely break.
 #include <Timer/timer.h> //for pause function
 #include <RCIO/RCInput.h> //for stick min values
 
-class aerodynamics {
+class forces {
 	private:
 		//You can put any private functions or vars in here that you like but it 
 		//must adhere to the standards below
 	public:
-		//This variable turns the aerodynamics model on and off and is set in 
+		//This variable turns the forces model on and off and is set in 
 		//Input_Files/Simulation_Flags.txt
-		int AERODYNAMICS_FLAG=0;
+		int FORCES_FLAG=0;
 		//These are 3x1 MATLAB vectors that must be in units of Newtons
 		//and in the body frame
-		MATLAB FAEROB,MAEROB; 
+		MATLAB FB,MB;
 		void setup(MATLAB var); //this will do any setup required. The input var is....
 		//There the inputs are the current time, the current MATLAB state vector,
 		//the current derivative state vector and the actuator values.
@@ -37,7 +37,7 @@ class aerodynamics {
 		//statedot is the derivatives of the state vector
 		void ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators); 
 		//Constructor
-		aerodynamics();
+		forces();
 };
 
 #endif

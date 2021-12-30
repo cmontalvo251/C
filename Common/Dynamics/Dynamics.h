@@ -15,9 +15,9 @@
 #include <RCIO/RCOutput.h> 
 
 //These two includes are craft dependent.
-//There is an open source portal cube example. The aircraft and 
-//quad, etc are all in private repos
-#include "aerodynamics.h" 
+//There is an open source portal cube example among others
+//in the Models folder
+#include "forces.h" 
 #include "controller.h"
 
 /*This sensor block does alot of different things. If we're running
@@ -72,13 +72,13 @@ class Dynamics {
   RCInput rcin;
   RCOutput rcout;
   controller ctl;
-  aerodynamics aero;
+  forces extforces;
   sensors err;
   int NUMSTATES,NUMLOGS,CONTROLLER_FLAG_INITIAL,NUMACTUATORS=0,NUMVARS;
   void setState(MATLAB state,MATLAB statedot);
   void Derivatives(double time,MATLAB State,MATLAB k);
   void initExtModels(int G);
-  void initAerodynamics(int A);
+  void initExtForces(int F);
   void setMassProps(MATLAB massdata);
   void initErrModel(MATLAB sensordata);
   void loop(double time,double dt);

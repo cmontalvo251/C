@@ -1,35 +1,35 @@
-/* Aerodynamics Template 2021
+/* Forces Template 2021
 
-This aerodynamics file is a template for a fictitious portalcube
-with thrusters and a simple aero model. The Dynamics.cpp module
-will call a few candidate functions. If you make your own aero
+This forces file is a template for a fictitious portalcube
+with thrusters and a simple  model. The Dynamics.cpp module
+will call a few candidate functions. If you make your own 
 file with header and cpp file you must conform to the following
 functions otherwise the software will completely break.
 
 */
 
-#include "aerodynamics.h"
+#include "forces.h"
 
 //Constructor
-aerodynamics::aerodynamics() {
+forces::forces() {
 	//The constructor must create these 3x1 vectors
-	FAEROB.zeros(3,1,"Force Aero in Body Frame");
-	MAEROB.zeros(3,1,"Moment Aero in Body Frame");
+	FB.zeros(3,1,"Force in Body Frame");
+	MB.zeros(3,1,"Moment in Body Frame");
 }
 
-void aerodynamics::setup(MATLAB var) {
+void forces::setup(MATLAB var) {
 	//This function is called once at the beginning of the simulation.
-	AERODYNAMICS_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
-	printf("Aerodynamics Initialized \n");
+	FORCES_FLAG = var.get(1,1); //In this case the first variable is whether we run the model or not
+	printf("Forces Initialized \n");
 }
 
-void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
-	//The only thing this function needs to do is populate FAEROB and MAEROB. 
+void forces::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB actuators) {
+	//The only thing this function needs to do is populate FB and MB. 
 	//You can do whatever you want in here but you must create those two vectors.
-	FAEROB.mult_eq(0); //Zero these out just to make sure something is in here
-	MAEROB.mult_eq(0);
+	FB.mult_eq(0); //Zero these out just to make sure something is in here
+	MB.mult_eq(0);
 
-	if (AERODYNAMICS_FLAG == 1) {
+	if (FORCES_FLAG == 1) {
 		//Extract Actuator Values
 		//Remember that control is in PWM (us)
 		double throttleUS = actuators.get(1,1);
@@ -47,7 +47,7 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB a
 		double Mthrust = (elevatorUS - STICK_MID)/mid_slope*TORQUEMAX;
 		double Nthrust = (rudderUS - STICK_MID)/mid_slope*TORQUEMAX;
 
-		//Aero Parameters
+		// Parameters
 		double S = 0.1; //m^2
 		double c = 1.0; //mean chord
 		double CD = 1.0; //Linear Drag Coefficient
@@ -83,25 +83,25 @@ void aerodynamics::ForceMoment(double time,MATLAB state,MATLAB statedot,MATLAB a
 		//printf("V = %lf \n",V);
 
 		//Forces
-		FAEROB.plus_eq(qinf);
-		FAEROB.mult_eq1(1,1,-u*CD);
-		FAEROB.mult_eq1(2,1,-v*CD);
-		FAEROB.mult_eq1(3,1,-w*CD); 
+		FB.plus_eq(qinf);
+		FB.mult_eq1(1,1,-u*CD);
+		FB.mult_eq1(2,1,-v*CD);
+		FB.mult_eq1(3,1,-w*CD); 
 		//Add Thrust
-		FAEROB.plus_eq1(3,1,Zthrust);
+		FB.plus_eq1(3,1,Zthrust);
 
 		//Moments
-		MAEROB.plus_eq(qinf);
-		MAEROB.mult_eq1(1,1,-V*pbar*c*CM);
-		MAEROB.mult_eq1(2,1,-V*qbar*c*CM);
-		MAEROB.mult_eq1(3,1,-V*rbar*c*CM);
+		MB.plus_eq(qinf);
+		MB.mult_eq1(1,1,-V*pbar*c*CM);
+		MB.mult_eq1(2,1,-V*qbar*c*CM);
+		MB.mult_eq1(3,1,-V*rbar*c*CM);
 		//Add Thruster
-		MAEROB.plus_eq1(1,1,Lthrust);
-		MAEROB.plus_eq1(2,1,Mthrust);
-		MAEROB.plus_eq1(3,1,Nthrust);
+		MB.plus_eq1(1,1,Lthrust);
+		MB.plus_eq1(2,1,Mthrust);
+		MB.plus_eq1(3,1,Nthrust);
 
-		//FAEROB.disp();
-		//MAEROB.disp();
+		//FB.disp();
+		//MB.disp();
 		//PAUSE();
 	}
 }
