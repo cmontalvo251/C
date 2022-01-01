@@ -9,22 +9,22 @@ FASTSim SysML:
    ✔ Re-org all folders in C++.git (Make C++ routines called Basic or something like that maybe Util? or COmmon? yea Common) @done (21-12-28 22:34)
    ✔ Code Orbit++ and add a sphere for Earth scaled by REARTH. Try to reuse as many routines as possible from MultiSat++. @done (21-12-30 16:47)
    ✔ deprecate Orbit++ from Aerospace folder @done (21-12-30 17:46)
-   ☐ SysML diagrams for everything below to make sure everything works as intended
-   ☐ I think the HIL send should be in Dynamics (that’s the only place you need to send)
-   ☐ The HIL receive should be in Sensors (only place you need to receive)
-    ☐ Create a logical architecture that works for all vehicles in the structure that looks like the form: 
-    ☐ Inner Loop 
-      ☐ Inputs: Roll, pitch, yaw commands 
-      ☐ Outputs: ctlcomms - us signals to RCIO class
-    ☐ Outerloop
-      ☐ Inputs: waypoint commands (x,y,altitude)
-      ☐ Outputs: roll pitch and yaw commands
-    ☐ GraveDigger - The Remote control car in the lab
-    ☐ BattleBot - the tank
-    ☐ FASTIris
-    ☐ Bumblebee
-    ☐ Meta 1 and 2
-    ☐ Batwing
+   ✔ SysML diagrams for everything below to make sure everything works as intended @done (21-12-31 20:37)
+   ✔ I think the HIL send should be in Dynamics (that’s the only place you need to send) @done (21-12-31 20:37)
+   ✔ The HIL receive should be in Sensors (only place you need to receive) @done (21-12-31 20:37)
+    ✔ Create a logical architecture that works for all vehicles in the structure that looks like the form: @done (21-12-31 20:37)
+    ✔ Inner Loop @done (21-12-31 20:37)
+      ✔ Inputs: Roll, pitch, yaw commands @done (21-12-31 20:37)
+      ✔ Outputs: ctlcomms - us signals to RCIO class @done (21-12-31 20:37)
+    ✔ Outerloop @done (21-12-31 20:37)
+      ✔ Inputs: waypoint commands (x,y,altitude) @done (21-12-31 20:37)
+      ✔ Outputs: roll pitch and yaw commands @done (21-12-31 20:37)
+    ✔ GraveDigger - The Remote control car in the lab @done (21-12-31 20:37)
+    ✔ BattleBot - the tank @done (21-12-31 20:37)
+    ✔ FASTIris @done (21-12-31 20:37)
+    ✔ Bumblebee @done (21-12-31 20:37)
+    ✔ Meta 1 and 2 @done (21-12-31 20:38)
+    ✔ Batwing @done (21-12-31 20:38)
    ☐ First Video is your struggle with something new
    ☐ Second Video is on SysML diagrams
    ☐ Rename C++.git to FAST.git
