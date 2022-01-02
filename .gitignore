@@ -1,3 +1,4 @@
+*.asml.bak
 EGM_EMM/
 Models/Extra_Models/
 *.blend
