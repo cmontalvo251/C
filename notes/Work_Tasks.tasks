@@ -134,11 +134,17 @@ WOODEN DRONE:
 
 ANTX:
 
- ☐ Make sure that the Batwing is working properly in Demo mode using SIMPILOT
- 
+ ☐ Make sure we have all the parts for Batwing and it turns on and all components are working
+
+ ☐ Make sure that the Batwing is working properly in demo mode (assuming Dr. Montalvo completed the demo.cpp)
+
+ ☐ Make sure AUTO mode for FAST works on Batwing
+
  ☐ Make sure telemetry is working properly using Processing
- 
- ☐ Upgrade Processing Software with whatever signals are being sent from Drone - Current iteration of software is in Processing.git/Serial/ReceiveHexDump.pde Original software used during NOAA campaign is in GROUND_STATION also in Serial folder. Be sure to check Archive folder. I'd like the ground station software to be versatile enough that it can handle any number of sensors from telemetry you just simply need to specify what sensors are being read in and in what order
+
+ ☐ Make sure Autopilot is working
+
+ ☐ Model the Batwing in simulation - so edit the Aerodynamics.cpp file to reflect the vehicle
  
  ☐ Market our entire setup as an independent contractor if needed
 
